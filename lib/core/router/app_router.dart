@@ -23,19 +23,16 @@ class AppRouter {
       showCupertinoParallax: false,
       name: Routes.homeScreen,
       page: () => HomeScreen(),
-      binding: ManagingScreenBinding(),
     ),
     GetPage(
       showCupertinoParallax: false,
       name: Routes.addEditWordScreen,
       page: () => AddEditWordScreen(),
-      binding: WordControllerBinding(),
     ),
     GetPage(
       showCupertinoParallax: false,
       name: Routes.addEditBookScreen,
       page: () => AddEditBookScreen(),
-      binding: BookControllerBinding(),
     ),
     GetPage(
       showCupertinoParallax: false,
@@ -46,25 +43,25 @@ class AppRouter {
       showCupertinoParallax: false,
       name: Routes.manageWordsScreen,
       page: () => ManageWordsScreen(),
-      binding: ManagingScreenBinding(),
+      binding: ManageWordsBinding(),
     ),
     GetPage(
       showCupertinoParallax: false,
       name: Routes.manageBooksScreen,
       page: () => ManageBooksScreen(),
-      binding: ManagingScreenBinding(),
+      binding: ManageBooksBinding(),
     ),
     GetPage(
       showCupertinoParallax: false,
       name: Routes.readWordScreen,
       page: () => ReadWordScreen(),
-      bindings: [SpeechServiceBinding() ,SpellingControllerBinding()  ],
+      binding: WordDetailsBinding(),
     ),
     GetPage(
       showCupertinoParallax: false,
       name: Routes.readBookScreen,
       page: () => ReadBookScreen(),
-      bindings: [SpellingControllerBinding()],
+      binding: WordDetailsBinding(),
     ),
   ];
 }

@@ -12,6 +12,8 @@ import 'package:vocly/vocabulary/controller/book_controller.dart';
 import 'package:vocly/vocabulary/model/book_model.dart';
 import 'package:vocly/vocabulary/model/word_model.dart';
 
+import '../../../core/constants/const_icons.dart';
+
 class AddEditBookScreen extends StatefulWidget {
   const AddEditBookScreen({super.key});
 
@@ -29,7 +31,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
   final _descriptionController = TextEditingController();
 
   int _selectedColorIndex = 0;
-  int _selectedBannerIndex = 1;
+  int _selectedIconIndex = 1;
   List<WordModel> _selectedWords = [];
 
   @override
@@ -67,7 +69,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
                   SizedBox(height: 10),
                   _colorSelection(),
                   SizedBox(height: 10),
-                  _bannerSelection(),
+                  _iconSelection() ,
                   SizedBox(height: 30),
                   Text('Words', style: AppTextTheme.titleMedium),
                   SizedBox(height: 10),
@@ -144,6 +146,39 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
       ],
     );
   }
+  Widget _iconSelection() {
+    return ExpansionWidget(
+      title: 'Icon',
+      children: [
+        Wrap(
+          spacing: 15,
+          runSpacing: 15,
+          children: [
+            for (int i = 0; i < ConstIcons.icons.length; i++)
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    _selectedIconIndex = i;
+                  });
+                },
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: ConstUiColors.backgroundColor2),
+                    borderRadius: const BorderRadius.all(Radius.circular(15)),
+                    color: i == _selectedIconIndex
+                        ? ConstUiColors.backgroundColor2
+                        : ConstUiColors.forthColor,
+                  ),
+                  child: Icon(ConstIcons.icons[i]),
+                ),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
 
   Widget _bannerSelection() {
     return ExpansionWidget(
@@ -157,7 +192,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
               InkWell(
                 onTap: () {
                   setState(() {
-                    _selectedBannerIndex = i;
+                    _selectedIconIndex = i;
                   });
                 },
                 child: Container(
@@ -165,7 +200,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
                   width: 80,
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: _selectedBannerIndex == i
+                      color: _selectedIconIndex == i
                           ? ConstUiColors.thirdColor
                           : ConstUiColors.backgroundColor2,
                     ),
@@ -197,7 +232,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
                   'name': _nameController.text,
                   'description': _descriptionController.text,
                   'color': _selectedColorIndex,
-                  'banner': _selectedBannerIndex,
+                  'banner': _selectedIconIndex,
                   'words': _selectedWords,
                 };
                 final BookModel model = BookModel.fromMap(map: map);

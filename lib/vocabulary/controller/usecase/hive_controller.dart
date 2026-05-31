@@ -20,13 +20,14 @@ abstract class HiveController<T extends HiveObject> extends GetxController {
       items = freshItems;
       update();
     } catch (error) {
-      Get.snackbar('Faild!', error.toString());
+      Get.snackbar('Failed!', error.toString());
     }
   }
 
   Future<void> addItem({required final T model}) async {
     try {
       await box.add(model);
+      loadItems();
     } on HiveError catch (error) {
       Get.snackbar('Oops!', error.message);
     }
@@ -36,7 +37,9 @@ abstract class HiveController<T extends HiveObject> extends GetxController {
   Future<void> deleteItems({required final List<T> selectedItems}) async {
     try {
       for (var item in selectedItems) {
-        await item.delete();
+        if (item.isInBox) {
+          await item.delete();
+        }
       }
       loadItems();
     } on HiveError catch (error) {
@@ -45,10 +48,16 @@ abstract class HiveController<T extends HiveObject> extends GetxController {
   }
 
   void updateCurrentItem({required final T freshModel}) {
+    currentItem = freshModel;
+    update();
+  }
+
+  Future<void> saveCurrentItem() async {
     try {
-      freshModel.save();
-      currentItem = freshModel;
-      update();
+      if (currentItem != null && currentItem!.isInBox) {
+        await currentItem!.save();
+        loadItems();
+      }
     } on HiveError catch (error) {
       Get.snackbar('Oops!', error.message);
     }

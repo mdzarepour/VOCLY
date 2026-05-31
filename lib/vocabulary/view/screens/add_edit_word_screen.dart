@@ -100,7 +100,7 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
                     const SizedBox(height: 30),
                     Text('Visual', style: AppTextTheme.titleMedium),
                     SizedBox(height: 10),
-                    _iconSelection(context),
+                    _iconSelection(),
                     const SizedBox(height: 15),
                     _typeSelection(context),
                     const SizedBox(height: 15),
@@ -118,7 +118,7 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
     );
   }
 
-  Widget _iconSelection(BuildContext context) {
+  Widget _iconSelection() {
     return ExpansionWidget(
       title: 'Icon',
       children: [
