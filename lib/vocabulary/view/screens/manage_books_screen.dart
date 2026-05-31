@@ -6,7 +6,8 @@ import 'package:vocly/core/constants/const_colors.dart';
 import 'package:vocly/core/router/app_router.dart';
 import 'package:vocly/core/services/dialog_service.dart';
 import 'package:vocly/vocabulary/controller/book_controller.dart';
-import 'package:vocly/vocabulary/controller/selection_controller.dart';
+import 'package:vocly/vocabulary/controller/book_selection_controller.dart';
+import 'package:vocly/vocabulary/controller/word_selection_controller.dart';
 import 'package:vocly/vocabulary/model/book_model.dart';
 
 class ManageBooksScreen extends StatefulWidget {
@@ -49,7 +50,7 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
   }
 
   Widget _bookWidget({required final BookModel book}) {
-    return GetBuilder<SelectionController>(
+    return GetBuilder<BookSelectionController>(
       builder: (controller) {
         return InkWell(
           onLongPress: () => controller.changeSelectionMode(item: book),
@@ -65,7 +66,7 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
               CardWidget(
                 selectedBorderColor: controller.isSelected(item: book)
                     ? ConstUiColors.thirdColor
-                    : null,
+                    : ConstUiColors.backgroundColor2,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -118,7 +119,7 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
   AppBar _appbarWidget() {
     return AppBar(
       automaticallyImplyLeading: true,
-      title: GetBuilder<SelectionController>(
+      title: GetBuilder<BookSelectionController>(
         builder: (controller) {
           return Row(
             children: [
@@ -137,7 +138,6 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
                     child: Icon(Icons.delete_outline),
                   ),
                 ),
-
               SizedBox(width: 10),
               //TODO change to icon
               InkWell(
@@ -156,13 +156,13 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
   }
 
   Future<void> _deleteBook({required List<BookModel> selectedBooks}) async {
-    final bool? permision = await _dialogService.showDialog(
+    final bool? permission = await _dialogService.showDialog(
       title: 'Deleting!',
       content: 'Are you sure about deleting these books?',
       confirmTitle: 'delete',
     );
 
-    if (permision == null || permision == false) return;
+    if (permission == null || permission == false) return;
     _bookController.deleteItems(selectedItems: selectedBooks);
   }
 }

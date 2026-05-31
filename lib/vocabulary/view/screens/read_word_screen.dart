@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
 import 'package:vocly/common/theme/app_text_theme.dart';
 import 'package:vocly/common/widgets/card_widget.dart';
@@ -10,6 +11,7 @@ import 'package:vocly/core/constants/const_colors.dart';
 import 'package:vocly/core/constants/const_strings.dart';
 import 'package:vocly/core/enums/enums.dart';
 import 'package:vocly/core/router/app_router.dart';
+import 'package:vocly/core/services/speech_service.dart';
 import 'package:vocly/vocabulary/controller/spelling_controller.dart';
 import 'package:vocly/vocabulary/controller/word_controller.dart';
 import 'package:vocly/vocabulary/model/word_model.dart';
@@ -23,6 +25,8 @@ class ReadWordScreen extends StatefulWidget {
 
 class _ReadWordScreenState extends State<ReadWordScreen> {
   final _wordController = Get.find<WordController>();
+  final _speechService = Get.find<SpeechService>() ;
+
   @override
   void initState() {
     super.initState();
@@ -163,18 +167,24 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
   }
 
   Widget _listenButton() {
-    return InkWell(
-      onTap: () async {},
-      child: CardWidget(
-        height: 50,
-        child: Row(
-          spacing: 15,
-          children: [
-            Icon(Icons.mic_none_rounded),
-            Text(style: AppTextTheme.titleMedium, 'Listen'),
-          ],
-        ),
-      ),
+    return GetBuilder<WordController>(
+      builder: (controller) {
+        return InkWell(
+          onTap: ()  {
+            _speechService.speak(text: controller.currentItem!.name!) ;
+          },
+          child: CardWidget(
+            height: 50,
+            child: Row(
+              spacing: 15,
+              children: [
+                Icon(Icons.mic_none_rounded),
+                Text(style: AppTextTheme.titleMedium, 'Listen'),
+              ],
+            ),
+          ),
+        );
+      }
     );
   }
 

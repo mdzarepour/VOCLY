@@ -18,7 +18,7 @@ class BookModelAdapter extends TypeAdapter<BookModel> {
     };
     return BookModel(
       color: fields[2] as int,
-      banner: fields[3] as int,
+      icon: fields[3] as int,
       name: fields[0] as String,
       words: (fields[4] as List).cast<WordModel>(),
       description: fields[1] as String,
@@ -36,7 +36,7 @@ class BookModelAdapter extends TypeAdapter<BookModel> {
       ..writeByte(2)
       ..write(obj.color)
       ..writeByte(3)
-      ..write(obj.banner)
+      ..write(obj.icon)
       ..writeByte(4)
       ..write(obj.words);
   }

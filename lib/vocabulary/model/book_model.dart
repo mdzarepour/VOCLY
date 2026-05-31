@@ -14,14 +14,14 @@ class BookModel extends HiveObject {
   int color;
 
   @HiveField(3)
-  int banner;
+  int icon;
 
   @HiveField(4)
   List<WordModel> words;
 
   BookModel({
     required this.color,
-    required this.banner,
+    required this.icon,
     required this.name,
     required this.words,
     required this.description,
@@ -31,7 +31,7 @@ class BookModel extends HiveObject {
     return BookModel(
       name: map['name'],
       description: map['description'],
-      banner: map['banner'],
+      icon: map['banner'],
       color: map['color'],
       words: map['words'],
     );
@@ -39,7 +39,7 @@ class BookModel extends HiveObject {
 
   void updateBook({required final Map<String, dynamic> map}) {
     name = map['name'] ?? name;
-    banner = map['banner'] ?? banner;
+    icon = map['banner'] ?? icon;
     color = map['color'] ?? color;
     words = map['words'] ?? words;
   }

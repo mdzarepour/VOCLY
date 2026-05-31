@@ -50,8 +50,6 @@ class _ReadBookScreenState extends State<ReadBookScreen> {
                   return Column(
                     children: [
                       SizedBox(height: 20, width: double.infinity),
-                      _bannerImage(currentBook),
-                      SizedBox(height: 20),
                       _editButton(),
                       SizedBox(height: 20),
                       _wordsList(currentBook),
@@ -104,15 +102,5 @@ class _ReadBookScreenState extends State<ReadBookScreen> {
     );
   }
 
-  Widget _bannerImage(BookModel currentBook) {
-    return ClipRRect(
-      borderRadius: BorderRadiusGeometry.all(Radius.circular(15)),
-      child: Image.asset(
-        fit: BoxFit.cover,
-        width: double.infinity,
-        height: 150,
-        'assets/${currentBook.banner}.jpg',
-      ),
-    );
-  }
+
 }

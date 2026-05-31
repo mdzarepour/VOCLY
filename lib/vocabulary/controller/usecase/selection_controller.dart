@@ -1,18 +1,12 @@
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
-import 'package:vocly/vocabulary/controller/book_controller.dart';
-import 'package:vocly/vocabulary/controller/word_controller.dart';
+import 'package:get/get.dart';
+import 'package:hive/hive.dart';
+import 'package:vocly/vocabulary/controller/usecase/hive_controller.dart';
 
-class SelectionController extends GetxController {
-  final WordController wordController;
-  final BookController bookController;
+abstract class SelectionController<T extends HiveObject> extends GetxController{
+  final HiveController currentController ;
+  SelectionController({required this.currentController}) ;
 
-  SelectionController({
-    required this.wordController,
-    required this.bookController,
-  });
-
-  final List<dynamic> selectedItems = [];
-
+  final List<T> selectedItems = [];
   bool isSelectionMode = false;
   String selectButtonTitle = 'Select all';
 
@@ -25,7 +19,6 @@ class SelectionController extends GetxController {
     }
     update();
   }
-
   void updateSelectionMode({required bool mode}) {
     isSelectionMode = mode;
     update();
@@ -47,11 +40,11 @@ class SelectionController extends GetxController {
   }
 
   void selectAllItems() {
-    final words = wordController.items;
+    final words = currentController.items;
     if (selectedItems.isEmpty || selectedItems.length < words.length) {
       updateSelectionMode(mode: true);
       selectedItems.clear();
-      selectedItems.addAll(words);
+      selectedItems.addAll(words.cast<T>());
     } else {
       updateSelectionMode(mode: false);
       selectedItems.clear();
@@ -61,10 +54,11 @@ class SelectionController extends GetxController {
   }
 
   void _updateSelectionTitle() {
-    if (selectedItems.length >= wordController.items.length) {
+    if (selectedItems.length >= currentController.items.length) {
       selectButtonTitle = 'Unselect all';
     } else {
       selectButtonTitle = 'Select all';
     }
   }
+
 }

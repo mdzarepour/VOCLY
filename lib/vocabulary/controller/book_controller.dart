@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:vocly/vocabulary/controller/hive_controller.dart';
+import 'package:vocly/vocabulary/controller/usecase/hive_controller.dart';
 import 'package:vocly/vocabulary/model/book_model.dart';
 
 class BookController extends HiveController<BookModel> {

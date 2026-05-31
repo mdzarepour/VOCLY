@@ -1,9 +1,11 @@
 import 'package:get/get.dart';
 import 'package:vocly/core/services/dialog_service.dart';
 import 'package:vocly/vocabulary/controller/book_controller.dart';
-import 'package:vocly/vocabulary/controller/selection_controller.dart';
+import 'package:vocly/vocabulary/controller/book_selection_controller.dart';
+import 'package:vocly/vocabulary/controller/word_selection_controller.dart';
 import 'package:vocly/vocabulary/controller/spelling_controller.dart';
 import 'package:vocly/vocabulary/controller/word_controller.dart';
+import 'package:vocly/core/services/speech_service.dart';
 
 class AppCoreBinding extends Bindings {
   @override
@@ -12,24 +14,20 @@ class AppCoreBinding extends Bindings {
   }
 }
 
-class WordControllerBindig extends Bindings {
+class WordControllerBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<WordController>(() => WordController());
   }
 }
 
-class ManagingScreenBindig extends Bindings {
+class ManagingScreenBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<BookController>(() => BookController());
     Get.lazyPut<WordController>(() => WordController());
-    Get.lazyPut<SelectionController>(
-      () => SelectionController(
-        bookController: Get.find<BookController>(),
-        wordController: Get.find<WordController>(),
-      ),
-    );
+    Get.lazyPut<WordSelectionController>(() => WordSelectionController(currentController: Get.find<WordController>()));
+    Get.lazyPut<BookSelectionController>(() => BookSelectionController(currentController: Get.find<BookController>()));
   }
 }
 
@@ -46,5 +44,12 @@ class BookControllerBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<BookController>(() => BookController());
+  }
+}
+
+class SpeechServiceBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<SpeechService>(() => SpeechService());
   }
 }

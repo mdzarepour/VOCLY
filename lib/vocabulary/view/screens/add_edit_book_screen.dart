@@ -244,12 +244,12 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
       _bookController.addItem(model: model);
       return;
     }
-    final bool? permision = await _dialogService.showDialog(
+    final bool? permission = await _dialogService.showDialog(
       title: 'Duplicated book!',
       content: 'Are you sure want to add duplicated book?',
       confirmTitle: 'Yes add',
     );
-    if (permision!) {
+    if (permission!) {
       _bookController.addItem(model: model);
     } else {
       Get.back();

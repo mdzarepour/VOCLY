@@ -301,13 +301,13 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
       return;
     }
 
-    final bool? permision = await _dialogService.showDialog(
+    final bool? permission = await _dialogService.showDialog(
       title: 'Duplicated word!',
       content: 'Are you sure want to add duplicated word?',
       confirmTitle: 'Yes add',
     );
 
-    if (permision!) {
+    if (permission!) {
       _wordController.addItem(model: model);
     } else {
       Get.back();

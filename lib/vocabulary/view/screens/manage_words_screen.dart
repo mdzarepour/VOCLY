@@ -7,7 +7,7 @@ import 'package:vocly/core/services/dialog_service.dart';
 import 'package:vocly/common/theme/app_text_theme.dart';
 import 'package:vocly/core/constants/const_colors.dart';
 import 'package:vocly/core/router/app_router.dart';
-import 'package:vocly/vocabulary/controller/selection_controller.dart';
+import 'package:vocly/vocabulary/controller/word_selection_controller.dart';
 import 'package:vocly/vocabulary/controller/word_controller.dart';
 import 'package:vocly/vocabulary/model/word_model.dart';
 import 'package:vocly/vocabulary/view/widgets/word_tile.dart';
@@ -31,7 +31,6 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
     super.initState();
     final type = Get.arguments;
     _isManagingMode = type == ManageWordsScreenType.manage ? true : false;
-    print(_isManagingMode) ;
   }
 
   @override
@@ -63,7 +62,7 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
                         ),
                         itemBuilder: (context, index) {
                           final currentWord = words[index];
-                          return GetBuilder<SelectionController>(
+                          return GetBuilder<WordSelectionController>(
                             builder: (controller) {
                               return WordTile(
                                 selectedBorderColor: controller.isSelected(item: currentWord) ? ConstUiColors.thirdColor :  ConstUiColors.backgroundColor2,
@@ -103,7 +102,7 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
   }
 
   Widget _addButton() {
-    return GetBuilder<SelectionController>(
+    return GetBuilder<WordSelectionController>(
       builder: (controller) {
         final selectedWords = controller.selectedItems;
         return InkWell(
@@ -146,7 +145,7 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
   AppBar _appbarWidget() {
     return AppBar(
       automaticallyImplyLeading: true,
-      title: GetBuilder<SelectionController>(
+      title: GetBuilder<WordSelectionController>(
         builder: (controller) {
           return Row(
             children: [

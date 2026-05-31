@@ -1,5 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:vocly/vocabulary/controller/hive_controller.dart';
+import 'package:vocly/vocabulary/controller/usecase/hive_controller.dart';
 import 'package:vocly/vocabulary/model/word_model.dart';
 
 class WordController extends HiveController<WordModel> {
