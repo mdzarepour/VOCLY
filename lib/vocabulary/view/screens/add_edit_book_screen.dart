@@ -36,48 +36,51 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: false,
-        title: Text(UIStrings.addNewBook, style: AppTextTheme.titleMedium),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  Text(UIStrings.details, style: AppTextTheme.titleMedium),
-                  SizedBox(height: 10),
-                  InputWidget(
-                    icon: Icons.chrome_reader_mode_outlined,
-                    controller: _nameController,
-                    hint: UIStrings.name,
-                  ),
-                  SizedBox(height: 10),
-                  InputWidget(
-                    icon: Icons.description_outlined,
-                    controller: _descriptionController,
-                    hint: UIStrings.description,
-                  ),
-                  const SizedBox(height: 30),
-                  Text(UIStrings.visual, style: AppTextTheme.titleMedium),
-                  SizedBox(height: 10),
-                  _colorSelection(),
-                  SizedBox(height: 10),
-                  _iconSelection(),
-                  SizedBox(height: 30),
-                  Text(UIStrings.words, style: AppTextTheme.titleMedium),
-                  SizedBox(height: 10),
-                  _wordSelection(),
-                  SizedBox(height: 30),
-                  _actionButtons(),
-                  SizedBox(height: 30),
-                ],
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: false,
+          title: Text(UIStrings.addNewBook, style: AppTextTheme.titleMedium),
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20),
+                    Text(UIStrings.details, style: AppTextTheme.titleMedium),
+                    SizedBox(height: 10),
+                    InputWidget(
+                      icon: Icons.chrome_reader_mode_outlined,
+                      controller: _nameController,
+                      hint: UIStrings.name,
+                    ),
+                    SizedBox(height: 10),
+                    InputWidget(
+                      icon: Icons.description_outlined,
+                      controller: _descriptionController,
+                      hint: UIStrings.description,
+                    ),
+                    const SizedBox(height: 30),
+                    Text(UIStrings.visual, style: AppTextTheme.titleMedium),
+                    SizedBox(height: 10),
+                    _colorSelection(),
+                    SizedBox(height: 10),
+                    _iconSelection(),
+                    SizedBox(height: 30),
+                    Text(UIStrings.words, style: AppTextTheme.titleMedium),
+                    SizedBox(height: 10),
+                    _wordSelection(),
+                    SizedBox(height: 30),
+                    _actionButtons(),
+                    SizedBox(height: 30),
+                  ],
+                ),
               ),
             ),
           ),
@@ -261,22 +264,3 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
     _descriptionController.dispose();
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

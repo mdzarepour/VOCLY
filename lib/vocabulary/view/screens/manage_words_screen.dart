@@ -66,7 +66,10 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
                           return GetBuilder<WordSelectionController>(
                             builder: (controller) {
                               return WordTile(
-                                selectedBorderColor: controller.isSelected(item: currentWord) ? ConstUiColors.thirdColor :  ConstUiColors.backgroundColor2,
+                                selectedBorderColor:
+                                    controller.isSelected(item: currentWord)
+                                    ? ConstUiColors.thirdColor
+                                    : ConstUiColors.backgroundColor2,
                                 isSmallTile: _isGridLayout,
                                 name: currentWord.name,
                                 meaning: currentWord.meaning,
@@ -150,12 +153,10 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
         builder: (controller) {
           return Row(
             children: [
-              Text(
-                _isManagingMode ? 'Manage words' : 'Add words',
-                style: AppTextTheme.titleMedium,
-              ),
+              Text(UIStrings.manageBooks, style: AppTextTheme.titleMedium),
               const Spacer(),
-              if (controller.isSelectionMode && _isManagingMode)
+              if (controller.isSelectionMode)
+                // DELETE ICON -->
                 InkWell(
                   onTap: () {
                     _deleteWord(
@@ -168,22 +169,17 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
                     child: Icon(Icons.delete_outline),
                   ),
                 ),
+              SizedBox(width: 10),
+              // LAYOUT ICON -->
               InkWell(
                 onTap: () => _changeLayout(),
-                child: SizedBox(
-                  height: 40,
-                  width: 40,
-                  child: Icon(_getLayoutIcon()),
-                ),
+                child: Icon(_getLayoutIcon()),
               ),
               SizedBox(width: 10),
-              // TODO change to icon
+              // SELECT ALL ICON -->
               InkWell(
                 onTap: () => controller.selectAllItems(),
-                child: Text(
-                  controller.selectButtonTitle,
-                  style: AppTextTheme.titleMedium,
-                ),
+                child: Icon(controller.selectButtonIcon),
               ),
               SizedBox(width: 20),
             ],
@@ -204,7 +200,9 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
   }
 
   IconData _getLayoutIcon() {
-    return _isGridLayout ? Icons.grid_view_outlined : Icons.view_list_sharp;
+    return _isGridLayout
+        ? Icons.grid_view_outlined
+        : Icons.view_agenda_outlined;
   }
 
   void _changeLayout() {
@@ -213,10 +211,3 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
     });
   }
 }
-
-
-
-
-
-
-

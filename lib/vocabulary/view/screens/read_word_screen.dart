@@ -159,7 +159,9 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
       ),
       child: CardWidget(
         height: 50,
-        child: Center(child: Text(UIStrings.edit, style: AppTextTheme.titleMedium)),
+        child: Center(
+          child: Text(UIStrings.edit, style: AppTextTheme.titleMedium),
+        ),
       ),
     );
   }
@@ -221,7 +223,7 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
                               return Text(
                                 textAlign: TextAlign.center,
                                 style: AppTextTheme.displayLarge,
-                                '${currentWord.name!.capitalizeFirst?.replaceAll(RegExp(r'.'), 'â€¢')}',
+                                '${currentWord.name!.capitalizeFirst?.replaceAll(RegExp(r'.'), '*')}',
                               );
                             }
                           },
@@ -297,7 +299,3 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
     }
   }
 }
-
-
-
-

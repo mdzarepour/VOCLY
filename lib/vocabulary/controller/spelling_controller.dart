@@ -15,7 +15,7 @@ class SpellingController extends GetxController {
 
   void _initSpellingEssentials() {
     _updatePracticeMode(value: true);
-    word = wordController.currentItem?.name ?? word;
+    word = wordController.currentItem?.name?.trim() ?? word.trim();
 
     if (word.isNotEmpty) {
       final List<String> splitWord = word.split('');

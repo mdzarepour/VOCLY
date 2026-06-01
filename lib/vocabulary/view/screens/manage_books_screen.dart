@@ -110,9 +110,11 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
         builder: (controller) {
           return Row(
             children: [
+              // APPBAR TITLE -->
               Text(UIStrings.manageBooks, style: AppTextTheme.titleMedium),
               const Spacer(),
               if (controller.isSelectionMode)
+                // DELETE ICON -->
                 InkWell(
                   onTap: () {
                     _deleteBook(
@@ -126,13 +128,10 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
                   ),
                 ),
               SizedBox(width: 10),
-              //TODO change to icon
+              // SELECT ALL ICON -->
               InkWell(
                 onTap: () => controller.selectAllItems(),
-                child: Text(
-                  controller.selectButtonTitle,
-                  style: AppTextTheme.titleMedium,
-                ),
+                child: Icon(controller.selectButtonIcon),
               ),
               SizedBox(width: 20),
             ],
@@ -142,10 +141,7 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
     );
   }
 
-  Color getBookWidgetColor({
-    required final bool isSelected,
-    required final int color,
-  }) {
+  Color getBookWidgetColor({required bool isSelected, required int color}) {
     return isSelected
         ? ConstUiColors.thirdColor
         : ConstEntityColors.colors[color];
@@ -162,8 +158,3 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
     _bookController.deleteItems(selectedItems: selectedBooks);
   }
 }
-
-
-
-
-

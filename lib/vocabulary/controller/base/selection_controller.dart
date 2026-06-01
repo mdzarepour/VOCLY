@@ -1,14 +1,16 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:vocly/vocabulary/controller/base/hive_controller.dart';
 
-abstract class SelectionController<T extends HiveObject> extends GetxController{
-  final HiveController currentController ;
-  SelectionController({required this.currentController}) ;
+abstract class SelectionController<T extends HiveObject>
+    extends GetxController {
+  final HiveController currentController;
+  SelectionController({required this.currentController});
 
   final List<T> selectedItems = [];
   bool isSelectionMode = false;
-  String selectButtonTitle = 'Select all';
+  IconData selectButtonIcon = Icons.done_all_outlined;
 
   void changeSelectionMode({required dynamic item}) {
     if (selectedItems.isEmpty) {
@@ -19,6 +21,7 @@ abstract class SelectionController<T extends HiveObject> extends GetxController{
     }
     update();
   }
+
   void updateSelectionMode({required bool mode}) {
     isSelectionMode = mode;
     update();
@@ -55,10 +58,9 @@ abstract class SelectionController<T extends HiveObject> extends GetxController{
 
   void _updateSelectionTitle() {
     if (selectedItems.length >= currentController.items.length) {
-      selectButtonTitle = 'Unselect all';
+      selectButtonIcon = Icons.do_not_disturb_alt_outlined;
     } else {
-      selectButtonTitle = 'Select all';
+      selectButtonIcon = Icons.done_all_outlined;
     }
   }
-
 }
