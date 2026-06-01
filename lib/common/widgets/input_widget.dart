@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:vocly/core/constants/const_colors.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:vocly/common/constants/const_colors.dart';
+import 'package:vocly/common/constants/const_strings.dart';
 import 'package:vocly/common/theme/app_text_theme.dart';
-import 'package:vocly/common/widgets/card_widget.dart';
+
 
 class InputWidget extends StatelessWidget {
   final String hint;
@@ -17,35 +18,44 @@ class InputWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CardWidget(
-      height: 50,
-      isHavePadding: false,
-      child: TextFormField(
-        controller: controller,
-        cursorColor: ConstUiColors.thirdColor,
-        style: AppTextTheme.titleMedium,
-        validator: (value) {
-          if (value == null || value.trim().isEmpty) {
-            return "Please enter $hint";
-          }
-          return null;
-        },
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        decoration: InputDecoration(
-          hintText: hint,
-          suffixIcon: Icon(icon, color: ConstUiColors.thirdColor),
-          enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
-          errorBorder: OutlineInputBorder(borderSide: BorderSide.none),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: ConstUiColors.thirdColor, width: 1),
-            borderRadius: BorderRadius.all(Radius.circular(15)),
+    return TextFormField(
+      controller: controller,
+      cursorColor: ConstUiColors.thirdColor,
+      style: AppTextTheme.titleMedium,
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return "${UIStrings.pleaseEnter} $hint";
+        }
+        return null;
+      },
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: ConstUiColors.forthColor,
+        hintText: hint,
+        suffixIcon: Icon(icon, color: ConstUiColors.thirdColor),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(15)),
+          borderSide: BorderSide(
+            color: ConstUiColors.backgroundColor2,
+            width: 1,
           ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: ConstUiColors.thirdColor, width: 1),
-            borderRadius: BorderRadius.all(Radius.circular(15)),
-          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(15)),
+          borderSide: BorderSide(color: ConstUiColors.errorColor, width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: ConstUiColors.thirdColor, width: 1),
+          borderRadius: BorderRadius.all(Radius.circular(15)),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: ConstUiColors.thirdColor, width: 1),
+          borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
       ),
     );
   }
 }
+
+

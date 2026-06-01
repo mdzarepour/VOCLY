@@ -1,10 +1,11 @@
-import 'package:flutter_tts/flutter_tts.dart';
+﻿import 'package:flutter_tts/flutter_tts.dart';
+import 'package:vocly/common/constants/const_strings.dart';
 
 class SpeechService {
   final FlutterTts _flutterTts = FlutterTts();
 
   Future<void> initEssentials() async {
-    await _flutterTts.setLanguage("en-US");
+    await _flutterTts.setLanguage(AppStrings.languageEnUs);
     await _flutterTts.setSpeechRate(0.5);
     await _flutterTts.setPitch(1.0);
     await _flutterTts.setVolume(1.0);
@@ -18,3 +19,5 @@ class SpeechService {
     await _flutterTts.stop();
   }
 }
+
+

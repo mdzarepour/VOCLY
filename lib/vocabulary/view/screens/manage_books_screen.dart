@@ -1,13 +1,14 @@
-import 'package:get/get.dart';
+﻿import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:vocly/common/theme/app_text_theme.dart';
+import 'package:vocly/common/constants/const_strings.dart';
 import 'package:vocly/common/widgets/card_widget.dart';
-import 'package:vocly/core/constants/const_colors.dart';
+import 'package:vocly/common/constants/const_colors.dart';
+import 'package:vocly/common/constants/const_icons.dart';
 import 'package:vocly/core/router/app_router.dart';
 import 'package:vocly/core/services/dialog_service.dart';
 import 'package:vocly/vocabulary/controller/book_controller.dart';
 import 'package:vocly/vocabulary/controller/book_selection_controller.dart';
-import 'package:vocly/vocabulary/controller/word_selection_controller.dart';
 import 'package:vocly/vocabulary/model/book_model.dart';
 
 class ManageBooksScreen extends StatefulWidget {
@@ -64,38 +65,24 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
           child: Stack(
             children: [
               CardWidget(
-                selectedBorderColor: controller.isSelected(item: book)
-                    ? ConstUiColors.thirdColor
-                    : ConstUiColors.backgroundColor2,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(width: double.infinity),
-                    Text(
-                      textAlign: TextAlign.center,
-                      style: AppTextTheme.titleLarge,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      book.name,
-                    ),
-                    SizedBox(height: 15),
-                    Text(
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      style: AppTextTheme.titleMedium,
-                      '${book.words.length} Words',
-                    ),
-                  ],
+                selectedBorderColor: getBookWidgetColor(
+                  isSelected: controller.isSelected(item: book),
+                  color: book.color,
+                ),
+                child: Center(
+                  child: Text(
+                    textAlign: TextAlign.center,
+                    style: AppTextTheme.titleMedium,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    book.name,
+                  ),
                 ),
               ),
               Positioned(
                 top: 20,
                 right: 20,
-                child: CircleAvatar(
-                  radius: 8,
-                  backgroundColor: ConstWordColors.colors[book.color],
-                ),
+                child: Icon(ConstIcons.icons[book.icon]),
               ),
             ],
           ),
@@ -111,7 +98,7 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
       children: [
         SizedBox(width: double.infinity),
         Icon(Icons.search_off_outlined),
-        Text(style: AppTextTheme.titleMedium, 'there is no book yet!'),
+        Text(style: AppTextTheme.titleMedium, UIStrings.thereIsNoBookYet),
       ],
     );
   }
@@ -123,7 +110,7 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
         builder: (controller) {
           return Row(
             children: [
-              Text('Manage books', style: AppTextTheme.titleMedium),
+              Text(UIStrings.manageBooks, style: AppTextTheme.titleMedium),
               const Spacer(),
               if (controller.isSelectionMode)
                 InkWell(
@@ -155,14 +142,28 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
     );
   }
 
+  Color getBookWidgetColor({
+    required final bool isSelected,
+    required final int color,
+  }) {
+    return isSelected
+        ? ConstUiColors.thirdColor
+        : ConstEntityColors.colors[color];
+  }
+
   Future<void> _deleteBook({required List<BookModel> selectedBooks}) async {
     final bool? permission = await _dialogService.showDialog(
-      title: 'Deleting!',
+      title: AppStrings.dialogConfirmDeleteTitle,
       content: 'Are you sure about deleting these books?',
-      confirmTitle: 'delete',
+      confirmTitle: AppStrings.dialogConfirmDeleteAction,
     );
 
     if (permission == null || permission == false) return;
     _bookController.deleteItems(selectedItems: selectedBooks);
   }
 }
+
+
+
+
+

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vocly/core/constants/const_colors.dart';
+import 'package:vocly/common/constants/const_colors.dart';
 
 class AppTextTheme {
   AppTextTheme._();

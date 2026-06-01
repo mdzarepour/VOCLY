@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/instance_manager.dart';
 import 'package:vocly/common/theme/app_text_theme.dart';
 import 'package:vocly/common/widgets/card_widget.dart';
-import 'package:vocly/core/constants/const_colors.dart';
+import 'package:vocly/common/constants/const_colors.dart';
+import 'package:vocly/common/constants/const_strings.dart';
 
 class DialogService extends GetxService {
   Future<bool?> showDialog({
@@ -54,7 +55,7 @@ class _DialogWidget extends StatelessWidget {
                 child: CardWidget(
                   height: 60,
                   child: Center(
-                    child: Text('Cancel', style: AppTextTheme.titleMedium),
+                    child: Text(UIStrings.cancel, style: AppTextTheme.titleMedium),
                   ),
                 ),
               ),
@@ -78,3 +79,5 @@ class _DialogWidget extends StatelessWidget {
     );
   }
 }
+
+

@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:get/route_manager.dart';
 import 'package:get/state_manager.dart';
 import 'package:vocly/core/enums/enums.dart';
 import 'package:vocly/core/services/dialog_service.dart';
 import 'package:vocly/common/theme/app_text_theme.dart';
-import 'package:vocly/core/constants/const_colors.dart';
+import 'package:vocly/common/constants/const_strings.dart';
+import 'package:vocly/common/constants/const_colors.dart';
 import 'package:vocly/core/router/app_router.dart';
 import 'package:vocly/vocabulary/controller/word_selection_controller.dart';
 import 'package:vocly/vocabulary/controller/word_controller.dart';
@@ -118,7 +119,7 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
               spacing: 20,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(style: AppTextTheme.titleMedium, 'Add books'),
+                Text(style: AppTextTheme.titleMedium, UIStrings.addBooks),
                 Text(
                   style: AppTextTheme.titleMedium,
                   '${selectedWords.length}',
@@ -136,7 +137,7 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
       spacing: 10,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text('There is no word yet', style: AppTextTheme.titleMedium),
+        Text(UIStrings.thereIsNoWordYet, style: AppTextTheme.titleMedium),
         Icon(Icons.search_off_outlined, size: 30),
       ],
     );
@@ -194,9 +195,9 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
 
   Future<void> _deleteWord({required List<WordModel> selectedWords}) async {
     final bool? permission = await _dialogService.showDialog(
-      title: 'Deleting!',
-      content: 'Are you sure about deleting these words?',
-      confirmTitle: 'delete',
+      title: AppStrings.dialogConfirmDeleteTitle,
+      content: AppStrings.dialogConfirmDeleteWordsContent,
+      confirmTitle: AppStrings.dialogConfirmDeleteAction,
     );
     if (permission == null || permission == false) return;
     _wordController.deleteItems(selectedItems: selectedWords);
@@ -212,3 +213,10 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
     });
   }
 }
+
+
+
+
+
+
+

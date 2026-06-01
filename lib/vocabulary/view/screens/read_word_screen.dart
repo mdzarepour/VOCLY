@@ -1,14 +1,12 @@
-import 'dart:ui';
-
-import 'package:flip_card/flip_card.dart';
+﻿import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
 import 'package:vocly/common/theme/app_text_theme.dart';
 import 'package:vocly/common/widgets/card_widget.dart';
 import 'package:vocly/common/widgets/expansion_widget.dart';
-import 'package:vocly/core/constants/const_colors.dart';
-import 'package:vocly/core/constants/const_strings.dart';
+import 'package:vocly/common/constants/const_colors.dart';
+import 'package:vocly/common/constants/const_icons.dart';
+import 'package:vocly/common/constants/const_strings.dart';
 import 'package:vocly/core/enums/enums.dart';
 import 'package:vocly/core/router/app_router.dart';
 import 'package:vocly/core/services/speech_service.dart';
@@ -25,7 +23,7 @@ class ReadWordScreen extends StatefulWidget {
 
 class _ReadWordScreenState extends State<ReadWordScreen> {
   final _wordController = Get.find<WordController>();
-  final _speechService = Get.find<SpeechService>() ;
+  final _speechService = Get.find<SpeechService>();
 
   @override
   void initState() {
@@ -44,7 +42,7 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Text('Word review', style: AppTextTheme.titleMedium),
+        title: Text(UIStrings.wordReview, style: AppTextTheme.titleMedium),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -78,7 +76,7 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
           onExpansionChanged: (value) {
             controller.startSpellingPractice(isClosed: value);
           },
-          title: 'Spelling practice',
+          title: UIStrings.spellingPractice,
           children: [
             AnimatedSize(
               duration: Duration(milliseconds: 200),
@@ -161,7 +159,7 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
       ),
       child: CardWidget(
         height: 50,
-        child: Center(child: Text('Edit', style: AppTextTheme.titleMedium)),
+        child: Center(child: Text(UIStrings.edit, style: AppTextTheme.titleMedium)),
       ),
     );
   }
@@ -170,8 +168,8 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
     return GetBuilder<WordController>(
       builder: (controller) {
         return InkWell(
-          onTap: ()  {
-            _speechService.speak(text: controller.currentItem!.name!) ;
+          onTap: () {
+            _speechService.speak(text: controller.currentItem!.name!);
           },
           child: CardWidget(
             height: 50,
@@ -179,12 +177,12 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
               spacing: 15,
               children: [
                 Icon(Icons.mic_none_rounded),
-                Text(style: AppTextTheme.titleMedium, 'Listen'),
+                Text(style: AppTextTheme.titleMedium, UIStrings.listen),
               ],
             ),
           ),
         );
-      }
+      },
     );
   }
 
@@ -201,6 +199,8 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
             front: Stack(
               children: [
                 CardWidget(
+                  selectedBorderColor:
+                      ConstEntityColors.colors[currentWord.color!],
                   height: 200,
                   child: Center(
                     child: Column(
@@ -209,21 +209,22 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
                       children: [
                         GetBuilder<SpellingController>(
                           builder: (spellController) {
-                            final isPracticeMode = spellController.isPracticeMode ;
-                            if(!isPracticeMode){
-                              return  Text(
-                                  textAlign: TextAlign.center,
-                                  style: AppTextTheme.displayLarge,
-                                  '${currentWord.name!.capitalizeFirst}',
-                                );
-                            }else{
-                              return  Text(
-                                  textAlign: TextAlign.center,
-                                  style: AppTextTheme.displayLarge,
-                                  '${currentWord.name!.capitalizeFirst?.replaceAll(RegExp(r'.'), '•')}',
-                                );
+                            final isPracticeMode =
+                                spellController.isPracticeMode;
+                            if (!isPracticeMode) {
+                              return Text(
+                                textAlign: TextAlign.center,
+                                style: AppTextTheme.displayLarge,
+                                '${currentWord.name!.capitalizeFirst}',
+                              );
+                            } else {
+                              return Text(
+                                textAlign: TextAlign.center,
+                                style: AppTextTheme.displayLarge,
+                                '${currentWord.name!.capitalizeFirst?.replaceAll(RegExp(r'.'), 'â€¢')}',
+                              );
                             }
-                          }
+                          },
                         ),
                         Text(
                           textAlign: TextAlign.center,
@@ -237,16 +238,15 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
                 Positioned(
                   top: 20,
                   right: 20,
-                  child: CircleAvatar(
-                    radius: 8,
-                    backgroundColor: ConstWordColors.colors[currentWord.color!],
-                  ),
+                  child: Icon(ConstIcons.icons[currentWord.icon!]),
                 ),
               ],
             ),
             back: Stack(
               children: [
                 CardWidget(
+                  selectedBorderColor:
+                      ConstEntityColors.colors[currentWord.color!],
                   height: 200,
                   child: Center(
                     child: Column(
@@ -270,10 +270,7 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
                 Positioned(
                   bottom: 20,
                   right: 20,
-                  child: CircleAvatar(
-                    radius: 8,
-                    backgroundColor: ConstWordColors.colors[currentWord.color!],
-                  ),
+                  child: Icon(ConstIcons.icons[currentWord.icon!]),
                 ),
               ],
             ),
@@ -282,7 +279,6 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
       },
     );
   }
-
 
   Color _getSpellCharColor({required final bool? accuracy}) {
     switch (accuracy) {
@@ -301,3 +297,7 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
     }
   }
 }
+
+
+
+

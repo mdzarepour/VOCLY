@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:vocly/common/theme/app_text_theme.dart';
-import 'package:vocly/core/constants/const_colors.dart';
+import 'package:vocly/common/constants/const_strings.dart';
+import 'package:vocly/common/constants/const_colors.dart';
 import 'package:vocly/vocabulary/view/screens/home_screen.dart';
 
 class WarpperScreen extends StatefulWidget {
@@ -25,8 +26,8 @@ class _WarpperScreenState extends State<WarpperScreen> {
           index: _selectedScreenIndex,
           children: [
             HomeScreen(onTap: () => _key.currentState!.openDrawer()),
-            Container(color: Colors.red, child: Text('data')),
-            Container(color: Colors.blue, child: Text('data')),
+            Container(color: Colors.red, child: Text(UIStrings.data)),
+            Container(color: Colors.blue, child: Text(UIStrings.data)),
           ],
         ),
       ),
@@ -47,28 +48,28 @@ class _WarpperScreenState extends State<WarpperScreen> {
               isSelected: _selectedTileIndex == 0,
               onTap: () => _changeSelectedTileIndex(index: 0),
               icon: Icons.settings,
-              title: 'settings',
+              title: UIStrings.settings,
             ),
             const SizedBox(height: 10),
             _DrawerTile(
               isSelected: _selectedTileIndex == 1,
               onTap: () => _changeSelectedTileIndex(index: 1),
               icon: Icons.send_rounded,
-              title: 'share to friends',
+              title: UIStrings.shareToFriends,
             ),
             const SizedBox(height: 10),
             _DrawerTile(
               isSelected: _selectedTileIndex == 2,
               onTap: () => _changeSelectedTileIndex(index: 2),
               icon: Icons.battery_charging_full_outlined,
-              title: 'donation to creator',
+              title: UIStrings.donationToCreator,
             ),
             const SizedBox(height: 10),
             _DrawerTile(
               isSelected: _selectedTileIndex == 3,
               onTap: () => _changeSelectedTileIndex(index: 3),
               icon: Icons.phone,
-              title: 'Help & feedback',
+              title: UIStrings.helpAndFeedback,
             ),
           ],
         ),
@@ -102,7 +103,7 @@ class _WarpperScreenState extends State<WarpperScreen> {
                         ? Icons.home
                         : Icons.home_outlined,
                   ),
-                  Text(style: AppTextTheme.titleSmall, 'Home'),
+                  Text(style: AppTextTheme.titleSmall, UIStrings.home),
                 ],
               ),
             ),
@@ -119,7 +120,7 @@ class _WarpperScreenState extends State<WarpperScreen> {
                         ? Icons.school
                         : Icons.school_outlined,
                   ),
-                  Text(style: AppTextTheme.titleSmall, 'Practice'),
+                  Text(style: AppTextTheme.titleSmall, UIStrings.practice),
                 ],
               ),
             ),
@@ -136,7 +137,7 @@ class _WarpperScreenState extends State<WarpperScreen> {
                         ? Icons.assignment
                         : Icons.assignment_outlined,
                   ),
-                  Text(style: AppTextTheme.titleSmall, 'Exam'),
+                  Text(style: AppTextTheme.titleSmall, UIStrings.exam),
                 ],
               ),
             ),
@@ -201,3 +202,14 @@ class _DrawerTile extends StatelessWidget {
     return isSelected ? ConstUiColors.forthColor : ConstUiColors.firsColor;
   }
 }
+
+
+
+
+
+
+
+
+
+
+

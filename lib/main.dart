@@ -1,7 +1,8 @@
-import 'package:get/get.dart';
+﻿import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:vocly/core/router/app_router.dart';
+import 'package:vocly/common/constants/const_strings.dart';
 import 'package:vocly/common/theme/app_ui_theme.dart';
 import 'package:vocly/vocabulary/model/book_model.dart';
 import 'package:vocly/vocabulary/model/word_model.dart';
@@ -18,8 +19,8 @@ void main(List<String> args) async {
     Hive.registerAdapter(BookModelAdapter());
   }
 
-  await Hive.openBox<WordModel>('WordBox');
-  await Hive.openBox<BookModel>('BookBox');
+  await Hive.openBox<WordModel>(AppStrings.wordBox);
+  await Hive.openBox<BookModel>(AppStrings.bookBox);
   runApp(Application());
 }
 
@@ -40,6 +41,8 @@ class Application extends StatelessWidget {
 // add animation to screens
 // revise vertical spacing in widgets
 // make ui strings static conts
-// fix input widget overflowing
 // make selection widgets reusable
 // make screens customscrollable
+
+
+

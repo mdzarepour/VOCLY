@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vocly/common/widgets/card_widget.dart';
 import 'package:vocly/common/widgets/expansion_widget.dart';
-import 'package:vocly/core/constants/const_colors.dart';
-import 'package:vocly/core/constants/const_icons.dart';
-import 'package:vocly/core/constants/const_strings.dart';
+import 'package:vocly/common/constants/const_strings.dart';
+import 'package:vocly/common/constants/const_colors.dart';
+import 'package:vocly/common/constants/const_icons.dart';
 import 'package:vocly/common/theme/app_text_theme.dart';
 import 'package:vocly/common/widgets/input_widget.dart';
 import 'package:vocly/core/enums/enums.dart';
@@ -78,27 +78,27 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
-                    Text('Details', style: AppTextTheme.titleMedium),
+                    Text(UIStrings.details, style: AppTextTheme.titleMedium),
                     SizedBox(height: 10),
                     InputWidget(
                       icon: Icons.language,
                       controller: _nameController,
-                      hint: 'Name',
+                      hint: UIStrings.name,
                     ),
                     const SizedBox(height: 15),
                     InputWidget(
                       icon: Icons.lightbulb_outline,
                       controller: _meaningController,
-                      hint: 'Meaning',
+                      hint: UIStrings.meaning,
                     ),
                     const SizedBox(height: 15),
                     InputWidget(
                       icon: Icons.newspaper_outlined,
                       controller: _exampleController,
-                      hint: 'Example',
+                      hint: UIStrings.example,
                     ),
                     const SizedBox(height: 30),
-                    Text('Visual', style: AppTextTheme.titleMedium),
+                    Text(UIStrings.visual, style: AppTextTheme.titleMedium),
                     SizedBox(height: 10),
                     _iconSelection(),
                     const SizedBox(height: 15),
@@ -120,7 +120,7 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
 
   Widget _iconSelection() {
     return ExpansionWidget(
-      title: 'Icon',
+      title: UIStrings.icon,
       children: [
         Wrap(
           spacing: 15,
@@ -154,7 +154,7 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
 
   Widget _typeSelection(BuildContext context) {
     return ExpansionWidget(
-      title: 'Type',
+      title: UIStrings.type,
       children: [
         Wrap(
           spacing: 15,
@@ -193,13 +193,13 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
 
   Widget _colorSelection() {
     return ExpansionWidget(
-      title: 'Color',
+      title: UIStrings.color,
       children: [
         Wrap(
           spacing: 15,
           runSpacing: 15,
           children: [
-            for (int i = 0; i < ConstWordColors.colors.length; i++)
+            for (int i = 0; i < ConstEntityColors.colors.length; i++)
               InkWell(
                 onTap: () {
                   setState(() {
@@ -214,7 +214,7 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
                       : EdgeInsets.all(100),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(15)),
-                    color: ConstWordColors.colors[i],
+                    color: ConstEntityColors.colors[i],
                   ),
                   child: CircleAvatar(
                     backgroundColor: ConstUiColors.backgroundColor,
@@ -238,12 +238,12 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
               FocusManager.instance.primaryFocus!.unfocus();
               if (_formKey.currentState!.validate()) {
                 final Map<String, dynamic> map = {
-                  'name': _nameController.text,
-                  'meaning': _meaningController.text,
-                  'example': _exampleController.text,
-                  'icon': _selectedIconIndex,
-                  'type': _selectedTypeIndex,
-                  'color': _selectedColorIndex,
+                  AppStrings.keyName: _nameController.text,
+                  AppStrings.keyMeaning: _meaningController.text,
+                  AppStrings.keyExample: _exampleController.text,
+                  AppStrings.keyIcon: _selectedIconIndex,
+                  AppStrings.keyType: _selectedTypeIndex,
+                  AppStrings.keyColor: _selectedColorIndex,
                 };
 
                 if (_isEditingMode) {
@@ -262,7 +262,7 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(_isEditingMode ? Icons.edit_outlined : Icons.done),
-                  Text('Done', style: AppTextTheme.titleMedium),
+                  Text(UIStrings.done, style: AppTextTheme.titleMedium),
                 ],
               ),
             ),
@@ -278,7 +278,7 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.cancel_outlined),
-                  Text('Cancel', style: AppTextTheme.titleMedium),
+                  Text(UIStrings.cancel, style: AppTextTheme.titleMedium),
                 ],
               ),
             ),
@@ -302,9 +302,9 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
     }
 
     final bool? permission = await _dialogService.showDialog(
-      title: 'Duplicated word!',
-      content: 'Are you sure want to add duplicated word?',
-      confirmTitle: 'Yes add',
+      title: AppStrings.dialogDuplicatedWordTitle,
+      content: AppStrings.dialogDuplicatedWordContent,
+      confirmTitle: AppStrings.dialogDuplicatedWordConfirm,
     );
 
     if (permission!) {
@@ -322,3 +322,24 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
     _exampleController.dispose();
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

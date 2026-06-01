@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vocly/core/constants/const_colors.dart';
+import 'package:vocly/common/constants/const_colors.dart';
 
 class CardWidget extends StatelessWidget {
   final Widget child;

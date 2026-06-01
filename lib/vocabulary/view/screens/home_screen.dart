@@ -1,8 +1,9 @@
-import 'package:get/get.dart';
+﻿import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:vocly/common/theme/app_text_theme.dart';
+import 'package:vocly/common/constants/const_strings.dart';
 import 'package:vocly/common/widgets/card_widget.dart';
-import 'package:vocly/core/constants/const_colors.dart';
+import 'package:vocly/common/constants/const_colors.dart';
 import 'package:vocly/core/enums/enums.dart';
 import 'package:vocly/core/router/app_router.dart';
 
@@ -21,7 +22,7 @@ class HomeScreen extends StatelessWidget {
           SizedBox(height: 20),
           _searchWidget(),
           const SizedBox(height: 30),
-          Text('You vocabulary', style: AppTextTheme.titleMedium),
+          Text(UIStrings.yourVocabulary, style: AppTextTheme.titleMedium),
           const SizedBox(height: 15),
           GridView(
             shrinkWrap: true,
@@ -35,13 +36,13 @@ class HomeScreen extends StatelessWidget {
             children: [
               _HomeButton(
                 icon: Icons.chrome_reader_mode_outlined,
-                title: 'Books',
+                title: UIStrings.books,
                 data: '50 Books',
                 onTap: () => Get.toNamed(Routes.manageBooksScreen),
               ),
               _HomeButton(
                 icon: Icons.language_outlined,
-                title: 'Words',
+                title: UIStrings.words,
                 data: '30 Words',
                 onTap: () => Get.toNamed(
                   Routes.manageWordsScreen,
@@ -50,12 +51,12 @@ class HomeScreen extends StatelessWidget {
               ),
               _HomeButton(
                 icon: Icons.add_outlined,
-                title: 'New book',
+                title: UIStrings.newBook,
                 onTap: () => Get.toNamed(Routes.addEditBookScreen),
               ),
               _HomeButton(
                 icon: Icons.add_outlined,
-                title: 'New word',
+                title: UIStrings.newWord,
                 onTap: () => Get.toNamed(
                   Routes.addEditWordScreen,
                   arguments: [WordScreenType.add, null],
@@ -64,19 +65,19 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 30),
-          Text('You data', style: AppTextTheme.titleMedium),
+          Text(UIStrings.yourData, style: AppTextTheme.titleMedium),
           const SizedBox(height: 15),
           _HomeButton(
             icon: Icons.folder_outlined,
-            title: 'Export your',
-            data: 'Export you words as pdf file',
+            title: UIStrings.exportYour,
+            data: UIStrings.exportYourDataDescription,
             onTap: () {},
           ),
           const SizedBox(height: 10),
           _HomeButton(
             icon: Icons.import_export,
-            title: 'Import your data',
-            data: 'Import your previously saved vocabulary',
+            title: UIStrings.importYourData,
+            data: UIStrings.importPreviouslySavedVocabulary,
             onTap: () {},
           ),
         ],
@@ -108,7 +109,7 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(width: 10),
             Align(
               alignment: AlignmentGeometry.center,
-              child: Text('Search', style: AppTextTheme.titleMedium),
+              child: Text(UIStrings.search, style: AppTextTheme.titleMedium),
             ),
             const Spacer(),
             const Icon(Icons.search, size: 25),

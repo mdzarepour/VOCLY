@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:vocly/core/constants/const_colors.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:vocly/common/constants/const_colors.dart';
 import 'package:vocly/common/theme/app_text_theme.dart';
+import 'package:vocly/common/constants/const_strings.dart';
 import 'package:vocly/common/widgets/filter_widget.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -27,10 +28,10 @@ class _SearchScreenState extends State<SearchScreen> {
               padding: EdgeInsetsGeometry.symmetric(horizontal: 20),
               scrollDirection: Axis.horizontal,
               children: [
-                FilterWidget(onTap: () {}, title: 'Sort words'),
-                FilterWidget(onTap: () {}, title: 'Color'),
-                FilterWidget(onTap: () {}, title: 'Type'),
-                FilterWidget(onTap: () {}, title: 'Book'),
+                FilterWidget(onTap: () {}, title: UIStrings.sortWords),
+                FilterWidget(onTap: () {}, title: UIStrings.color),
+                FilterWidget(onTap: () {}, title: UIStrings.type),
+                FilterWidget(onTap: () {}, title: UIStrings.book),
               ],
             ),
           ),
@@ -42,7 +43,7 @@ class _SearchScreenState extends State<SearchScreen> {
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 10),
-                  child: Text('data'),
+                  child: Text(UIStrings.data),
                   //child: WordTile(),
                 );
               },
@@ -68,7 +69,7 @@ class _SearchScreenState extends State<SearchScreen> {
         cursorColor: ConstUiColors.thirdColor,
         controller: _searchController,
         style: AppTextTheme.titleMedium,
-        decoration: InputDecoration(hintText: 'Search'),
+        decoration: InputDecoration(hintText: UIStrings.search),
       ),
     );
   }
@@ -79,3 +80,10 @@ class _SearchScreenState extends State<SearchScreen> {
     _searchController.dispose();
   }
 }
+
+
+
+
+
+
+

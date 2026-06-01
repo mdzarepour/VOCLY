@@ -1,7 +1,11 @@
+﻿import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vocly/common/theme/app_text_theme.dart';
 import 'package:vocly/common/widgets/card_widget.dart';
+import 'package:vocly/common/constants/const_colors.dart';
+import 'package:vocly/common/constants/const_strings.dart';
+import 'package:vocly/common/constants/const_icons.dart';
 import 'package:vocly/core/router/app_router.dart';
 import 'package:vocly/vocabulary/controller/book_controller.dart';
 import 'package:vocly/vocabulary/model/book_model.dart';
@@ -35,7 +39,7 @@ class _ReadBookScreenState extends State<ReadBookScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Text('Book review', style: AppTextTheme.titleMedium),
+        title: Text(UIStrings.bookReview, style: AppTextTheme.titleMedium),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -49,7 +53,64 @@ class _ReadBookScreenState extends State<ReadBookScreen> {
                 } else {
                   return Column(
                     children: [
-                      SizedBox(height: 20, width: double.infinity),
+                      FlipCard(
+                        direction: FlipDirection.VERTICAL,
+                        speed: 250,
+                        front: Stack(
+                          children: [
+                            CardWidget(
+                              height: 130,
+                              selectedBorderColor:
+                                  ConstEntityColors.colors[currentBook.color],
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(width: double.infinity),
+                                  Text(
+                                    currentBook.name,
+                                    style: AppTextTheme.titleMedium,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Positioned(
+                              top: 20,
+                              right: 20,
+                              child: Icon(ConstIcons.icons[currentBook.icon]),
+                            ),
+                          ],
+                        ),
+                        back: Stack(
+                          children: [
+                            CardWidget(
+                              height: 130,
+                              selectedBorderColor:
+                                  ConstEntityColors.colors[currentBook.color],
+                              child: Column(
+                                spacing: 10,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(width: double.infinity),
+                                  Text(
+                                    currentBook.description,
+                                    style: AppTextTheme.bodyLarge,
+                                  ),
+                                  Text(
+                                    style: AppTextTheme.bodyMedium,
+                                    'You have ${currentBook.words.length.toString()} words in this book',
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 20,
+                              right: 20,
+                              child: Icon(ConstIcons.icons[currentBook.icon]),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 20),
                       _editButton(),
                       SizedBox(height: 20),
                       _wordsList(currentBook),
@@ -97,10 +158,12 @@ class _ReadBookScreenState extends State<ReadBookScreen> {
     return InkWell(
       child: CardWidget(
         height: 50,
-        child: Center(child: Text(style: AppTextTheme.titleMedium, 'Edit')),
+        child: Center(child: Text(style: AppTextTheme.titleMedium, UIStrings.edit)),
       ),
     );
   }
-
-
 }
+
+
+
+

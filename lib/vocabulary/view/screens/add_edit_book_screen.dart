@@ -1,18 +1,18 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vocly/common/theme/app_text_theme.dart';
 import 'package:vocly/common/widgets/card_widget.dart';
 import 'package:vocly/common/widgets/expansion_widget.dart';
 import 'package:vocly/common/widgets/input_widget.dart';
-import 'package:vocly/core/constants/const_colors.dart';
+import 'package:vocly/common/constants/const_strings.dart';
+import 'package:vocly/common/constants/const_colors.dart';
 import 'package:vocly/core/enums/enums.dart';
 import 'package:vocly/core/router/app_router.dart';
 import 'package:vocly/core/services/dialog_service.dart';
 import 'package:vocly/vocabulary/controller/book_controller.dart';
 import 'package:vocly/vocabulary/model/book_model.dart';
 import 'package:vocly/vocabulary/model/word_model.dart';
-
-import '../../../core/constants/const_icons.dart';
+import '../../../common/constants/const_icons.dart';
 
 class AddEditBookScreen extends StatefulWidget {
   const AddEditBookScreen({super.key});
@@ -39,7 +39,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Text('Add new book', style: AppTextTheme.titleMedium),
+        title: Text(UIStrings.addNewBook, style: AppTextTheme.titleMedium),
       ),
       body: SafeArea(
         child: Padding(
@@ -51,27 +51,27 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 20),
-                  Text('Details', style: AppTextTheme.titleMedium),
+                  Text(UIStrings.details, style: AppTextTheme.titleMedium),
                   SizedBox(height: 10),
                   InputWidget(
                     icon: Icons.chrome_reader_mode_outlined,
                     controller: _nameController,
-                    hint: 'Name',
+                    hint: UIStrings.name,
                   ),
                   SizedBox(height: 10),
                   InputWidget(
                     icon: Icons.description_outlined,
                     controller: _descriptionController,
-                    hint: 'Description',
+                    hint: UIStrings.description,
                   ),
                   const SizedBox(height: 30),
-                  Text('Visual', style: AppTextTheme.titleMedium),
+                  Text(UIStrings.visual, style: AppTextTheme.titleMedium),
                   SizedBox(height: 10),
                   _colorSelection(),
                   SizedBox(height: 10),
-                  _iconSelection() ,
+                  _iconSelection(),
                   SizedBox(height: 30),
-                  Text('Words', style: AppTextTheme.titleMedium),
+                  Text(UIStrings.words, style: AppTextTheme.titleMedium),
                   SizedBox(height: 10),
                   _wordSelection(),
                   SizedBox(height: 30),
@@ -113,13 +113,13 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
 
   Widget _colorSelection() {
     return ExpansionWidget(
-      title: 'Color',
+      title: UIStrings.color,
       children: [
         Wrap(
           spacing: 15,
           runSpacing: 15,
           children: [
-            for (int i = 0; i < ConstWordColors.colors.length; i++)
+            for (int i = 0; i < ConstEntityColors.colors.length; i++)
               InkWell(
                 onTap: () {
                   setState(() {
@@ -134,7 +134,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
                       : EdgeInsets.all(100),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(15)),
-                    color: ConstWordColors.colors[i],
+                    color: ConstEntityColors.colors[i],
                   ),
                   child: CircleAvatar(
                     backgroundColor: ConstUiColors.backgroundColor,
@@ -146,9 +146,10 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
       ],
     );
   }
+
   Widget _iconSelection() {
     return ExpansionWidget(
-      title: 'Icon',
+      title: UIStrings.icon,
       children: [
         Wrap(
           spacing: 15,
@@ -180,44 +181,6 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
     );
   }
 
-  Widget _bannerSelection() {
-    return ExpansionWidget(
-      title: 'Banner',
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 20,
-          children: [
-            for (int i = 0; i < 3; i++)
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    _selectedIconIndex = i;
-                  });
-                },
-                child: Container(
-                  height: 80,
-                  width: 80,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: _selectedIconIndex == i
-                          ? ConstUiColors.thirdColor
-                          : ConstUiColors.backgroundColor2,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage('assets/$i.jpg'),
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ],
-    );
-  }
-
   Widget _actionButtons() {
     return Row(
       spacing: 10,
@@ -229,11 +192,11 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
               FocusManager.instance.primaryFocus!.unfocus();
               if (_formKey.currentState!.validate()) {
                 final map = {
-                  'name': _nameController.text,
-                  'description': _descriptionController.text,
-                  'color': _selectedColorIndex,
-                  'banner': _selectedIconIndex,
-                  'words': _selectedWords,
+                  AppStrings.keyName: _nameController.text,
+                  AppStrings.keyDescription: _descriptionController.text,
+                  AppStrings.keyColor: _selectedColorIndex,
+                  AppStrings.keyBanner: _selectedIconIndex,
+                  AppStrings.keyWords: _selectedWords,
                 };
                 final BookModel model = BookModel.fromMap(map: map);
                 _addBook(model: model);
@@ -246,7 +209,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.done),
-                  Text('Done', style: AppTextTheme.titleMedium),
+                  Text(UIStrings.done, style: AppTextTheme.titleMedium),
                 ],
               ),
             ),
@@ -262,7 +225,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.cancel_outlined),
-                  Text('Cancel', style: AppTextTheme.titleMedium),
+                  Text(UIStrings.cancel, style: AppTextTheme.titleMedium),
                 ],
               ),
             ),
@@ -280,9 +243,9 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
       return;
     }
     final bool? permission = await _dialogService.showDialog(
-      title: 'Duplicated book!',
-      content: 'Are you sure want to add duplicated book?',
-      confirmTitle: 'Yes add',
+      title: AppStrings.dialogDuplicatedBookTitle,
+      content: AppStrings.dialogDuplicatedBookContent,
+      confirmTitle: AppStrings.dialogDuplicatedBookConfirm,
     );
     if (permission!) {
       _bookController.addItem(model: model);
@@ -298,3 +261,22 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
     _descriptionController.dispose();
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

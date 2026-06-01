@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:vocly/common/widgets/card_widget.dart';
 import 'package:vocly/common/theme/app_text_theme.dart';
-import 'package:vocly/core/constants/const_colors.dart';
-import 'package:vocly/core/constants/const_icons.dart';
-import 'package:vocly/core/constants/const_strings.dart';
+import 'package:vocly/common/constants/const_colors.dart';
+import 'package:vocly/common/constants/const_icons.dart';
+import 'package:vocly/common/constants/const_strings.dart';
 
 class WordTile extends StatelessWidget {
   final bool isSmallTile;
@@ -61,7 +61,7 @@ class WordTile extends StatelessWidget {
                   ),
                   CircleAvatar(
                     radius: 5,
-                    backgroundColor: ConstWordColors.colors[color!],
+                    backgroundColor: ConstEntityColors.colors[color!],
                   ),
                 ],
               ),
@@ -93,7 +93,7 @@ class WordTile extends StatelessWidget {
                     ),
                   ),
                   CircleAvatar(
-                    backgroundColor: ConstWordColors.colors[color!],
+                    backgroundColor: ConstEntityColors.colors[color!],
                     radius: 5,
                   ),
                 ],

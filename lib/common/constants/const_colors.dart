@@ -14,8 +14,8 @@ class ConstUiColors {
   static const Color blurColor = Color.fromARGB(15, 255, 255, 255);
 }
 
-class ConstWordColors {
-  ConstWordColors._();
+class ConstEntityColors {
+  ConstEntityColors._();
 
   static const List<Color> colors = [
     Color(0xFFFF727A),
