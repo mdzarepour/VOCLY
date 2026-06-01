@@ -11,9 +11,9 @@ class AppCoreBinding extends Bindings {
   @override
   void dependencies() {
     Get.put<DialogService>(DialogService(), permanent: true);
-    Get.put<SpeechService>(SpeechService(), permanent: true);
     Get.put<WordController>(WordController(), permanent: true);
     Get.put<BookController>(BookController(), permanent: true);
+    Get.put<SpeechService>(SpeechService(), permanent: true).initEssentials();
   }
 }
 
@@ -21,7 +21,9 @@ class ManageWordsBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<WordSelectionController>(
-      () => WordSelectionController(currentController: Get.find<WordController>()),
+      () => WordSelectionController(
+        currentController: Get.find<WordController>(),
+      ),
     );
   }
 }
@@ -30,7 +32,9 @@ class ManageBooksBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<BookSelectionController>(
-      () => BookSelectionController(currentController: Get.find<BookController>()),
+      () => BookSelectionController(
+        currentController: Get.find<BookController>(),
+      ),
     );
   }
 }

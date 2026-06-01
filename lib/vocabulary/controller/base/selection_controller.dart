@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import 'package:vocly/vocabulary/controller/usecase/hive_controller.dart';
+import 'package:vocly/vocabulary/controller/base/hive_controller.dart';
 
 abstract class SelectionController<T extends HiveObject> extends GetxController{
   final HiveController currentController ;

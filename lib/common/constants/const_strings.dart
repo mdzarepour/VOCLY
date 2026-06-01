@@ -1,4 +1,5 @@
 ﻿class ConstWordTypes {
+  ConstWordTypes._();
   static const wordTypes = [
     'Article',
     'Pronoun',
@@ -12,6 +13,7 @@
 }
 
 class UIStrings {
+  UIStrings._();
   static const appName = 'VOCLY';
   static const newBook = 'New book';
   static const newWord = 'New word';
@@ -65,6 +67,7 @@ class UIStrings {
 }
 
 class AppStrings {
+  AppStrings._();
   static const wordBox = 'WordBox';
   static const bookBox = 'BookBox';
   static const languageEnUs = 'en-US';

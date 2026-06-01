@@ -23,7 +23,6 @@ class AppTextTheme {
     );
   }
 
-  // M3 Display
   static TextStyle displayLarge = _base(
     fontSize: 32,
     fontWeight: FontWeight.w400,
@@ -53,7 +52,6 @@ class AppTextTheme {
     height: 1.2,
   );
 
-  // M3 Title
   static TextStyle titleLarge = _base(
     fontSize: 22,
     fontWeight: FontWeight.w400,
@@ -77,7 +75,7 @@ class AppTextTheme {
     letterSpacing: 0.1,
   );
 
-  // M3 Body
+
   static TextStyle bodyLarge = _base(
     fontSize: 16,
     fontWeight: FontWeight.w400,
@@ -102,7 +100,7 @@ class AppTextTheme {
     letterSpacing: 0.4,
   );
 
-  // M3 Label
+
   static TextStyle labelLarge = _base(
     fontSize: 14,
     fontWeight: FontWeight.w500,
