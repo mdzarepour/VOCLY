@@ -1,10 +1,11 @@
+import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 part 'word_model.g.dart';
 
 @HiveType(typeId: 0)
-class WordModel extends HiveObject {
+class WordModel extends HiveObject with EquatableMixin{
   @HiveField(0)
   String? name;
 
@@ -51,4 +52,15 @@ class WordModel extends HiveObject {
     type = map['type'];
     color = map['color'];
   }
+
+  @override
+  List<Object?> get props => [
+    name,
+    meaning,
+    example,
+    icon,
+    type,
+    color
+  ];
 }
+

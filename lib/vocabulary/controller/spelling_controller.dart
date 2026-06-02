@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:vocly/common/constants/const_strings.dart';
 import 'package:vocly/vocabulary/controller/word_controller.dart';
 import 'package:vocly/vocabulary/model/spell_char_model.dart';
 
@@ -6,86 +7,80 @@ class SpellingController extends GetxController {
   final WordController wordController;
   SpellingController({required this.wordController});
 
-  String word = '';
-  bool? accuracy;
-  bool isPracticeMode = false;
+  final RxString _word = AppStrings.emptyChar.obs;
+  String get word => _word.value;
 
-  List<SpellCharModel> chars = [];
-  List<SpellCharModel> selectedChars = [];
+  final RxnBool _accuracy = RxnBool();
+  bool? get accuracy => _accuracy.value;
+
+  final RxBool _isPracticeMode = false.obs;
+  bool get isPracticeMode => _isPracticeMode.value;
+
+  final RxList<SpellCharModel> _chars = <SpellCharModel>[].obs;
+  List<SpellCharModel> get chars => _chars;
+
+  final RxList<SpellCharModel> _selectedChars = <SpellCharModel>[].obs;
+  List<SpellCharModel> get selectedChars => _selectedChars;
 
   void _initSpellingEssentials() {
     _updatePracticeMode(value: true);
-    word = wordController.currentItem?.name?.trim() ?? word.trim();
+    _word.value = wordController.currentItem?.name?.trim() ?? _word.trim();
 
-    if (word.isNotEmpty) {
-      final List<String> splitWord = word.split('');
-      splitWord.shuffle();
+    final List<String> splitWord = _word.split(AppStrings.emptyChar);
+    splitWord.shuffle();
 
-      chars = List.generate(
-        splitWord.length,
-        (index) => SpellCharModel(char: splitWord[index], originalIndex: index),
-      );
-    }
-    update();
+    _chars.value = List.generate(splitWord.length, (index) {
+      return SpellCharModel(char: splitWord[index], originalIndex: index);
+    });
   }
 
   void _endPractice() {
     _updatePracticeMode(value: false);
     _updateAccuracy(value: null);
-    selectedChars.clear();
-    update();
+    _selectedChars.clear();
   }
 
   void _checkAccuracy() {
     _updatePracticeMode(value: false);
-    String answer = '';
-    for (var currentChar in selectedChars) {
+    String answer = AppStrings.emptyChar;
+    for (var currentChar in _selectedChars) {
       answer += currentChar.char;
     }
-
-    if (answer == word) {
+    if (answer == _word.value) {
       _updateAccuracy(value: true);
     } else {
       _updateAccuracy(value: false);
     }
-    update();
   }
 
   void _updatePracticeMode({required final bool value}) {
-    isPracticeMode = value;
+    _isPracticeMode.value = value;
   }
 
   void _updateAccuracy({required final bool? value}) {
-    accuracy = value;
+    _accuracy.value = value;
   }
 
   void unselectChar({required SpellCharModel char}) {
-    if (char.char.isEmpty) return;
-    selectedChars.remove(char);
-    chars.removeAt(char.originalIndex);
-    chars.insert(char.originalIndex, char);
+    _selectedChars.remove(char);
+    _chars.removeAt(char.originalIndex);
+    _chars.insert(char.originalIndex, char);
 
-    if (selectedChars.length < word.length) {
+    if (_selectedChars.length < _word.value.length) {
       _updatePracticeMode(value: true);
       _updateAccuracy(value: null);
     }
-    update();
   }
 
   void selectChar({required final SpellCharModel char}) {
     if (char.char.isEmpty) return;
+    _selectedChars.insert(_selectedChars.length, char);
 
-    selectedChars.insert(selectedChars.length, char);
-    chars.removeAt(char.originalIndex);
-    chars.insert(
-      char.originalIndex,
-      SpellCharModel(char: '', originalIndex: char.originalIndex),
+    _chars[char.originalIndex] = SpellCharModel(
+      char: AppStrings.emptyChar,
+      originalIndex: char.originalIndex,
     );
-
-    if (selectedChars.length == word.length) {
-      _checkAccuracy();
-    }
-    update();
+    if (_selectedChars.length == _word.value.length) _checkAccuracy();
   }
 
   void startSpellingPractice({required final bool isClosed}) {

@@ -1,3 +1,4 @@
-enum WordScreenType { edit, add }
+enum WordScreenType { editWord, addWord }
+enum BookScreenType { editBook, addBook }
 
-enum ManageWordsScreenType { add, manage }
+enum ManageWordsScreenType { addWordToBook, manageWords }

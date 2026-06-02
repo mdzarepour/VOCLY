@@ -2,9 +2,9 @@ import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
 
 abstract class HiveController<T extends HiveObject> extends GetxController {
-  HiveController({required this.box});
+  HiveController({required Box<T> box}) : _box = box;
 
-  late final Box<T> box;
+  late final Box<T> _box;
   T? currentItem;
   List<T> items = [];
 
@@ -16,7 +16,7 @@ abstract class HiveController<T extends HiveObject> extends GetxController {
 
   void loadItems() {
     try {
-      final List<T> freshItems = box.values.toList();
+      final List<T> freshItems = _box.values.toList();
       items = freshItems;
       update();
     } catch (error) {
@@ -26,10 +26,10 @@ abstract class HiveController<T extends HiveObject> extends GetxController {
 
   Future<void> addItem({required final T model}) async {
     try {
-      await box.add(model);
+      await _box.add(model);
       loadItems();
     } on HiveError catch (error) {
-      Get.snackbar('Oops!', error.message);
+      Get.snackbar('Oopps!', error.message);
     }
     Get.back();
   }
@@ -43,12 +43,13 @@ abstract class HiveController<T extends HiveObject> extends GetxController {
       }
       loadItems();
     } on HiveError catch (error) {
-      Get.snackbar('Oops!', error.message);
+      Get.snackbar('Oopps!', error.message);
     }
   }
 
   void updateCurrentItem({required final T freshModel}) {
     currentItem = freshModel;
+    freshModel.save();
     update();
   }
 
@@ -59,7 +60,7 @@ abstract class HiveController<T extends HiveObject> extends GetxController {
         loadItems();
       }
     } on HiveError catch (error) {
-      Get.snackbar('Oops!', error.message);
+      Get.snackbar('Oopps!', error.message);
     }
   }
 

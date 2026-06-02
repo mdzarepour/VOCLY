@@ -1,9 +1,10 @@
+import 'package:equatable/equatable.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:vocly/vocabulary/model/word_model.dart';
 part 'book_model.g.dart';
 
 @HiveType(typeId: 1)
-class BookModel extends HiveObject {
+class BookModel extends HiveObject with EquatableMixin{
   @HiveField(0)
   String name;
 
@@ -43,4 +44,13 @@ class BookModel extends HiveObject {
     color = map['color'] ?? color;
     words = map['words'] ?? words;
   }
+
+  @override
+  List<Object?> get props => [
+    name,
+    description,
+    color,
+    icon,
+    words,
+  ];
 }

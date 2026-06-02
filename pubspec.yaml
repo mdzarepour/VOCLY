@@ -41,6 +41,7 @@ dependencies:
   hive_flutter: ^1.1.0
   flutter_tts: ^4.2.5
   flutter_popup: ^3.3.9
+  equatable: ^2.0.8
 
 dev_dependencies:
   flutter_test:

@@ -46,20 +46,28 @@ class HomeScreen extends StatelessWidget {
                 data: '30 Words',
                 onTap: () => Get.toNamed(
                   Routes.manageWordsScreen,
-                  arguments: ManageWordsScreenType.manage,
+                  arguments: [
+                    ManageWordsScreenType.manageWords ,
+                    null
+                  ],
                 ),
               ),
               _HomeButton(
                 icon: Icons.add_outlined,
                 title: UIStrings.newBook,
-                onTap: () => Get.toNamed(Routes.addEditBookScreen),
+                onTap: () => Get.toNamed(Routes.addEditBookScreen ,
+                arguments: [
+                  BookScreenType.addBook ,
+                  null
+                ]
+                ),
               ),
               _HomeButton(
                 icon: Icons.add_outlined,
                 title: UIStrings.newWord,
                 onTap: () => Get.toNamed(
                   Routes.addEditWordScreen,
-                  arguments: [WordScreenType.add, null],
+                  arguments: [WordScreenType.addWord, null],
                 ),
               ),
             ],

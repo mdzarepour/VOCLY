@@ -43,9 +43,9 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
   }
 
   void _initFields() {
-    final type = Get.arguments[0];
-    editingWord = Get.arguments[1];
-    _isEditingMode = type == WordScreenType.edit ? true : false;
+    final type = Get.arguments[0] as WordScreenType;
+    editingWord = Get.arguments[1] ;
+    _isEditingMode = type == WordScreenType.editWord ? true : false;
 
     if (editingWord == null) return;
     _nameController.text = editingWord!.name!;

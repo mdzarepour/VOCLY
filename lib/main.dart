@@ -40,7 +40,6 @@ class Application extends StatelessWidget {
 
 // add animation to screens
 // revise vertical spacing in widgets
-// make ui strings static conts
 // make selection widgets reusable
 // make screens customscrollable
 

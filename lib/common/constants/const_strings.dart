@@ -32,6 +32,7 @@ class UIStrings {
   static const type = 'Type';
   static const color = 'Color';
   static const done = 'Done';
+
   static const cancel = 'Cancel';
   static const spellingPractice = 'Spelling practice';
   static const edit = 'Edit';
@@ -71,6 +72,7 @@ class AppStrings {
   static const wordBox = 'WordBox';
   static const bookBox = 'BookBox';
   static const languageEnUs = 'en-US';
+  static const emptyChar = '';
 
   // Map keys
   static const keyName = 'name';

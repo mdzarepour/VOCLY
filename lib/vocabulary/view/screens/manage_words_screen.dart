@@ -23,6 +23,7 @@ class ManageWordsScreen extends StatefulWidget {
 class _ManageWordsScreenState extends State<ManageWordsScreen> {
   final _dialogService = Get.find<DialogService>();
   final _wordController = Get.find<WordController>();
+  final selectionController = Get.find<WordSelectionController>();
 
   late final bool _isManagingMode;
   bool _isGridLayout = false;
@@ -30,8 +31,17 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
   @override
   void initState() {
     super.initState();
-    final type = Get.arguments;
-    _isManagingMode = type == ManageWordsScreenType.manage ? true : false;
+    final type = Get.arguments[0] as ManageWordsScreenType;
+    _isManagingMode = type == ManageWordsScreenType.manageWords ? true : false;
+
+    if (Get.arguments[1] == null) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      selectionController.selectedItems.clear();
+      selectionController.selectedItems.addAll(Get.arguments[1]);
+      selectionController.isSelectionMode = true;
+      selectionController.update();
+    });
   }
 
   @override
@@ -155,7 +165,7 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
             children: [
               Text(UIStrings.manageBooks, style: AppTextTheme.titleMedium),
               const Spacer(),
-              if (controller.isSelectionMode)
+              if (_isManagingMode)
                 // DELETE ICON -->
                 InkWell(
                   onTap: () {

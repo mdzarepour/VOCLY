@@ -34,6 +34,26 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
   int _selectedIconIndex = 1;
   List<WordModel> _selectedWords = [];
 
+  late final BookModel? _editingBook;
+  late final bool _isEditingType;
+
+  @override
+  void initState() {
+    super.initState();
+    final type = Get.arguments[0] as BookScreenType;
+    _editingBook = Get.arguments[1];
+
+    _isEditingType = type == BookScreenType.editBook ? true : false;
+
+    if (_editingBook == null) return;
+
+    _nameController.text = _editingBook.name;
+    _descriptionController.text = _editingBook.description;
+    _selectedColorIndex = _editingBook.color;
+    _selectedIconIndex = _editingBook.icon;
+    _selectedWords = List.from(_editingBook.words);
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -41,7 +61,10 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: false,
-          title: Text(UIStrings.addNewBook, style: AppTextTheme.titleMedium),
+          title: Text(
+            _isEditingType ? 'Edit book' : UIStrings.addNewBook,
+            style: AppTextTheme.titleMedium,
+          ),
         ),
         body: SafeArea(
           child: Padding(
@@ -94,7 +117,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
       onTap: () async {
         List<WordModel> list = await Get.toNamed(
           Routes.manageWordsScreen,
-          arguments: ManageWordsScreenType.add,
+          arguments: [ManageWordsScreenType.addWordToBook, _selectedWords],
         );
         setState(() {
           _selectedWords = list;
@@ -201,8 +224,13 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
                   AppStrings.keyBanner: _selectedIconIndex,
                   AppStrings.keyWords: _selectedWords,
                 };
-                final BookModel model = BookModel.fromMap(map: map);
-                _addBook(model: model);
+                if (_isEditingType) {
+                  _editingBook!.updateBook(map: map);
+                  _updateBook();
+                } else {
+                  final BookModel model = BookModel.fromMap(map: map);
+                  _addBook(model: model);
+                }
               }
             },
             child: CardWidget(
@@ -211,8 +239,11 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
                 spacing: 10,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.done),
-                  Text(UIStrings.done, style: AppTextTheme.titleMedium),
+                  Icon(_isEditingType ? Icons.edit : Icons.done),
+                  Text(
+                    _isEditingType ? UIStrings.edit : UIStrings.done,
+                    style: AppTextTheme.titleMedium,
+                  ),
                 ],
               ),
             ),
@@ -236,6 +267,11 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
         ),
       ],
     );
+  }
+
+  void _updateBook() {
+    _bookController.updateCurrentItem(freshModel: _editingBook!);
+    Get.back();
   }
 
   Future<void> _addBook({required final BookModel model}) async {

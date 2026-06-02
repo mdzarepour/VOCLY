@@ -24,6 +24,7 @@ class ReadWordScreen extends StatefulWidget {
 class _ReadWordScreenState extends State<ReadWordScreen> {
   final _wordController = Get.find<WordController>();
   final _speechService = Get.find<SpeechService>();
+  final _spellingController = Get.find<SpellingController>();
 
   @override
   void initState() {
@@ -67,95 +68,89 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
   }
 
   Widget spellWidget() {
-    return GetBuilder<SpellingController>(
-      builder: (controller) {
-        final selectedChars = controller.selectedChars;
-        final chars = controller.chars;
-        final word = controller.word;
-        return ExpansionWidget(
-          onExpansionChanged: (value) {
-            controller.startSpellingPractice(isClosed: value);
-          },
-          title: UIStrings.spellingPractice,
-          children: [
-            AnimatedSize(
-              duration: Duration(milliseconds: 200),
-              child: Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                alignment: WrapAlignment.center,
-                children: [
-                  SizedBox(width: double.infinity),
-                  for (int i = 0; i < word.length; i++)
-                    InkWell(
-                      onTap: () {
-                        controller.unselectChar(char: selectedChars[i]);
-                      },
-                      child: AnimatedScale(
-                        scale: 1,
-                        duration: Duration(milliseconds: 200),
-                        child: CardWidget(
-                          isHavePadding: false,
-                          selectedBorderColor: _getSpellCharColor(
-                            accuracy: controller.accuracy,
-                          ),
-                          height: 45,
-                          width: 45,
-                          child: Center(
-                            child: Text(
-                              style: AppTextTheme.titleMedium,
-                              i > selectedChars.length - 1
-                                  ? ''
-                                  : selectedChars[i].char,
-                            ),
-                          ),
+    return Obx(() {
+      final selectedChars = _spellingController.selectedChars;
+      final word = _spellingController.word;
+      final chars = _spellingController.chars;
+      final accuracy = _spellingController.accuracy;
+
+      return ExpansionWidget(
+        onExpansionChanged: (value) {
+          _spellingController.startSpellingPractice(isClosed: value);
+        },
+        title: UIStrings.spellingPractice,
+        children: [
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            alignment: WrapAlignment.center,
+            children: [
+              SizedBox(width: double.infinity),
+              for (int i = 0; i < word.length; i++)
+                InkWell(
+                  onTap: () {
+                    _spellingController.unselectChar(char: selectedChars[i]);
+                  },
+                  child: AnimatedScale(
+                    scale: 1,
+                    duration: Duration(milliseconds: 200),
+                    child: CardWidget(
+                      isHavePadding: false,
+                      selectedBorderColor: _getSpellCharColor(
+                        accuracy: accuracy,
+                      ),
+                      height: 45,
+                      width: 45,
+                      child: Center(
+                        child: Text(
+                          style: AppTextTheme.titleMedium,
+                          i > selectedChars.length - 1
+                              ? AppStrings.emptyChar
+                              : selectedChars[i].char.toUpperCase(),
                         ),
                       ),
                     ),
-                ],
-              ),
-            ),
-            SizedBox(height: 15),
-            Divider(),
-            AnimatedSize(
-              duration: Duration(milliseconds: 200),
-              child: Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                alignment: WrapAlignment.center,
-                children: [
-                  SizedBox(width: double.infinity),
-                  for (int i = 0; i < word.length; i++)
-                    InkWell(
-                      onTap: () {
-                        controller.selectChar(char: chars[i]);
-                      },
-                      child: CardWidget(
-                        isHavePadding: false,
-                        height: 45,
-                        width: 45,
-                        child: Center(
-                          child: Text(
-                            style: AppTextTheme.titleMedium,
-                            chars[i].char,
-                          ),
-                        ),
+                  ),
+                ),
+            ],
+          ),
+          SizedBox(height: 15),
+          Divider(),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            alignment: WrapAlignment.center,
+            children: [
+              SizedBox(width: double.infinity),
+              for (int i = 0; i < word.length; i++)
+                InkWell(
+                  onTap: () {
+                    _spellingController.selectChar(char: chars[i]);
+                  },
+                  child: CardWidget(
+                    isHavePadding: false,
+                    height: 45,
+                    width: 45,
+                    child: Center(
+                      child: Text(
+                        style: AppTextTheme.titleMedium,
+                        chars[i].char.toUpperCase(),
                       ),
                     ),
-                ],
-              ),
-            ),
-          ],
-        );
-      },
-    );
+                  ),
+                ),
+            ],
+          ),
+        ],
+      );
+    });
   }
 
   Widget _editButton() {
     return InkWell(
       onTap: () => Get.toNamed(
         Routes.addEditWordScreen,
-        arguments: [WordScreenType.edit, _wordController.currentItem],
+        arguments: [WordScreenType.editWord, _wordController.currentItem],
       ),
       child: CardWidget(
         height: 50,
@@ -209,25 +204,24 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
                       spacing: 20,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        GetBuilder<SpellingController>(
-                          builder: (spellController) {
-                            final isPracticeMode =
-                                spellController.isPracticeMode;
-                            if (!isPracticeMode) {
-                              return Text(
-                                textAlign: TextAlign.center,
-                                style: AppTextTheme.displayLarge,
-                                '${currentWord.name!.capitalizeFirst}',
-                              );
-                            } else {
-                              return Text(
-                                textAlign: TextAlign.center,
-                                style: AppTextTheme.displayLarge,
-                                '${currentWord.name!.capitalizeFirst?.replaceAll(RegExp(r'.'), '*')}',
-                              );
-                            }
-                          },
-                        ),
+                        Obx(() {
+                          final isPracticeMode =
+                              _spellingController.isPracticeMode;
+
+                          if (!isPracticeMode) {
+                            return Text(
+                              textAlign: TextAlign.center,
+                              style: AppTextTheme.displayLarge,
+                              '${currentWord.name!.capitalizeFirst}',
+                            );
+                          } else {
+                            return Text(
+                              textAlign: TextAlign.center,
+                              style: AppTextTheme.displayLarge,
+                              '${currentWord.name!.capitalizeFirst?.replaceAll(RegExp(r'.'), '*')}',
+                            );
+                          }
+                        }),
                         Text(
                           textAlign: TextAlign.center,
                           style: AppTextTheme.titleMedium,
