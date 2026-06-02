@@ -8,59 +8,60 @@ abstract class SelectionController<T extends HiveObject>
   final HiveController currentController;
   SelectionController({required this.currentController});
 
-  final List<T> selectedItems = [];
-  bool isSelectionMode = false;
-  IconData selectButtonIcon = Icons.done_all_outlined;
+  final RxList<T> _selectedItems = <T>[].obs;
+  List<T> get selectedItems => _selectedItems;
+
+  final RxBool _isSelectionMode = false.obs;
+  bool get isSelectionMode => _isSelectionMode.value;
+
+  final _selectButtonIcon = Icons.done_all_outlined.obs;
+  IconData get selectButtonIcon => _selectButtonIcon.value;
 
   void changeSelectionMode({required dynamic item}) {
-    if (selectedItems.isEmpty) {
-      selectedItems.add(item);
+    if (_selectedItems.isEmpty) {
+      _selectedItems.add(item);
       updateSelectionMode(mode: true);
     } else {
       selectItem(item: item);
     }
-    update();
   }
 
   void updateSelectionMode({required bool mode}) {
-    isSelectionMode = mode;
-    update();
+    _isSelectionMode.value = mode;
   }
 
-  bool isSelected({required dynamic item}) => selectedItems.contains(item);
+  bool isSelected({required dynamic item}) => _selectedItems.contains(item);
 
   void selectItem({required dynamic item}) {
-    if (selectedItems.contains(item)) {
-      selectedItems.remove(item);
-      if (selectedItems.isEmpty) {
+    if (_selectedItems.contains(item)) {
+      _selectedItems.remove(item);
+      if (_selectedItems.isEmpty) {
         updateSelectionMode(mode: false);
       }
     } else {
-      selectedItems.add(item);
+      _selectedItems.add(item);
     }
     _updateSelectionTitle();
-    update();
   }
 
   void selectAllItems() {
     final words = currentController.items;
-    if (selectedItems.isEmpty || selectedItems.length < words.length) {
+    if (_selectedItems.isEmpty || _selectedItems.length < words.length) {
       updateSelectionMode(mode: true);
-      selectedItems.clear();
-      selectedItems.addAll(words.cast<T>());
+      _selectedItems.clear();
+      _selectedItems.addAll(words.cast<T>());
     } else {
       updateSelectionMode(mode: false);
-      selectedItems.clear();
+      _selectedItems.clear();
     }
     _updateSelectionTitle();
-    update();
   }
 
   void _updateSelectionTitle() {
-    if (selectedItems.length >= currentController.items.length) {
-      selectButtonIcon = Icons.do_not_disturb_alt_outlined;
+    if (_selectedItems.length >= currentController.items.length) {
+      _selectButtonIcon.value = Icons.do_not_disturb_alt_outlined;
     } else {
-      selectButtonIcon = Icons.done_all_outlined;
+      _selectButtonIcon.value = Icons.done_all_outlined;
     }
   }
 }

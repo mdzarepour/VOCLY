@@ -5,8 +5,12 @@ abstract class HiveController<T extends HiveObject> extends GetxController {
   HiveController({required Box<T> box}) : _box = box;
 
   late final Box<T> _box;
-  T? currentItem;
-  List<T> items = [];
+
+  final Rxn<T>? _currentItem = Rxn<T>();
+  T? get currentItem => _currentItem?.value;
+
+  final RxList<T> _items = <T>[].obs;
+  List<T> get items => _items;
 
   @override
   void onInit() {
@@ -17,8 +21,7 @@ abstract class HiveController<T extends HiveObject> extends GetxController {
   void loadItems() {
     try {
       final List<T> freshItems = _box.values.toList();
-      items = freshItems;
-      update();
+      _items.value = freshItems;
     } catch (error) {
       Get.snackbar('Failed!', error.toString());
     }
@@ -48,15 +51,15 @@ abstract class HiveController<T extends HiveObject> extends GetxController {
   }
 
   void updateCurrentItem({required final T freshModel}) {
-    currentItem = freshModel;
+    _currentItem!.value = freshModel;
     freshModel.save();
-    update();
   }
 
   Future<void> saveCurrentItem() async {
     try {
-      if (currentItem != null && currentItem!.isInBox) {
-        await currentItem!.save();
+      final item = _currentItem?.value;
+      if (item != null && item.isInBox) {
+        await item.save();
         loadItems();
       }
     } on HiveError catch (error) {

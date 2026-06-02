@@ -46,47 +46,42 @@ class _ReadBookScreenState extends State<ReadBookScreen> {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: GetBuilder<BookController>(
-              builder: (controller) {
-                final BookModel? currentBook = controller.currentItem;
-                if (currentBook == null) {
-                  return CircularProgressIndicator();
-                } else {
-                  return Column(
-                    children: [
-                   _cardWidget(currentBook: currentBook),
-                      SizedBox(height: 20),
-                      _editButton(currentBook: currentBook),
-                      SizedBox(height: 20),
-                      _wordsList(currentBook),
-                    ],
-                  );
-                }
-              },
-            ),
+            child: Obx(() {
+              final currentBook = _bookController.currentItem;
+              if (currentBook == null) {
+                return CircularProgressIndicator();
+              } else {
+                return Column(
+                  children: [
+                    _cardWidget(currentBook: currentBook),
+                    SizedBox(height: 20),
+                    _editButton(currentBook: currentBook),
+                    SizedBox(height: 20),
+                    _wordsList(currentBook),
+                  ],
+                );
+              }
+            }),
           ),
         ),
       ),
     );
   }
-  Widget _cardWidget({required final BookModel currentBook}){
-    return    FlipCard(
+
+  Widget _cardWidget({required final BookModel currentBook}) {
+    return FlipCard(
       direction: FlipDirection.VERTICAL,
       speed: 250,
       front: Stack(
         children: [
           CardWidget(
             height: 130,
-            selectedBorderColor:
-            ConstEntityColors.colors[currentBook.color],
+            selectedBorderColor: ConstEntityColors.colors[currentBook.color],
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(width: double.infinity),
-                Text(
-                  currentBook.name,
-                  style: AppTextTheme.titleMedium,
-                ),
+                Text(currentBook.name, style: AppTextTheme.titleMedium),
               ],
             ),
           ),
@@ -101,17 +96,13 @@ class _ReadBookScreenState extends State<ReadBookScreen> {
         children: [
           CardWidget(
             height: 130,
-            selectedBorderColor:
-            ConstEntityColors.colors[currentBook.color],
+            selectedBorderColor: ConstEntityColors.colors[currentBook.color],
             child: Column(
               spacing: 10,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(width: double.infinity),
-                Text(
-                  currentBook.description,
-                  style: AppTextTheme.bodyLarge,
-                ),
+                Text(currentBook.description, style: AppTextTheme.bodyLarge),
                 Text(
                   style: AppTextTheme.bodyMedium,
                   'You have ${currentBook.words.length.toString()} words in this book',
@@ -126,64 +117,62 @@ class _ReadBookScreenState extends State<ReadBookScreen> {
           ),
         ],
       ),
-    ) ;
+    );
   }
 
   Widget _wordsList(BookModel currentBook) {
-   return currentBook.words.isEmpty ?
-        Column(
-          spacing: 10,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.search_off) ,
-            Text('you don\'t added any words yet' , style: AppTextTheme.titleMedium,)
-          ],
-        ) :
-     GridView.builder(
-      shrinkWrap: true,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 15,
-        crossAxisSpacing: 15,
-        mainAxisExtent: 70,
-      ),
-      itemCount: currentBook.words.length,
-      itemBuilder: (context, index) {
-        final WordModel currentWord = currentBook.words[index];
-        return InkWell(
-          onTap: () {
-            Get.toNamed(Routes.readWordScreen, arguments: currentWord);
-          },
-          child: WordTile(
-            name: currentWord.name,
-            meaning: currentWord.meaning,
-            icon: currentWord.icon,
-            type: currentWord.type,
-            isSmallTile: true,
-            color: currentWord.color,
-          ),
-        );
-      },
-    );
+    return currentBook.words.isEmpty
+        ? Column(
+            spacing: 10,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.search_off),
+              Text(
+                'you don\'t added any words yet',
+                style: AppTextTheme.titleMedium,
+              ),
+            ],
+          )
+        : GridView.builder(
+            shrinkWrap: true,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 15,
+              crossAxisSpacing: 15,
+              mainAxisExtent: 70,
+            ),
+            itemCount: currentBook.words.length,
+            itemBuilder: (context, index) {
+              final WordModel currentWord = currentBook.words[index];
+              return InkWell(
+                onTap: () {
+                  Get.toNamed(Routes.readWordScreen, arguments: currentWord);
+                },
+                child: WordTile(
+                  name: currentWord.name,
+                  meaning: currentWord.meaning,
+                  icon: currentWord.icon,
+                  type: currentWord.type,
+                  isSmallTile: true,
+                  color: currentWord.color,
+                ),
+              );
+            },
+          );
   }
 
   Widget _editButton({required final BookModel currentBook}) {
     return InkWell(
       onTap: () => Get.toNamed(
-        Routes.addEditBookScreen ,
-        arguments: [
-          BookScreenType.editBook ,
-          currentBook
-        ]
+        Routes.addEditBookScreen,
+        arguments: [BookScreenType.editBook, currentBook],
       ),
       child: CardWidget(
         height: 50,
-        child: Center(child: Text(style: AppTextTheme.titleMedium, UIStrings.edit)),
+        child: Center(
+          child: Text(style: AppTextTheme.titleMedium, UIStrings.edit),
+        ),
       ),
     );
   }
 }
-
-
-
-

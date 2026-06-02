@@ -23,7 +23,7 @@ class ManageWordsScreen extends StatefulWidget {
 class _ManageWordsScreenState extends State<ManageWordsScreen> {
   final _dialogService = Get.find<DialogService>();
   final _wordController = Get.find<WordController>();
-  final selectionController = Get.find<WordSelectionController>();
+  final _selectionController = Get.find<WordSelectionController>();
 
   late final bool _isManagingMode;
   bool _isGridLayout = false;
@@ -37,10 +37,9 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
     if (Get.arguments[1] == null) return;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      selectionController.selectedItems.clear();
-      selectionController.selectedItems.addAll(Get.arguments[1]);
-      selectionController.isSelectionMode = true;
-      selectionController.update();
+      _selectionController.selectedItems.clear();
+      _selectionController.selectedItems.addAll(Get.arguments[1]);
+      _selectionController.updateSelectionMode(mode: true);
     });
   }
 
@@ -48,9 +47,9 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appbarWidget(),
-      body: GetBuilder<WordController>(
-        builder: (controller) {
-          final words = controller.items;
+      body: Obx(
+         () {
+          final words = _wordController.items;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -73,37 +72,40 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
                         ),
                         itemBuilder: (context, index) {
                           final currentWord = words[index];
-                          return GetBuilder<WordSelectionController>(
-                            builder: (controller) {
-                              return WordTile(
-                                selectedBorderColor:
-                                    controller.isSelected(item: currentWord)
-                                    ? ConstUiColors.thirdColor
-                                    : ConstUiColors.backgroundColor2,
-                                isSmallTile: _isGridLayout,
-                                name: currentWord.name,
-                                meaning: currentWord.meaning,
-                                icon: currentWord.icon,
-                                type: currentWord.type,
-                                color: currentWord.color,
-                                onLongPress: () {
-                                  controller.changeSelectionMode(
+                          return Obx(() {
+                            final mode = _selectionController.isSelectionMode;
+                            final isSelected = _selectionController.isSelected(
+                              item: currentWord,
+                            );
+                            return WordTile(
+                              selectedBorderColor: isSelected
+                                  ? ConstUiColors.thirdColor
+                                  : ConstUiColors.backgroundColor2,
+                              isSmallTile: _isGridLayout,
+                              name: currentWord.name,
+                              meaning: currentWord.meaning,
+                              icon: currentWord.icon,
+                              type: currentWord.type,
+                              color: currentWord.color,
+                              onLongPress: () {
+                                _selectionController.changeSelectionMode(
+                                  item: currentWord,
+                                );
+                              },
+                              onTap: () {
+                                if (mode) {
+                                  _selectionController.selectItem(
                                     item: currentWord,
                                   );
-                                },
-                                onTap: () {
-                                  if (controller.isSelectionMode) {
-                                    controller.selectItem(item: currentWord);
-                                  } else {
-                                    Get.toNamed(
-                                      Routes.readWordScreen,
-                                      arguments: currentWord,
-                                    );
-                                  }
-                                },
-                              );
-                            },
-                          );
+                                } else {
+                                  Get.toNamed(
+                                    Routes.readWordScreen,
+                                    arguments: currentWord,
+                                  );
+                                }
+                              },
+                            );
+                          });
                         },
                       ),
               ),
@@ -116,33 +118,28 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
   }
 
   Widget _addButton() {
-    return GetBuilder<WordSelectionController>(
-      builder: (controller) {
-        final selectedWords = controller.selectedItems;
-        return InkWell(
-          onTap: () => Get.back(result: selectedWords.cast<WordModel>()),
-          child: Container(
-            decoration: BoxDecoration(
-              border: BorderDirectional(
-                top: BorderSide(color: ConstUiColors.backgroundColor2),
-              ),
-            ),
-            height: 70,
-            child: Row(
-              spacing: 20,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(style: AppTextTheme.titleMedium, UIStrings.addBooks),
-                Text(
-                  style: AppTextTheme.titleMedium,
-                  '${selectedWords.length}',
-                ),
-              ],
+    return Obx(() {
+      final selectedWords = _selectionController.selectedItems;
+      return InkWell(
+        onTap: () => Get.back(result: selectedWords.cast<WordModel>()),
+        child: Container(
+          decoration: BoxDecoration(
+            border: BorderDirectional(
+              top: BorderSide(color: ConstUiColors.backgroundColor2),
             ),
           ),
-        );
-      },
-    );
+          height: 70,
+          child: Row(
+            spacing: 20,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(style: AppTextTheme.titleMedium, UIStrings.addBooks),
+              Text(style: AppTextTheme.titleMedium, '${selectedWords.length}'),
+            ],
+          ),
+        ),
+      );
+    });
   }
 
   Widget _emptyStateWidget() {
@@ -159,43 +156,41 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
   AppBar _appbarWidget() {
     return AppBar(
       automaticallyImplyLeading: true,
-      title: GetBuilder<WordSelectionController>(
-        builder: (controller) {
-          return Row(
-            children: [
-              Text(UIStrings.manageBooks, style: AppTextTheme.titleMedium),
-              const Spacer(),
-              if (_isManagingMode)
-                // DELETE ICON -->
-                InkWell(
-                  onTap: () {
-                    _deleteWord(
-                      selectedWords: controller.selectedItems.cast<WordModel>(),
-                    );
-                  },
-                  child: SizedBox(
-                    height: 40,
-                    width: 40,
-                    child: Icon(Icons.delete_outline),
-                  ),
+      title: Obx(() {
+        final selectedItem = _selectionController.selectedItems;
+        final mode = _selectionController.isSelectionMode;
+        return Row(
+          children: [
+            Text(UIStrings.manageBooks, style: AppTextTheme.titleMedium),
+            const Spacer(),
+            if (mode)
+              // DELETE ICON -->
+              InkWell(
+                onTap: () {
+                  _deleteWord(selectedWords: selectedItem.cast<WordModel>());
+                },
+                child: SizedBox(
+                  height: 40,
+                  width: 40,
+                  child: Icon(Icons.delete_outline),
                 ),
-              SizedBox(width: 10),
-              // LAYOUT ICON -->
-              InkWell(
-                onTap: () => _changeLayout(),
-                child: Icon(_getLayoutIcon()),
               ),
-              SizedBox(width: 10),
-              // SELECT ALL ICON -->
-              InkWell(
-                onTap: () => controller.selectAllItems(),
-                child: Icon(controller.selectButtonIcon),
-              ),
-              SizedBox(width: 20),
-            ],
-          );
-        },
-      ),
+            SizedBox(width: 10),
+            // LAYOUT ICON -->
+            InkWell(
+              onTap: () => _changeLayout(),
+              child: Icon(_getLayoutIcon()),
+            ),
+            SizedBox(width: 10),
+            // SELECT ALL ICON -->
+            InkWell(
+              onTap: () => _selectionController.selectAllItems(),
+              child: Icon(_selectionController.selectButtonIcon),
+            ),
+            SizedBox(width: 20),
+          ],
+        );
+      }),
     );
   }
 

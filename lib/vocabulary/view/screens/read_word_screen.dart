@@ -49,18 +49,25 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                SizedBox(height: 20),
-                _cardWidget(),
-                SizedBox(height: 20),
-                _listenButton(),
-                SizedBox(height: 20),
-                spellWidget(),
-                SizedBox(height: 20),
-                _editButton(),
-              ],
-            ),
+            child: Obx(() {
+              final currentWord = _wordController.currentItem;
+              if (currentWord == null) {
+                return CircularProgressIndicator();
+              } else {
+                return Column(
+                  children: [
+                    SizedBox(height: 20),
+                    _cardWidget(currentWord: currentWord),
+                    SizedBox(height: 20),
+                    _listenButton(),
+                    SizedBox(height: 20),
+                    spellWidget(),
+                    SizedBox(height: 20),
+                    _editButton(currentWord: currentWord),
+                  ],
+                );
+              }
+            }),
           ),
         ),
       ),
@@ -83,7 +90,6 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
           Wrap(
             spacing: 10,
             runSpacing: 10,
-            alignment: WrapAlignment.center,
             children: [
               SizedBox(width: double.infinity),
               for (int i = 0; i < word.length; i++)
@@ -119,7 +125,6 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
           Wrap(
             spacing: 10,
             runSpacing: 10,
-            alignment: WrapAlignment.center,
             children: [
               SizedBox(width: double.infinity),
               for (int i = 0; i < word.length; i++)
@@ -146,7 +151,7 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
     });
   }
 
-  Widget _editButton() {
+  Widget _editButton({required final WordModel currentWord}) {
     return InkWell(
       onTap: () => Get.toNamed(
         Routes.addEditWordScreen,
@@ -162,117 +167,102 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
   }
 
   Widget _listenButton() {
-    return GetBuilder<WordController>(
-      builder: (controller) {
-        return InkWell(
-          onTap: () {
-            _speechService.speak(text: controller.currentItem!.name!);
-          },
-          child: CardWidget(
-            height: 50,
-            child: Row(
-              spacing: 15,
-              children: [
-                Icon(Icons.mic_none_rounded),
-                Text(style: AppTextTheme.titleMedium, UIStrings.listen),
-              ],
-            ),
-          ),
-        );
+    return InkWell(
+      onTap: () {
+        final name = _wordController.currentItem!.name!;
+        _speechService.speak(text: name);
       },
+      child: CardWidget(
+        height: 50,
+        child: Row(
+          spacing: 15,
+          children: [
+            Icon(Icons.mic_none_rounded),
+            Text(style: AppTextTheme.titleMedium, UIStrings.listen),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _cardWidget() {
-    return GetBuilder<WordController>(
-      builder: (wordController) {
-        final WordModel? currentWord = wordController.currentItem;
-        if (currentWord == null) {
-          return CircularProgressIndicator();
-        } else {
-          return FlipCard(
-            direction: FlipDirection.VERTICAL,
-            speed: 250,
-            front: Stack(
-              children: [
-                CardWidget(
-                  selectedBorderColor:
-                      ConstEntityColors.colors[currentWord.color!],
-                  height: 200,
-                  child: Center(
-                    child: Column(
-                      spacing: 20,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Obx(() {
-                          final isPracticeMode =
-                              _spellingController.isPracticeMode;
+  Widget _cardWidget({required final WordModel currentWord}) {
+    return FlipCard(
+      direction: FlipDirection.VERTICAL,
+      speed: 250,
+      front: Stack(
+        children: [
+          CardWidget(
+            selectedBorderColor: ConstEntityColors.colors[currentWord.color!],
+            height: 200,
+            child: Center(
+              child: Column(
+                spacing: 20,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Obx(() {
+                    final isPracticeMode = _spellingController.isPracticeMode;
 
-                          if (!isPracticeMode) {
-                            return Text(
-                              textAlign: TextAlign.center,
-                              style: AppTextTheme.displayLarge,
-                              '${currentWord.name!.capitalizeFirst}',
-                            );
-                          } else {
-                            return Text(
-                              textAlign: TextAlign.center,
-                              style: AppTextTheme.displayLarge,
-                              '${currentWord.name!.capitalizeFirst?.replaceAll(RegExp(r'.'), '*')}',
-                            );
-                          }
-                        }),
-                        Text(
-                          textAlign: TextAlign.center,
-                          style: AppTextTheme.titleMedium,
-                          ConstWordTypes.wordTypes[currentWord.type!],
-                        ),
-                      ],
-                    ),
+                    if (!isPracticeMode) {
+                      return Text(
+                        textAlign: TextAlign.center,
+                        style: AppTextTheme.displayLarge,
+                        '${currentWord.name!.capitalizeFirst}',
+                      );
+                    } else {
+                      return Text(
+                        textAlign: TextAlign.center,
+                        style: AppTextTheme.displayLarge,
+                        '${currentWord.name!.capitalizeFirst?.replaceAll(RegExp(r'.'), '*')}',
+                      );
+                    }
+                  }),
+                  Text(
+                    textAlign: TextAlign.center,
+                    style: AppTextTheme.titleMedium,
+                    ConstWordTypes.wordTypes[currentWord.type!],
                   ),
-                ),
-                Positioned(
-                  top: 20,
-                  right: 20,
-                  child: Icon(ConstIcons.icons[currentWord.icon!]),
-                ),
-              ],
+                ],
+              ),
             ),
-            back: Stack(
-              children: [
-                CardWidget(
-                  selectedBorderColor:
-                      ConstEntityColors.colors[currentWord.color!],
-                  height: 200,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      spacing: 20,
-                      children: [
-                        Text(
-                          textAlign: TextAlign.center,
-                          style: AppTextTheme.displayMedium,
-                          currentWord.meaning!,
-                        ),
-                        Text(
-                          textAlign: TextAlign.center,
-                          style: AppTextTheme.titleMedium,
-                          currentWord.example!,
-                        ),
-                      ],
-                    ),
+          ),
+          Positioned(
+            top: 20,
+            right: 20,
+            child: Icon(ConstIcons.icons[currentWord.icon!]),
+          ),
+        ],
+      ),
+      back: Stack(
+        children: [
+          CardWidget(
+            selectedBorderColor: ConstEntityColors.colors[currentWord.color!],
+            height: 200,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 20,
+                children: [
+                  Text(
+                    textAlign: TextAlign.center,
+                    style: AppTextTheme.displayMedium,
+                    currentWord.meaning!,
                   ),
-                ),
-                Positioned(
-                  bottom: 20,
-                  right: 20,
-                  child: Icon(ConstIcons.icons[currentWord.icon!]),
-                ),
-              ],
+                  Text(
+                    textAlign: TextAlign.center,
+                    style: AppTextTheme.titleMedium,
+                    currentWord.example!,
+                  ),
+                ],
+              ),
             ),
-          );
-        }
-      },
+          ),
+          Positioned(
+            bottom: 20,
+            right: 20,
+            child: Icon(ConstIcons.icons[currentWord.icon!]),
+          ),
+        ],
+      ),
     );
   }
 

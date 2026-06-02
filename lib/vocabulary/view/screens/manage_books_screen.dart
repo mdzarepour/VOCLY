@@ -21,14 +21,15 @@ class ManageBooksScreen extends StatefulWidget {
 class _ManageBooksScreenState extends State<ManageBooksScreen> {
   final _dialogService = Get.find<DialogService>();
   final _bookController = Get.find<BookController>();
+  final _selectionController = Get.find<BookSelectionController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appbarWidget(),
-      body: GetBuilder<BookController>(
-        builder: (controller) {
-          final books = controller.items;
+      body: Obx(
+         () {
+          final books = _bookController.items;
           return books.isEmpty
               ? _emptyState()
               : GridView.builder(
@@ -42,7 +43,7 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
                   itemCount: books.length,
                   itemBuilder: (BuildContext context, int index) {
                     final book = books[index];
-                    return _bookWidget(book: book);
+                    return _bookWidget(currentBook: book);
                   },
                 );
         },
@@ -50,45 +51,48 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
     );
   }
 
-  Widget _bookWidget({required final BookModel book}) {
-    return GetBuilder<BookSelectionController>(
-      builder: (controller) {
-        return InkWell(
-          onLongPress: () => controller.changeSelectionMode(item: book),
-          onTap: () {
-            if (controller.isSelectionMode) {
-              controller.selectItem(item: book);
-            } else {
-              Get.toNamed(Routes.readBookScreen, arguments: book);
-            }
-          },
-          child: Stack(
-            children: [
-              CardWidget(
-                selectedBorderColor: getBookWidgetColor(
-                  isSelected: controller.isSelected(item: book),
-                  color: book.color,
-                ),
-                child: Center(
-                  child: Text(
-                    textAlign: TextAlign.center,
-                    style: AppTextTheme.titleMedium,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    book.name,
-                  ),
+  Widget _bookWidget({required final BookModel currentBook}) {
+    return Obx(() {
+      final mode = _selectionController.isSelectionMode;
+      final isSelected = _selectionController.isSelected(item: currentBook);
+
+      return InkWell(
+        onLongPress: () {
+          _selectionController.changeSelectionMode(item: currentBook);
+        },
+        onTap: () {
+          if (mode) {
+            _selectionController.selectItem(item: currentBook);
+          } else {
+            Get.toNamed(Routes.readBookScreen, arguments: currentBook);
+          }
+        },
+        child: Stack(
+          children: [
+            CardWidget(
+              selectedBorderColor: getBookWidgetColor(
+                isSelected: isSelected,
+                color: currentBook.color,
+              ),
+              child: Center(
+                child: Text(
+                  textAlign: TextAlign.center,
+                  style: AppTextTheme.titleMedium,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  currentBook.name,
                 ),
               ),
-              Positioned(
-                top: 20,
-                right: 20,
-                child: Icon(ConstIcons.icons[book.icon]),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+            ),
+            Positioned(
+              top: 20,
+              right: 20,
+              child: Icon(ConstIcons.icons[currentBook.icon]),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _emptyState() {
@@ -106,38 +110,37 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
   AppBar _appbarWidget() {
     return AppBar(
       automaticallyImplyLeading: true,
-      title: GetBuilder<BookSelectionController>(
-        builder: (controller) {
-          return Row(
-            children: [
-              // APPBAR TITLE -->
-              Text(UIStrings.manageBooks, style: AppTextTheme.titleMedium),
-              const Spacer(),
-              if (controller.isSelectionMode)
-                // DELETE ICON -->
-                InkWell(
-                  onTap: () {
-                    _deleteBook(
-                      selectedBooks: controller.selectedItems.cast<BookModel>(),
-                    );
-                  },
-                  child: SizedBox(
-                    height: 40,
-                    width: 40,
-                    child: Icon(Icons.delete_outline),
-                  ),
-                ),
-              SizedBox(width: 10),
-              // SELECT ALL ICON -->
+      title: Obx(() {
+        final mode = _selectionController.isSelectionMode;
+        final selectedBooks = _selectionController.selectedItems;
+
+        return Row(
+          children: [
+            // APPBAR TITLE -->
+            Text(UIStrings.manageBooks, style: AppTextTheme.titleMedium),
+            const Spacer(),
+            if (mode)
+              // DELETE ICON -->
               InkWell(
-                onTap: () => controller.selectAllItems(),
-                child: Icon(controller.selectButtonIcon),
+                onTap: () {
+                  _deleteBook(selectedBooks: selectedBooks.cast<BookModel>());
+                },
+                child: SizedBox(
+                  height: 40,
+                  width: 40,
+                  child: Icon(Icons.delete_outline),
+                ),
               ),
-              SizedBox(width: 20),
-            ],
-          );
-        },
-      ),
+            SizedBox(width: 10),
+            // SELECT ALL ICON -->
+            InkWell(
+              onTap: () => _selectionController.selectAllItems(),
+              child: Icon(_selectionController.selectButtonIcon),
+            ),
+            SizedBox(width: 20),
+          ],
+        );
+      }),
     );
   }
 
