@@ -169,7 +169,7 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
   Widget _listenButton() {
     return InkWell(
       onTap: () {
-        final name = _wordController.currentItem!.name!;
+        final name = _wordController.currentItem!.name;
         _speechService.speak(text: name);
       },
       child: CardWidget(
@@ -192,7 +192,7 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
       front: Stack(
         children: [
           CardWidget(
-            selectedBorderColor: ConstEntityColors.colors[currentWord.color!],
+            selectedBorderColor: ConstEntityColors.colors[currentWord.color],
             height: 200,
             child: Center(
               child: Column(
@@ -206,20 +206,20 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
                       return Text(
                         textAlign: TextAlign.center,
                         style: AppTextTheme.displayLarge,
-                        '${currentWord.name!.capitalizeFirst}',
+                        '${currentWord.name.capitalizeFirst}',
                       );
                     } else {
                       return Text(
                         textAlign: TextAlign.center,
                         style: AppTextTheme.displayLarge,
-                        '${currentWord.name!.capitalizeFirst?.replaceAll(RegExp(r'.'), '*')}',
+                        '${currentWord.name.capitalizeFirst?.replaceAll(RegExp(r'.'), '*')}',
                       );
                     }
                   }),
                   Text(
                     textAlign: TextAlign.center,
                     style: AppTextTheme.titleMedium,
-                    ConstWordTypes.wordTypes[currentWord.type!],
+                    ConstWordTypes.wordTypes[currentWord.type],
                   ),
                 ],
               ),
@@ -228,14 +228,14 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
           Positioned(
             top: 20,
             right: 20,
-            child: Icon(ConstIcons.icons[currentWord.icon!]),
+            child: Icon(ConstIcons.icons[currentWord.icon]),
           ),
         ],
       ),
       back: Stack(
         children: [
           CardWidget(
-            selectedBorderColor: ConstEntityColors.colors[currentWord.color!],
+            selectedBorderColor: ConstEntityColors.colors[currentWord.color],
             height: 200,
             child: Center(
               child: Column(
@@ -245,12 +245,12 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
                   Text(
                     textAlign: TextAlign.center,
                     style: AppTextTheme.displayMedium,
-                    currentWord.meaning!,
+                    currentWord.meaning,
                   ),
                   Text(
                     textAlign: TextAlign.center,
                     style: AppTextTheme.titleMedium,
-                    currentWord.example!,
+                    currentWord.example,
                   ),
                 ],
               ),
@@ -259,7 +259,7 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
           Positioned(
             bottom: 20,
             right: 20,
-            child: Icon(ConstIcons.icons[currentWord.icon!]),
+            child: Icon(ConstIcons.icons[currentWord.icon]),
           ),
         ],
       ),

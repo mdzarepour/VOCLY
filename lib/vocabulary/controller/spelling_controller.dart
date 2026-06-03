@@ -24,7 +24,7 @@ class SpellingController extends GetxController {
 
   void _initSpellingEssentials() {
     _updatePracticeMode(value: true);
-    _word.value = wordController.currentItem?.name?.trim() ?? _word.trim();
+    _word.value = wordController.currentItem?.name.trim() ?? _word.trim();
 
     final List<String> splitWord = _word.split(AppStrings.emptyChar);
     splitWord.shuffle();

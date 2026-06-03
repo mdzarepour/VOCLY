@@ -34,7 +34,7 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
   int _selectedColorIndex = 0;
 
   late final bool _isEditingMode;
-  late final WordModel? editingWord;
+  late final WordModel? _editingWord;
 
   @override
   void initState() {
@@ -44,16 +44,17 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
 
   void _initFields() {
     final type = Get.arguments[0] as WordScreenType;
-    editingWord = Get.arguments[1] ;
     _isEditingMode = type == WordScreenType.editWord ? true : false;
 
-    if (editingWord == null) return;
-    _nameController.text = editingWord!.name!;
-    _meaningController.text = editingWord!.meaning!;
-    _exampleController.text = editingWord!.example!;
-    _selectedIconIndex = editingWord!.icon!;
-    _selectedTypeIndex = editingWord!.type!;
-    _selectedColorIndex = editingWord!.color!;
+    if (Get.arguments[1] == null) return;
+
+    _editingWord = Get.arguments[1] as WordModel;
+    _nameController.text = _editingWord!.name;
+    _meaningController.text = _editingWord.meaning;
+    _exampleController.text = _editingWord.example;
+    _selectedIconIndex = _editingWord.icon;
+    _selectedTypeIndex = _editingWord.type;
+    _selectedColorIndex = _editingWord.color;
   }
 
   @override
@@ -247,7 +248,7 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
                 };
 
                 if (_isEditingMode) {
-                  editingWord!.updateWordModel(map: map);
+                  _editingWord!.updateWordModel(map: map);
                   _updateWord();
                 } else {
                   final WordModel model = WordModel.fromMap(map);
@@ -256,6 +257,7 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
               }
             },
             child: CardWidget(
+              selectedBorderColor: ConstUiColors.positiveColor,
               height: 70,
               child: Row(
                 spacing: 10,
@@ -272,6 +274,7 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
           child: InkWell(
             onTap: () => Get.back(),
             child: CardWidget(
+              selectedBorderColor: ConstUiColors.errorColor,
               height: 70,
               child: Row(
                 spacing: 10,
@@ -289,12 +292,12 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
   }
 
   void _updateWord() {
-    _wordController.updateCurrentItem(freshModel: editingWord!);
+    _wordController.updateCurrentItem(freshModel: _editingWord!);
     Get.back();
   }
 
   Future<void> _addWord({required final WordModel model}) async {
-    final bool isWordExist = _wordController.isItemExist(name: model.name!);
+    final bool isWordExist = _wordController.isItemExist(name: model.name);
 
     if (!isWordExist) {
       _wordController.addItem(model: model);
@@ -322,24 +325,3 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
     _exampleController.dispose();
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

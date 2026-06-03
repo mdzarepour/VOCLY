@@ -9,7 +9,6 @@ import 'package:vocly/core/router/app_router.dart';
 
 class HomeScreen extends StatelessWidget {
   final void Function()? onTap;
-
   const HomeScreen({super.key, this.onTap});
 
   @override
@@ -46,20 +45,15 @@ class HomeScreen extends StatelessWidget {
                 data: '30 Words',
                 onTap: () => Get.toNamed(
                   Routes.manageWordsScreen,
-                  arguments: [
-                    ManageWordsScreenType.manageWords ,
-                    null
-                  ],
+                  arguments: [ManageWordsScreenType.manageWords, null],
                 ),
               ),
               _HomeButton(
                 icon: Icons.add_outlined,
                 title: UIStrings.newBook,
-                onTap: () => Get.toNamed(Routes.addEditBookScreen ,
-                arguments: [
-                  BookScreenType.addBook ,
-                  null
-                ]
+                onTap: () => Get.toNamed(
+                  Routes.addEditBookScreen,
+                  arguments: [BookScreenType.addBook, null],
                 ),
               ),
               _HomeButton(
@@ -100,7 +94,7 @@ class HomeScreen extends StatelessWidget {
         height: 50,
         padding: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
-          border: Border.all(color: ConstUiColors.backgroundColor2, width: 1),
+          border: Border.all(color: ConstUiColors.secondaryBorder, width: 1),
           borderRadius: const BorderRadius.all(Radius.circular(30)),
           color: ConstUiColors.forthColor,
         ),

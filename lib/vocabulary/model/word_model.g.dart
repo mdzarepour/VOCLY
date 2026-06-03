@@ -17,12 +17,12 @@ class WordModelAdapter extends TypeAdapter<WordModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return WordModel(
-      name: fields[0] as String?,
-      meaning: fields[1] as String?,
-      example: fields[2] as String?,
-      icon: fields[3] as int?,
-      type: fields[4] as int?,
-      color: fields[5] as int?,
+      name: fields[0] as String,
+      meaning: fields[1] as String,
+      example: fields[2] as String,
+      icon: fields[3] as int,
+      type: fields[4] as int,
+      color: fields[5] as int,
     );
   }
 

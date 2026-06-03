@@ -2,6 +2,9 @@
 import 'package:get/get_instance/get_instance.dart';
 import 'package:get/route_manager.dart';
 import 'package:get/state_manager.dart';
+import 'package:vocly/common/constants/const_icons.dart';
+import 'package:vocly/common/widgets/filter_button.dart';
+import 'package:vocly/common/widgets/filter_sheet_widget.dart';
 import 'package:vocly/core/enums/enums.dart';
 import 'package:vocly/core/services/dialog_service.dart';
 import 'package:vocly/common/theme/app_text_theme.dart';
@@ -47,73 +50,65 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appbarWidget(),
-      body: Obx(
-         () {
-          final words = _wordController.items;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SizedBox(height: 20),
-              Expanded(
-                child: words.isEmpty
-                    ? _emptyStateWidget()
-                    : GridView.builder(
-                        padding: EdgeInsets.only(
-                          left: 20,
-                          right: 20,
-                          bottom: 30,
-                        ),
-                        itemCount: words.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisExtent: 70,
-                          crossAxisCount: _isGridLayout ? 2 : 1,
-                          mainAxisSpacing: 10,
-                          crossAxisSpacing: 10,
-                        ),
-                        itemBuilder: (context, index) {
-                          final currentWord = words[index];
-                          return Obx(() {
-                            final mode = _selectionController.isSelectionMode;
-                            final isSelected = _selectionController.isSelected(
-                              item: currentWord,
-                            );
-                            return WordTile(
-                              selectedBorderColor: isSelected
-                                  ? ConstUiColors.thirdColor
-                                  : ConstUiColors.backgroundColor2,
-                              isSmallTile: _isGridLayout,
-                              name: currentWord.name,
-                              meaning: currentWord.meaning,
-                              icon: currentWord.icon,
-                              type: currentWord.type,
-                              color: currentWord.color,
-                              onLongPress: () {
-                                _selectionController.changeSelectionMode(
-                                  item: currentWord,
-                                );
-                              },
-                              onTap: () {
-                                if (mode) {
-                                  _selectionController.selectItem(
-                                    item: currentWord,
-                                  );
-                                } else {
-                                  Get.toNamed(
-                                    Routes.readWordScreen,
-                                    arguments: currentWord,
-                                  );
-                                }
-                              },
-                            );
-                          });
-                        },
-                      ),
-              ),
-              if (!_isManagingMode) _addButton(),
-            ],
-          );
-        },
+      body: Obx(() {
+        final words = _wordController.wordsList;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(height: 10),
+            _filterWidget(),
+            SizedBox(height: 10),
+            Expanded(
+              child: words.isEmpty
+                  ? _emptyStateWidget()
+                  : _wordsListWidget(words),
+            ),
+            if (!_isManagingMode) _addButton(),
+          ],
+        );
+      }),
+    );
+  }
+
+  Widget _wordsListWidget(List<WordModel> words) {
+    return GridView.builder(
+      padding: EdgeInsets.only(left: 20, right: 20, bottom: 30),
+      itemCount: words.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        mainAxisExtent: 70,
+        crossAxisCount: _isGridLayout ? 2 : 1,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
       ),
+      itemBuilder: (context, index) {
+        final currentWord = words[index];
+        return Obx(() {
+          final mode = _selectionController.isSelectionMode;
+          final isSelected = _selectionController.isSelected(item: currentWord);
+
+          return WordTile(
+            selectedBorderColor: isSelected
+                ? ConstUiColors.thirdColor
+                : ConstUiColors.backgroundColor2,
+            isSmallTile: _isGridLayout,
+            name: currentWord.name,
+            meaning: currentWord.meaning,
+            icon: currentWord.icon,
+            type: currentWord.type,
+            color: currentWord.color,
+            onLongPress: () {
+              _selectionController.changeSelectionMode(item: currentWord);
+            },
+            onTap: () {
+              if (mode) {
+                _selectionController.selectItem(item: currentWord);
+              } else {
+                Get.toNamed(Routes.readWordScreen, arguments: currentWord);
+              }
+            },
+          );
+        });
+      },
     );
   }
 
@@ -191,6 +186,60 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
           ],
         );
       }),
+    );
+  }
+
+  Widget _filterWidget() {
+    final List<Map> filterMap = [
+      {
+        AppStrings.keyName: AppStrings.keyColor,
+        AppStrings.keyType: FilterType.color,
+        AppStrings.keyFilterItems: ConstEntityColors.colors,
+      },
+      {
+        AppStrings.keyName: AppStrings.keyIcon,
+        AppStrings.keyType: FilterType.icon,
+        AppStrings.keyFilterItems: ConstIcons.icons,
+      },
+      {
+        AppStrings.keyName: AppStrings.keyType,
+        AppStrings.keyType: FilterType.type,
+        AppStrings.keyFilterItems: ConstWordTypes.wordTypes,
+      },
+    ];
+    return SizedBox(
+      height: 35,
+      child: ListView.builder(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        scrollDirection: Axis.horizontal,
+        itemCount: 3,
+        itemBuilder: (context, index) {
+          return FilterButton(
+            onTap: () {
+              Get.bottomSheet(
+                backgroundColor: ConstUiColors.backgroundColor,
+                FilterSheetWidget(
+                  onChanged: (i) {
+                    _wordController.selectFilters(
+                      type: filterMap[index][AppStrings.keyType],
+                      filterItem: i,
+                    );
+                  },
+                  isSelected: (i) {
+                    return _wordController.isFilterSelected(
+                      type: filterMap[index][AppStrings.keyType],
+                      filterItem: i,
+                    );
+                  },
+                  filterItems: filterMap[index][AppStrings.keyFilterItems],
+                  type: filterMap[index][AppStrings.keyType],
+                ),
+              );
+            },
+            title: filterMap[index][AppStrings.keyName],
+          );
+        },
+      ),
     );
   }
 

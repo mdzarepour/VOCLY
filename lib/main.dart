@@ -1,4 +1,5 @@
-﻿import 'package:get/get.dart';
+﻿import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:vocly/core/router/app_router.dart';
@@ -9,6 +10,8 @@ import 'package:vocly/vocabulary/model/word_model.dart';
 
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   await Hive.initFlutter();
 
@@ -42,6 +45,3 @@ class Application extends StatelessWidget {
 // revise vertical spacing in widgets
 // make selection widgets reusable
 // make screens customscrollable
-
-
-

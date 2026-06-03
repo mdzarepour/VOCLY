@@ -1,36 +1,35 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
 part 'word_model.g.dart';
 
 @HiveType(typeId: 0)
-class WordModel extends HiveObject with EquatableMixin{
+class WordModel extends HiveObject with EquatableMixin {
   @HiveField(0)
-  String? name;
+  String name;
 
   @HiveField(1)
-  String? meaning;
+  String meaning;
 
   @HiveField(2)
-  String? example;
+  String example;
 
   @HiveField(3)
-  int? icon;
+  int icon;
 
   @HiveField(4)
-  int? type;
+  int type;
 
   @HiveField(5)
-  int? color;
+  int color;
 
   WordModel({
-    this.name,
-    this.meaning,
-    this.example,
-    this.icon,
-    this.type,
-    this.color,
+    required this.name,
+    required this.meaning,
+    required this.example,
+    required this.icon,
+    required this.type,
+    required this.color,
   });
 
   factory WordModel.fromMap(Map<String, dynamic> map) {
@@ -54,13 +53,5 @@ class WordModel extends HiveObject with EquatableMixin{
   }
 
   @override
-  List<Object?> get props => [
-    name,
-    meaning,
-    example,
-    icon,
-    type,
-    color
-  ];
+  List<Object?> get props => [name, meaning, example, icon, type, color];
 }
-

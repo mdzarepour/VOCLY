@@ -41,13 +41,12 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
   void initState() {
     super.initState();
     final type = Get.arguments[0] as BookScreenType;
-    _editingBook = Get.arguments[1];
-
     _isEditingType = type == BookScreenType.editBook ? true : false;
 
-    if (_editingBook == null) return;
+    if (Get.arguments[1] == null) return;
 
-    _nameController.text = _editingBook.name;
+    _editingBook = Get.arguments[1] as BookModel;
+    _nameController.text = _editingBook!.name;
     _descriptionController.text = _editingBook.description;
     _selectedColorIndex = _editingBook.color;
     _selectedIconIndex = _editingBook.icon;
@@ -231,9 +230,10 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
                   final BookModel model = BookModel.fromMap(map: map);
                   _addBook(model: model);
                 }
-              }
+              } 
             },
             child: CardWidget(
+              selectedBorderColor: ConstUiColors.positiveColor,
               height: 70,
               child: Row(
                 spacing: 10,
@@ -253,6 +253,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
           child: InkWell(
             onTap: () => Get.back(),
             child: CardWidget(
+              selectedBorderColor: ConstUiColors.errorColor,
               height: 70,
               child: Row(
                 spacing: 10,

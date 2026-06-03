@@ -12,6 +12,7 @@ class ConstUiColors {
   static const Color errorColor = Color(0xFFFF6B81);
   static const Color positiveColor = Colors.greenAccent;
   static const Color blurColor = Color.fromARGB(15, 255, 255, 255);
+  static const Color secondaryBorder = Color(0xFF48D1CC);
 }
 
 class ConstEntityColors {

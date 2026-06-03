@@ -2,7 +2,6 @@
 import 'package:vocly/common/constants/const_colors.dart';
 import 'package:vocly/common/theme/app_text_theme.dart';
 import 'package:vocly/common/constants/const_strings.dart';
-import 'package:vocly/common/widgets/filter_widget.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -22,20 +21,6 @@ class _SearchScreenState extends State<SearchScreen> {
       body: Column(
         children: [
           SizedBox(height: 15),
-          SizedBox(
-            height: 35,
-            child: ListView(
-              padding: EdgeInsetsGeometry.symmetric(horizontal: 20),
-              scrollDirection: Axis.horizontal,
-              children: [
-                FilterWidget(onTap: () {}, title: UIStrings.sortWords),
-                FilterWidget(onTap: () {}, title: UIStrings.color),
-                FilterWidget(onTap: () {}, title: UIStrings.type),
-                FilterWidget(onTap: () {}, title: UIStrings.book),
-              ],
-            ),
-          ),
-          SizedBox(height: 20),
           Expanded(
             child: ListView.builder(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -80,10 +65,3 @@ class _SearchScreenState extends State<SearchScreen> {
     _searchController.dispose();
   }
 }
-
-
-
-
-
-
-

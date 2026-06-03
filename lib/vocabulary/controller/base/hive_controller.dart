@@ -6,8 +6,8 @@ abstract class HiveController<T extends HiveObject> extends GetxController {
 
   late final Box<T> _box;
 
-  final Rxn<T>? _currentItem = Rxn<T>();
-  T? get currentItem => _currentItem?.value;
+  final Rxn<T> _currentItem = Rxn<T>();
+  T? get currentItem => _currentItem.value;
 
   final RxList<T> _items = <T>[].obs;
   List<T> get items => _items;
@@ -51,13 +51,13 @@ abstract class HiveController<T extends HiveObject> extends GetxController {
   }
 
   void updateCurrentItem({required final T freshModel}) {
-    _currentItem!.value = freshModel;
+    _currentItem.value = freshModel;
     freshModel.save();
   }
 
   Future<void> saveCurrentItem() async {
     try {
-      final item = _currentItem?.value;
+      final item = _currentItem.value;
       if (item != null && item.isInBox) {
         await item.save();
         loadItems();

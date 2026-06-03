@@ -84,6 +84,7 @@ class AppStrings {
   static const keyExample = 'example';
   static const keyType = 'type';
   static const keyIcon = 'icon';
+  static const keyFilterItems = 'FilterItems';
 
   // Dialogs
   static const dialogDuplicatedBookTitle = 'Duplicated book!';
