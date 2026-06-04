@@ -1,26 +1,32 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:uuid/uuid.dart';
 import 'package:vocly/vocabulary/model/word_model.dart';
 part 'book_model.g.dart';
 
 @HiveType(typeId: 1)
 class BookModel extends HiveObject with EquatableMixin{
+
   @HiveField(0)
-  String name;
+  String id;
 
   @HiveField(1)
-  String description;
+  String name;
 
   @HiveField(2)
-  int color;
+  String description;
 
   @HiveField(3)
-  int icon;
+  int color;
 
   @HiveField(4)
-  List<WordModel> words;
+  int icon;
+
+  @HiveField(5)
+  List<String> words;
 
   BookModel({
+    required this.id,
     required this.color,
     required this.icon,
     required this.name,
@@ -30,11 +36,12 @@ class BookModel extends HiveObject with EquatableMixin{
 
   factory BookModel.fromMap({required final Map<String, dynamic> map}) {
     return BookModel(
+      id: Uuid().v4(),
       name: map['name'],
-      description: map['description'],
       icon: map['banner'],
       color: map['color'],
       words: map['words'],
+      description: map['description'],
     );
   }
 
@@ -46,11 +53,5 @@ class BookModel extends HiveObject with EquatableMixin{
   }
 
   @override
-  List<Object?> get props => [
-    name,
-    description,
-    color,
-    icon,
-    words,
-  ];
+  List<Object?> get props => [id];
 }

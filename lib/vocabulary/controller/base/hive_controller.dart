@@ -2,9 +2,9 @@ import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
 
 abstract class HiveController<T extends HiveObject> extends GetxController {
-  HiveController({required Box<T> box}) : _box = box;
+  HiveController({required Box<T> box}) : this.box = box;
 
-  late final Box<T> _box;
+  late final Box<T> box;
 
   final Rxn<T> _currentItem = Rxn<T>();
   T? get currentItem => _currentItem.value;
@@ -20,21 +20,11 @@ abstract class HiveController<T extends HiveObject> extends GetxController {
 
   void loadItems() {
     try {
-      final List<T> freshItems = _box.values.toList();
+      final List<T> freshItems = box.values.toList();
       _items.value = freshItems;
     } catch (error) {
       Get.snackbar('Failed!', error.toString());
     }
-  }
-
-  Future<void> addItem({required final T model}) async {
-    try {
-      await _box.add(model);
-      loadItems();
-    } on HiveError catch (error) {
-      Get.snackbar('Oopps!', error.message);
-    }
-    Get.back();
   }
 
   Future<void> deleteItems({required final List<T> selectedItems}) async {
@@ -50,22 +40,18 @@ abstract class HiveController<T extends HiveObject> extends GetxController {
     }
   }
 
-  void updateCurrentItem({required final T freshModel}) {
-    _currentItem.value = freshModel;
-    freshModel.save();
-  }
-
-  Future<void> saveCurrentItem() async {
+  Future<void> updateCurrentItem({required final T freshModel}) async {
     try {
-      final item = _currentItem.value;
-      if (item != null && item.isInBox) {
-        await item.save();
-        loadItems();
-      }
+      await freshModel.save();
+      _currentItem.value = freshModel;
+      _currentItem.refresh();
+      loadItems();
     } on HiveError catch (error) {
       Get.snackbar('Oopps!', error.message);
     }
   }
+
+  Future<void> addItem({required final T model});
 
   bool isItemExist({required final String name});
 }

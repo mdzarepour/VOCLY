@@ -57,7 +57,11 @@ class _ReadBookScreenState extends State<ReadBookScreen> {
                     SizedBox(height: 20),
                     _editButton(currentBook: currentBook),
                     SizedBox(height: 20),
-                    _wordsList(currentBook),
+                    _wordsList(
+                      currentBookWords: _bookController.getBookWords(
+                        currentBook,
+                      ),
+                    ),
                   ],
                 );
               }
@@ -120,8 +124,8 @@ class _ReadBookScreenState extends State<ReadBookScreen> {
     );
   }
 
-  Widget _wordsList(BookModel currentBook) {
-    return currentBook.words.isEmpty
+  Widget _wordsList({required final List<WordModel> currentBookWords}) {
+    return currentBookWords.isEmpty
         ? Column(
             spacing: 10,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -141,9 +145,10 @@ class _ReadBookScreenState extends State<ReadBookScreen> {
               crossAxisSpacing: 15,
               mainAxisExtent: 70,
             ),
-            itemCount: currentBook.words.length,
+            itemCount: currentBookWords.length,
             itemBuilder: (context, index) {
-              final WordModel currentWord = currentBook.words[index];
+              final WordModel currentWord = currentBookWords[index];
+
               return InkWell(
                 onTap: () {
                   Get.toNamed(Routes.readWordScreen, arguments: currentWord);

@@ -1,7 +1,9 @@
+import 'package:get/get.dart';
 import 'package:get/state_manager.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:vocly/core/enums/enums.dart';
 import 'package:vocly/vocabulary/controller/base/hive_controller.dart';
+import 'package:vocly/vocabulary/model/book_model.dart';
 import 'package:vocly/vocabulary/model/word_model.dart';
 
 class WordController extends HiveController<WordModel> {
@@ -59,12 +61,35 @@ class WordController extends HiveController<WordModel> {
   bool isFilterSelected({required FilterType type, required int filterItem}) {
     switch (type) {
       case FilterType.color:
-        return colorFilters.contains(filterItem);
+        {
+          return colorFilters.contains(filterItem);
+        }
       case FilterType.icon:
-        return iconFilters.contains(filterItem);
+        {
+          return iconFilters.contains(filterItem);
+        }
       case FilterType.type:
-        return typeFilters.contains(filterItem);
+        {
+          return typeFilters.contains(filterItem);
+        }
     }
+  }
+
+  void deleteFilters() {
+    colorFilters.clear();
+    iconFilters.clear();
+    typeFilters.clear();
+  }
+
+  @override
+  Future<void> addItem({required WordModel model}) async {
+    try {
+      await box.put(model.id, model);
+      loadItems();
+    } on HiveError catch (error) {
+      Get.snackbar('Oopps!', error.message);
+    }
+    Get.back();
   }
 
   @override

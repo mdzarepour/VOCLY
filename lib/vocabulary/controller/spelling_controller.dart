@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:vocly/common/constants/const_strings.dart';
 import 'package:vocly/vocabulary/controller/word_controller.dart';
 import 'package:vocly/vocabulary/model/spell_char_model.dart';
-
+//TODO revise and write cleaner
 class SpellingController extends GetxController {
   final WordController wordController;
   SpellingController({required this.wordController});
@@ -22,7 +22,7 @@ class SpellingController extends GetxController {
   final RxList<SpellCharModel> _selectedChars = <SpellCharModel>[].obs;
   List<SpellCharModel> get selectedChars => _selectedChars;
 
-  void _initSpellingEssentials() {
+  void _prepareChars() {
     _updatePracticeMode(value: true);
     _word.value = wordController.currentItem?.name.trim() ?? _word.trim();
 
@@ -32,12 +32,6 @@ class SpellingController extends GetxController {
     _chars.value = List.generate(splitWord.length, (index) {
       return SpellCharModel(char: splitWord[index], originalIndex: index);
     });
-  }
-
-  void _endPractice() {
-    _updatePracticeMode(value: false);
-    _updateAccuracy(value: null);
-    _selectedChars.clear();
   }
 
   void _checkAccuracy() {
@@ -83,11 +77,19 @@ class SpellingController extends GetxController {
     if (_selectedChars.length == _word.value.length) _checkAccuracy();
   }
 
-  void startSpellingPractice({required final bool isClosed}) {
+  void startPractice({required final bool isClosed}) {
     if (!isClosed) {
       _endPractice();
     } else {
-      _initSpellingEssentials();
+      _prepareChars();
     }
   }
+
+  void _endPractice() {
+    _updatePracticeMode(value: false);
+    _updateAccuracy(value: null);
+    _selectedChars.clear();
+  }
 }
+
+

@@ -1,10 +1,4 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
-
 part of 'book_model.dart';
-
-// **************************************************************************
-// TypeAdapterGenerator
-// **************************************************************************
 
 class BookModelAdapter extends TypeAdapter<BookModel> {
   @override
@@ -17,27 +11,30 @@ class BookModelAdapter extends TypeAdapter<BookModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return BookModel(
-      color: fields[2] as int,
-      icon: fields[3] as int,
-      name: fields[0] as String,
-      words: (fields[4] as List).cast<WordModel>(),
-      description: fields[1] as String,
+      id: fields[0] as String,
+      name: fields[1] as String,
+      description: fields[2] as String,
+      color: fields[3] as int,
+      icon: fields[4] as int,
+      words: (fields[5] as List).cast<String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, BookModel obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
-      ..write(obj.name)
+      ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.description)
+      ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.color)
+      ..write(obj.description)
       ..writeByte(3)
-      ..write(obj.icon)
+      ..write(obj.color)
       ..writeByte(4)
+      ..write(obj.icon)
+      ..writeByte(5)
       ..write(obj.words);
   }
 

@@ -1,6 +1,6 @@
 class SpellCharModel {
   final int originalIndex;
-  String char;
+  final String char;
 
   SpellCharModel({required this.char, required this.originalIndex});
 }

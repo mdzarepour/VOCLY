@@ -2,7 +2,6 @@
 import 'package:get/get_instance/get_instance.dart';
 import 'package:get/route_manager.dart';
 import 'package:get/state_manager.dart';
-import 'package:vocly/common/constants/const_icons.dart';
 import 'package:vocly/common/widgets/filter_button.dart';
 import 'package:vocly/common/widgets/filter_sheet_widget.dart';
 import 'package:vocly/core/enums/enums.dart';
@@ -41,7 +40,19 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _selectionController.selectedItems.clear();
-      _selectionController.selectedItems.addAll(Get.arguments[1]);
+      final selectedArg = Get.arguments[1];
+
+      // Handle both List<WordModel> and List<String> (word IDs)
+      if (selectedArg is List<WordModel>) {
+        _selectionController.selectedItems.addAll(selectedArg);
+      } else if (selectedArg is List<String>) {
+        // Convert word IDs to WordModel objects
+        final selectedWords = _wordController.wordsList
+            .where((word) => selectedArg.contains(word.id))
+            .toList();
+        _selectionController.selectedItems.addAll(selectedWords);
+      }
+
       _selectionController.updateSelectionMode(mode: true);
     });
   }
@@ -116,7 +127,7 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
     return Obx(() {
       final selectedWords = _selectionController.selectedItems;
       return InkWell(
-        onTap: () => Get.back(result: selectedWords.cast<WordModel>()),
+        onTap: () => Get.back(result: selectedWords),
         child: Container(
           decoration: BoxDecoration(
             border: BorderDirectional(
@@ -190,23 +201,7 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
   }
 
   Widget _filterWidget() {
-    final List<Map> filterMap = [
-      {
-        AppStrings.keyName: AppStrings.keyColor,
-        AppStrings.keyType: FilterType.color,
-        AppStrings.keyFilterItems: ConstEntityColors.colors,
-      },
-      {
-        AppStrings.keyName: AppStrings.keyIcon,
-        AppStrings.keyType: FilterType.icon,
-        AppStrings.keyFilterItems: ConstIcons.icons,
-      },
-      {
-        AppStrings.keyName: AppStrings.keyType,
-        AppStrings.keyType: FilterType.type,
-        AppStrings.keyFilterItems: ConstWordTypes.wordTypes,
-      },
-    ];
+    final wordFilteringItems = AppStrings.wordFilteringItems;
     return SizedBox(
       height: 35,
       child: ListView.builder(
@@ -219,24 +214,25 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
               Get.bottomSheet(
                 backgroundColor: ConstUiColors.backgroundColor,
                 FilterSheetWidget(
-                  onChanged: (i) {
+                  onChanged: (indexOfSelectedFilterItem) {
                     _wordController.selectFilters(
-                      type: filterMap[index][AppStrings.keyType],
-                      filterItem: i,
+                      type: wordFilteringItems[index][AppStrings.keyType],
+                      filterItem: indexOfSelectedFilterItem,
                     );
                   },
-                  isSelected: (i) {
+                  isSelected: (indexOfSelectedFilterItem) {
                     return _wordController.isFilterSelected(
-                      type: filterMap[index][AppStrings.keyType],
-                      filterItem: i,
+                      type: wordFilteringItems[index][AppStrings.keyType],
+                      filterItem: indexOfSelectedFilterItem,
                     );
                   },
-                  filterItems: filterMap[index][AppStrings.keyFilterItems],
-                  type: filterMap[index][AppStrings.keyType],
+                  filterItems:
+                      wordFilteringItems[index][AppStrings.keyFilterItems],
+                  type: wordFilteringItems[index][AppStrings.keyType],
                 ),
               );
             },
-            title: filterMap[index][AppStrings.keyName],
+            title: wordFilteringItems[index][AppStrings.keyName],
           );
         },
       ),
@@ -263,5 +259,12 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
     setState(() {
       _isGridLayout = !_isGridLayout;
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _selectionController.dispose();
+    _wordController.deleteFilters();
   }
 }

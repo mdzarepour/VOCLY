@@ -1,10 +1,4 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
-
 part of 'word_model.dart';
-
-// **************************************************************************
-// TypeAdapterGenerator
-// **************************************************************************
 
 class WordModelAdapter extends TypeAdapter<WordModel> {
   @override
@@ -17,30 +11,33 @@ class WordModelAdapter extends TypeAdapter<WordModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return WordModel(
-      name: fields[0] as String,
-      meaning: fields[1] as String,
-      example: fields[2] as String,
-      icon: fields[3] as int,
-      type: fields[4] as int,
-      color: fields[5] as int,
+      id: fields[0] as String,
+      name: fields[1] as String,
+      meaning: fields[2] as String,
+      example: fields[3] as String,
+      icon: fields[4] as int,
+      type: fields[5] as int,
+      color: fields[6] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, WordModel obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
-      ..write(obj.name)
+      ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.meaning)
+      ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.example)
+      ..write(obj.meaning)
       ..writeByte(3)
-      ..write(obj.icon)
+      ..write(obj.example)
       ..writeByte(4)
-      ..write(obj.type)
+      ..write(obj.icon)
       ..writeByte(5)
+      ..write(obj.type)
+      ..writeByte(6)
       ..write(obj.color);
   }
 

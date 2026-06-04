@@ -5,7 +5,8 @@ import 'package:vocly/vocabulary/controller/base/hive_controller.dart';
 
 abstract class SelectionController<T extends HiveObject>
     extends GetxController {
-  final HiveController currentController;
+      
+  final HiveController<T> currentController;
   SelectionController({required this.currentController});
 
   final RxList<T> _selectedItems = <T>[].obs;
@@ -14,10 +15,15 @@ abstract class SelectionController<T extends HiveObject>
   final RxBool _isSelectionMode = false.obs;
   bool get isSelectionMode => _isSelectionMode.value;
 
-  final _selectButtonIcon = Icons.done_all_outlined.obs;
-  IconData get selectButtonIcon => _selectButtonIcon.value;
+  IconData get selectButtonIcon {
+    if (_selectedItems.length >= currentController.items.length) {
+      return Icons.do_not_disturb_alt_outlined;
+    } else {
+      return Icons.done_all_outlined;
+    }
+  }
 
-  void changeSelectionMode({required dynamic item}) {
+  void changeSelectionMode({required T item}) {
     if (_selectedItems.isEmpty) {
       _selectedItems.add(item);
       updateSelectionMode(mode: true);
@@ -30,9 +36,9 @@ abstract class SelectionController<T extends HiveObject>
     _isSelectionMode.value = mode;
   }
 
-  bool isSelected({required dynamic item}) => _selectedItems.contains(item);
+  bool isSelected({required T item}) => _selectedItems.contains(item);
 
-  void selectItem({required dynamic item}) {
+  void selectItem({required T item}) {
     if (_selectedItems.contains(item)) {
       _selectedItems.remove(item);
       if (_selectedItems.isEmpty) {
@@ -41,7 +47,6 @@ abstract class SelectionController<T extends HiveObject>
     } else {
       _selectedItems.add(item);
     }
-    _updateSelectionTitle();
   }
 
   void selectAllItems() {
@@ -54,14 +59,12 @@ abstract class SelectionController<T extends HiveObject>
       updateSelectionMode(mode: false);
       _selectedItems.clear();
     }
-    _updateSelectionTitle();
   }
 
-  void _updateSelectionTitle() {
-    if (_selectedItems.length >= currentController.items.length) {
-      _selectButtonIcon.value = Icons.do_not_disturb_alt_outlined;
-    } else {
-      _selectButtonIcon.value = Icons.done_all_outlined;
-    }
+  @override
+  void onClose() {
+    super.onClose();
+    _selectedItems.clear();
+    _isSelectionMode.value = false;
   }
 }

@@ -32,7 +32,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
 
   int _selectedColorIndex = 0;
   int _selectedIconIndex = 1;
-  List<WordModel> _selectedWords = [];
+  List<String> _selectedWords = [];
 
   late final BookModel? _editingBook;
   late final bool _isEditingType;
@@ -119,7 +119,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
           arguments: [ManageWordsScreenType.addWordToBook, _selectedWords],
         );
         setState(() {
-          _selectedWords = list;
+          _selectedWords = list.map((e) => e.id).toList();
         });
       },
       child: CardWidget(

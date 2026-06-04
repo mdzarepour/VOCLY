@@ -1,4 +1,8 @@
-﻿class ConstWordTypes {
+﻿import 'package:vocly/common/constants/const_colors.dart';
+import 'package:vocly/common/constants/const_icons.dart';
+import 'package:vocly/core/enums/enums.dart';
+
+class ConstWordTypes {
   ConstWordTypes._();
   static const wordTypes = [
     'Article',
@@ -102,4 +106,22 @@ class AppStrings {
       'Are you sure about deleting these words?';
   static const dialogConfirmDeleteAction = 'delete';
   static const bookWordsCount = 'You have {count} words in this book';
+
+  static const List<Map> wordFilteringItems = [
+    {
+      AppStrings.keyName: AppStrings.keyColor,
+      AppStrings.keyType: FilterType.color,
+      AppStrings.keyFilterItems: ConstEntityColors.colors,
+    },
+    {
+      AppStrings.keyName: AppStrings.keyIcon,
+      AppStrings.keyType: FilterType.icon,
+      AppStrings.keyFilterItems: ConstIcons.icons,
+    },
+    {
+      AppStrings.keyName: AppStrings.keyType,
+      AppStrings.keyType: FilterType.type,
+      AppStrings.keyFilterItems: ConstWordTypes.wordTypes,
+    },
+  ];
 }

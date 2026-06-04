@@ -83,7 +83,7 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
 
       return ExpansionWidget(
         onExpansionChanged: (value) {
-          _spellingController.startSpellingPractice(isClosed: value);
+          _spellingController.startPractice(isClosed: value);
         },
         title: UIStrings.spellingPractice,
         children: [
