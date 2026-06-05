@@ -43,6 +43,7 @@ dependencies:
   flutter_popup: ^3.3.9
   equatable: ^2.0.8
   uuid: ^4.5.3
+  substring_highlight: ^1.0.33
 
 dev_dependencies:
   flutter_test:

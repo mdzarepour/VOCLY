@@ -1,9 +1,7 @@
 import 'package:get/get.dart';
-import 'package:get/state_manager.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:vocly/core/enums/enums.dart';
 import 'package:vocly/vocabulary/controller/base/hive_controller.dart';
-import 'package:vocly/vocabulary/model/book_model.dart';
 import 'package:vocly/vocabulary/model/word_model.dart';
 
 class WordController extends HiveController<WordModel> {

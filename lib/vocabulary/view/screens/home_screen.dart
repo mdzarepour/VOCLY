@@ -6,10 +6,14 @@ import 'package:vocly/common/widgets/card_widget.dart';
 import 'package:vocly/common/constants/const_colors.dart';
 import 'package:vocly/core/enums/enums.dart';
 import 'package:vocly/core/router/app_router.dart';
+import 'package:vocly/vocabulary/controller/book_controller.dart';
+import 'package:vocly/vocabulary/controller/word_controller.dart';
 
 class HomeScreen extends StatelessWidget {
   final void Function()? onTap;
-  const HomeScreen({super.key, this.onTap});
+  HomeScreen({super.key, this.onTap});
+  final _wordController = Get.find<WordController>();
+  final _bookController = Get.find<BookController>();
 
   @override
   Widget build(BuildContext context) {
@@ -23,45 +27,58 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: 30),
           Text(UIStrings.yourVocabulary, style: AppTextTheme.titleMedium),
           const SizedBox(height: 15),
-          GridView(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              mainAxisExtent: 70,
-            ),
+          Row(
+            spacing: 10,
             children: [
-              _HomeButton(
-                icon: Icons.chrome_reader_mode_outlined,
-                title: UIStrings.books,
-                data: '50 Books',
-                onTap: () => Get.toNamed(Routes.manageBooksScreen),
-              ),
-              _HomeButton(
-                icon: Icons.language_outlined,
-                title: UIStrings.words,
-                data: '30 Words',
-                onTap: () => Get.toNamed(
-                  Routes.manageWordsScreen,
-                  arguments: [ManageWordsScreenType.manageWords, null],
+              Obx(() {
+                final booksLength = _bookController.items.length;
+                return Expanded(
+                  child: _HomeButton(
+                    icon: Icons.chrome_reader_mode_outlined,
+                    title: UIStrings.books,
+                    data: '$booksLength Books',
+                    onTap: () => Get.toNamed(Routes.manageBooksScreen),
+                  ),
+                );
+              }),
+              Obx(() {
+                final wordsLength = _wordController.items.length;
+                return Expanded(
+                  child: _HomeButton(
+                    icon: Icons.language_outlined,
+                    title: UIStrings.words,
+                    data: '$wordsLength Words',
+                    onTap: () => Get.toNamed(
+                      Routes.manageWordsScreen,
+                      arguments: [ManageWordsScreenType.manageWords, null],
+                    ),
+                  ),
+                );
+              }),
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            spacing: 10,
+            children: [
+              Expanded(
+                child: _HomeButton(
+                  icon: Icons.add_outlined,
+                  title: UIStrings.newBook,
+                  onTap: () => Get.toNamed(
+                    Routes.addEditBookScreen,
+                    arguments: [BookScreenType.addBook, null],
+                  ),
                 ),
               ),
-              _HomeButton(
-                icon: Icons.add_outlined,
-                title: UIStrings.newBook,
-                onTap: () => Get.toNamed(
-                  Routes.addEditBookScreen,
-                  arguments: [BookScreenType.addBook, null],
-                ),
-              ),
-              _HomeButton(
-                icon: Icons.add_outlined,
-                title: UIStrings.newWord,
-                onTap: () => Get.toNamed(
-                  Routes.addEditWordScreen,
-                  arguments: [WordScreenType.addWord, null],
+              Expanded(
+                child: _HomeButton(
+                  icon: Icons.add_outlined,
+                  title: UIStrings.newWord,
+                  onTap: () => Get.toNamed(
+                    Routes.addEditWordScreen,
+                    arguments: [WordScreenType.addWord, null],
+                  ),
                 ),
               ),
             ],
@@ -94,7 +111,7 @@ class HomeScreen extends StatelessWidget {
         height: 50,
         padding: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
-          border: Border.all(color: ConstEntityColors.colors[10], width: 1),
+          border: Border.all(color: ConstUiColors.blueHighLightColor, width: 1),
           borderRadius: const BorderRadius.all(Radius.circular(30)),
           color: ConstUiColors.forthColor,
         ),

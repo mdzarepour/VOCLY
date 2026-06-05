@@ -36,6 +36,7 @@ class WordTile extends StatelessWidget {
       onTap: onTap,
       child: isSmallTile
           ? CardWidget(
+              height: 68,
               selectedBorderColor: selectedBorderColor,
               child: Row(
                 children: [
@@ -67,6 +68,7 @@ class WordTile extends StatelessWidget {
               ),
             )
           : CardWidget(
+              height: 68,
               selectedBorderColor: selectedBorderColor,
               child: Row(
                 spacing: 15,

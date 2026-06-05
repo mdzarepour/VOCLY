@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
-import 'package:vocly/vocabulary/model/word_model.dart';
 part 'book_model.g.dart';
 
 @HiveType(typeId: 1)

@@ -3,6 +3,7 @@ import 'package:vocly/core/services/dialog_service.dart';
 import 'package:vocly/core/services/speech_service.dart';
 import 'package:vocly/vocabulary/controller/book_controller.dart';
 import 'package:vocly/vocabulary/controller/book_selection_controller.dart';
+import 'package:vocly/vocabulary/controller/word_search_controller.dart';
 import 'package:vocly/vocabulary/controller/word_selection_controller.dart';
 import 'package:vocly/vocabulary/controller/spelling_controller.dart';
 import 'package:vocly/vocabulary/controller/word_controller.dart';
@@ -44,6 +45,15 @@ class WordDetailsBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<SpellingController>(
       () => SpellingController(wordController: Get.find<WordController>()),
+    );
+  }
+}
+
+class SearchBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<WordSearchController>(
+      () => WordSearchController(wordController: Get.find<WordController>()),
     );
   }
 }

@@ -8,7 +8,7 @@ import 'package:vocly/vocabulary/view/screens/read_book_screen.dart';
 import 'package:vocly/vocabulary/view/screens/read_word_screen.dart';
 import 'package:vocly/vocabulary/view/screens/search_screen.dart';
 import 'package:vocly/vocabulary/view/screens/manage_words_screen.dart';
-import 'package:vocly/vocabulary/view/screens/wrapper_screen.dart';
+import 'package:vocly/common/widgets/wrapper_screen.dart';
 
 class AppRouter {
   AppRouter._();
@@ -38,6 +38,7 @@ class AppRouter {
       showCupertinoParallax: false,
       name: Routes.searchScreen,
       page: () => SearchScreen(),
+      binding: SearchBinding(),
     ),
     GetPage(
       showCupertinoParallax: false,

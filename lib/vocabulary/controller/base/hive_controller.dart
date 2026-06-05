@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
 
 abstract class HiveController<T extends HiveObject> extends GetxController {
-  HiveController({required Box<T> box}) : this.box = box;
+  HiveController({required Box<T> box}) : box = box;
 
   late final Box<T> box;
 

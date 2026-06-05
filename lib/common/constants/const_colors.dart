@@ -13,6 +13,7 @@ class ConstUiColors {
   static const Color positiveColor = Colors.greenAccent;
   static const Color blurColor = Color.fromARGB(15, 255, 255, 255);
   static const Color secondaryBorder = Color(0xFF48D1CC);
+  static const Color blueHighLightColor = Color(0xFF6495ED);
 }
 
 class ConstEntityColors {
