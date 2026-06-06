@@ -84,6 +84,15 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 30),
+          Text('Use Prepared Books', style: AppTextTheme.titleMedium),
+          const SizedBox(height: 15),
+          _HomeButton(
+            icon: Icons.coffee_outlined,
+            title: 'Use vocabulary',
+            data: 'We are prepared some vocabulary for you',
+            onTap: () {},
+          ),
+          const SizedBox(height: 30),
           Text(UIStrings.yourData, style: AppTextTheme.titleMedium),
           const SizedBox(height: 15),
           _HomeButton(

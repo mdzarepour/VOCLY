@@ -16,6 +16,11 @@ class ConstWordTypes {
   ];
 }
 
+class ConstWordDifficulty {
+  ConstWordDifficulty._();
+  static const wordDifficulty = ['Easy', 'Medium', 'Hard', 'Very hard'];
+}
+
 class UIStrings {
   UIStrings._();
   static const appName = 'VOCLY';
@@ -35,6 +40,7 @@ class UIStrings {
   static const icon = 'Icon';
   static const type = 'Type';
   static const color = 'Color';
+  static const difficulty = 'Difficulty';
   static const done = 'Done';
 
   static const cancel = 'Cancel';
@@ -88,6 +94,7 @@ class AppStrings {
   static const keyExample = 'example';
   static const keyType = 'type';
   static const keyIcon = 'icon';
+  static const keyDifficulty = 'difficulty';
   static const keyFilterItems = 'FilterItems';
 
   // Dialogs
@@ -109,19 +116,31 @@ class AppStrings {
 
   static const List<Map> wordFilteringItems = [
     {
-      AppStrings.keyName: AppStrings.keyColor,
+      AppStrings.keyName: 'Color',
       AppStrings.keyType: FilterType.color,
       AppStrings.keyFilterItems: ConstEntityColors.colors,
     },
     {
-      AppStrings.keyName: AppStrings.keyIcon,
+      AppStrings.keyName: 'Icon',
       AppStrings.keyType: FilterType.icon,
       AppStrings.keyFilterItems: ConstIcons.icons,
     },
     {
-      AppStrings.keyName: AppStrings.keyType,
+      AppStrings.keyName: 'Type',
       AppStrings.keyType: FilterType.type,
       AppStrings.keyFilterItems: ConstWordTypes.wordTypes,
     },
+    {
+      AppStrings.keyName: 'Level',
+      AppStrings.keyType: FilterType.difficulty,
+      AppStrings.keyFilterItems: ConstWordDifficulty.wordDifficulty,
+    },
+  ];
+
+  static const List<Map> wordSortItems = [
+    {'name': 'Newest', 'type': SortType.newest},
+    {'name': 'Oldest', 'type': SortType.oldest},
+    {'name': 'From A to Z', 'type': SortType.aToZ},
+    {'name': 'From Z to A', 'type': SortType.zToA},
   ];
 }

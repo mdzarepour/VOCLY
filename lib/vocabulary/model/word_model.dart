@@ -7,7 +7,7 @@ part 'word_model.g.dart';
 @HiveType(typeId: 0)
 class WordModel extends HiveObject with EquatableMixin {
   @HiveField(0)
-  String id;
+  final String id;
 
   @HiveField(1)
   String name;
@@ -27,6 +27,12 @@ class WordModel extends HiveObject with EquatableMixin {
   @HiveField(6)
   int color;
 
+  @HiveField(7)
+  int difficulty;
+
+  @HiveField(8)
+  String createAt;
+
   WordModel({
     required this.id,
     required this.name,
@@ -35,27 +41,32 @@ class WordModel extends HiveObject with EquatableMixin {
     required this.icon,
     required this.type,
     required this.color,
+    required this.difficulty,
+    required this.createAt,
   });
 
   factory WordModel.fromMap(Map<String, dynamic> map) {
     return WordModel(
       id: Uuid().v4(),
+      createAt: DateTime.now().microsecond.toString(),
       name: map['name'],
       meaning: map['meaning'],
       example: map['example'],
       icon: map['icon'],
       type: map['type'],
       color: map['color'],
+      difficulty: map['difficulty'],
     );
   }
 
-  void updateWordModel({required final Map<String, dynamic> map}) {
+  void updateWordModel({required Map<String, dynamic> map}) {
     name = map['name'];
     meaning = map['meaning'];
     example = map['example'];
     icon = map['icon'];
     type = map['type'];
     color = map['color'];
+    difficulty = map['difficulty'];
   }
 
   @override

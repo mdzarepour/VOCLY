@@ -32,6 +32,7 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
   int _selectedIconIndex = 0;
   int _selectedTypeIndex = 0;
   int _selectedColorIndex = 0;
+  int _selectedDifficultyIndex = 0;
 
   late final bool _isEditingMode;
   late final WordModel? _editingWord;
@@ -55,6 +56,7 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
     _selectedIconIndex = _editingWord.icon;
     _selectedTypeIndex = _editingWord.type;
     _selectedColorIndex = _editingWord.color;
+    _selectedDifficultyIndex = _editingWord.difficulty;
   }
 
   @override
@@ -98,12 +100,14 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
                       controller: _exampleController,
                       hint: UIStrings.example,
                     ),
+                    SizedBox(height: 15),
+                    _typeSelection(context),
+                    SizedBox(height: 15),
+                    _difficultySelection(context),
                     const SizedBox(height: 30),
                     Text(UIStrings.visual, style: AppTextTheme.titleMedium),
                     SizedBox(height: 10),
                     _iconSelection(),
-                    const SizedBox(height: 15),
-                    _typeSelection(context),
                     const SizedBox(height: 15),
                     _colorSelection(),
                     SizedBox(height: 30),
@@ -192,6 +196,45 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
     );
   }
 
+  Widget _difficultySelection(BuildContext context) {
+    return ExpansionWidget(
+      title: UIStrings.difficulty,
+      children: [
+        Wrap(
+          spacing: 15,
+          runSpacing: 15,
+          children: [
+            for (int i = 0; i < ConstWordDifficulty.wordDifficulty.length; i++)
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    _selectedDifficultyIndex = i;
+                  });
+                },
+                child: Container(
+                  height: 40,
+                  width: MediaQuery.of(context).size.width / 3,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: ConstUiColors.backgroundColor2),
+                    borderRadius: const BorderRadius.all(Radius.circular(15)),
+                    color: i == _selectedDifficultyIndex
+                        ? ConstUiColors.backgroundColor2
+                        : ConstUiColors.forthColor,
+                  ),
+                  child: Center(
+                    child: Text(
+                      ConstWordDifficulty.wordDifficulty[i],
+                      style: AppTextTheme.headlineSmall,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
   Widget _colorSelection() {
     return ExpansionWidget(
       title: UIStrings.color,
@@ -245,8 +288,9 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
                   AppStrings.keyIcon: _selectedIconIndex,
                   AppStrings.keyType: _selectedTypeIndex,
                   AppStrings.keyColor: _selectedColorIndex,
+                  AppStrings.keyDifficulty: _selectedDifficultyIndex,
                 };
-
+                
                 if (_isEditingMode) {
                   _editingWord!.updateWordModel(map: map);
                   _updateWord();

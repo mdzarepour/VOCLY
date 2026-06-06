@@ -18,13 +18,15 @@ class WordModelAdapter extends TypeAdapter<WordModel> {
       icon: fields[4] as int,
       type: fields[5] as int,
       color: fields[6] as int,
+      difficulty: fields[7] as int,
+      createAt: fields[8] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, WordModel obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -38,7 +40,11 @@ class WordModelAdapter extends TypeAdapter<WordModel> {
       ..writeByte(5)
       ..write(obj.type)
       ..writeByte(6)
-      ..write(obj.color);
+      ..write(obj.color)
+      ..writeByte(7)
+      ..write(obj.difficulty)
+      ..writeByte(8)
+      ..write(obj.createAt);
   }
 
   @override

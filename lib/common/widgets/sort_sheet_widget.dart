@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/state_manager.dart';
+
 import 'package:vocly/common/constants/const_colors.dart';
+import 'package:vocly/common/constants/const_strings.dart';
 import 'package:vocly/common/theme/app_text_theme.dart';
 import 'package:vocly/core/enums/enums.dart';
 
-class FilterSheetWidget extends StatelessWidget {
-  final void Function(int) onChanged;
-  final bool Function(int) isSelected;
-  final List filterItems;
-  final FilterType type;
+class SortSheetWidget extends StatelessWidget {
+  final void Function(SortType) onChanged;
+  final bool Function(SortType) isSelected;
 
-  const FilterSheetWidget({
+  const SortSheetWidget({
     super.key,
     required this.onChanged,
     required this.isSelected,
-    required this.filterItems,
-    required this.type,
   });
 
   @override
@@ -32,15 +30,16 @@ class FilterSheetWidget extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
             children: [
-              for (int i = 0; i < filterItems.length; i++)
+              for (int i = 0; i < AppStrings.wordSortItems.length; i++)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 25),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // dynamic left child -->
-                      getFilterItemWidget(filterContent: filterItems[i]),
-                      // check box -->
+                      Text(
+                        style: AppTextTheme.titleMedium,
+                        AppStrings.wordSortItems[i]['name'],
+                      ),
                       Obx(() {
                         return SizedBox(
                           height: 20,
@@ -51,8 +50,13 @@ class FilterSheetWidget extends StatelessWidget {
                             ),
                             checkColor: ConstUiColors.thirdColor,
                             activeColor: ConstUiColors.backgroundColor,
-                            value: isSelected(i),
-                            onChanged: (value) => onChanged.call(i),
+                            value: isSelected.call(
+                              AppStrings.wordSortItems[i]['type'],
+                            ),
+                            shape: const CircleBorder(),
+                            onChanged: (value) => onChanged.call(
+                              AppStrings.wordSortItems[i]['type'],
+                            ),
                           ),
                         );
                       }),
@@ -64,26 +68,5 @@ class FilterSheetWidget extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  Widget getFilterItemWidget({required final dynamic filterContent}) {
-    switch (type) {
-      case FilterType.color:
-        {
-          return CircleAvatar(backgroundColor: filterContent, radius: 10);
-        }
-      case FilterType.type:
-        {
-          return Text(style: AppTextTheme.titleMedium, filterContent as String);
-        }
-      case FilterType.icon:
-        {
-          return Icon(filterContent as IconData);
-        }
-      case FilterType.difficulty:
-        {
-          return Text(style: AppTextTheme.titleMedium, filterContent as String);
-        }
-    }
   }
 }

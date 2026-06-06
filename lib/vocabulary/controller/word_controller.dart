@@ -7,50 +7,99 @@ import 'package:vocly/vocabulary/model/word_model.dart';
 class WordController extends HiveController<WordModel> {
   WordController() : super(box: Hive.box<WordModel>('WordBox'));
 
-  final RxList<int> colorFilters = <int>[].obs;
-  final RxList<int> iconFilters = <int>[].obs;
-  final RxList<int> typeFilters = <int>[].obs;
+  final RxList<int> _difficultyFilters = <int>[].obs;
+  final RxList<int> _colorFilters = <int>[].obs;
+  final RxList<int> _iconFilters = <int>[].obs;
+  final RxList<int> _typeFilters = <int>[].obs;
+
+  final Rx<SortType> _sortType = SortType.newest.obs;
 
   List<WordModel> get wordsList {
-    if (colorFilters.isEmpty && iconFilters.isEmpty && typeFilters.isEmpty) {
-      return items;
+    List<WordModel> modifiedWordsList = [];
+
+    if (_colorFilters.isEmpty &&
+        _iconFilters.isEmpty &&
+        _typeFilters.isEmpty &&
+        _difficultyFilters.isEmpty) {
+      modifiedWordsList.assignAll(items);
+    } else {
+      modifiedWordsList = items.where((word) {
+        final matchesColor =
+            _colorFilters.isEmpty || _colorFilters.contains(word.color);
+
+        final matchesType =
+            _typeFilters.isEmpty || _typeFilters.contains(word.type);
+
+        final matchesIcon =
+            _iconFilters.isEmpty || _iconFilters.contains(word.icon);
+
+        final matchesDifficulty =
+            _difficultyFilters.isEmpty ||
+            _difficultyFilters.contains(word.difficulty);
+
+        return matchesColor && matchesType && matchesIcon && matchesDifficulty;
+      }).toList();
     }
 
-    return items.where((word) {
-      final matchesColor =
-          colorFilters.isEmpty || colorFilters.contains(word.color);
+    modifiedWordsList.sort((a, b) {
+      switch (_sortType.value) {
+        case SortType.oldest:
+          {
+            return int.parse(a.createAt).compareTo(int.parse(b.createAt));
+          }
+        case SortType.newest:
+          {
+            return int.parse(b.createAt).compareTo(int.parse(a.createAt));
+          }
+        case SortType.aToZ:
+          {
+            return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+          }
+        case SortType.zToA:
+          {
+            return b.name.toLowerCase().compareTo(a.name.toLowerCase());
+          }
+      }
+    });
+    return modifiedWordsList;
+  }
 
-      final matchesType =
-          typeFilters.isEmpty || typeFilters.contains(word.type);
+  void selectSort({required final SortType sortType}) {
+    _sortType.value = sortType;
+  }
 
-      final matchesIcon =
-          iconFilters.isEmpty || iconFilters.contains(word.icon);
-
-      return matchesColor && matchesType && matchesIcon;
-    }).toList();
+  bool isSortSelected({required final SortType sortType}) {
+    return _sortType.value == sortType;
   }
 
   void selectFilters({required FilterType type, required int filterItem}) {
     switch (type) {
       case FilterType.color:
         {
-          colorFilters.contains(filterItem)
-              ? colorFilters.remove(filterItem)
-              : colorFilters.add(filterItem);
+          _colorFilters.contains(filterItem)
+              ? _colorFilters.remove(filterItem)
+              : _colorFilters.add(filterItem);
         }
         break;
       case FilterType.icon:
         {
-          iconFilters.contains(filterItem)
-              ? iconFilters.remove(filterItem)
-              : iconFilters.add(filterItem);
+          _iconFilters.contains(filterItem)
+              ? _iconFilters.remove(filterItem)
+              : _iconFilters.add(filterItem);
         }
         break;
       case FilterType.type:
         {
-          typeFilters.contains(filterItem)
-              ? typeFilters.remove(filterItem)
-              : typeFilters.add(filterItem);
+          _typeFilters.contains(filterItem)
+              ? _typeFilters.remove(filterItem)
+              : _typeFilters.add(filterItem);
+        }
+        break;
+      case FilterType.difficulty:
+        {
+          _difficultyFilters.contains(filterItem)
+              ? _difficultyFilters.remove(filterItem)
+              : _difficultyFilters.add(filterItem);
         }
         break;
     }
@@ -60,23 +109,28 @@ class WordController extends HiveController<WordModel> {
     switch (type) {
       case FilterType.color:
         {
-          return colorFilters.contains(filterItem);
+          return _colorFilters.contains(filterItem);
         }
       case FilterType.icon:
         {
-          return iconFilters.contains(filterItem);
+          return _iconFilters.contains(filterItem);
         }
       case FilterType.type:
         {
-          return typeFilters.contains(filterItem);
+          return _typeFilters.contains(filterItem);
+        }
+      case FilterType.difficulty:
+        {
+          return _difficultyFilters.contains(filterItem);
         }
     }
   }
 
   void deleteFilters() {
-    colorFilters.clear();
-    iconFilters.clear();
-    typeFilters.clear();
+    _colorFilters.clear();
+    _iconFilters.clear();
+    _typeFilters.clear();
+    _difficultyFilters.clear();
   }
 
   @override

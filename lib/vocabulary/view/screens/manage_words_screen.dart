@@ -4,6 +4,7 @@ import 'package:get/route_manager.dart';
 import 'package:get/state_manager.dart';
 import 'package:vocly/common/widgets/filter_button.dart';
 import 'package:vocly/common/widgets/filter_sheet_widget.dart';
+import 'package:vocly/common/widgets/sort_sheet_widget.dart';
 import 'package:vocly/core/enums/enums.dart';
 import 'package:vocly/core/services/dialog_service.dart';
 import 'package:vocly/common/theme/app_text_theme.dart';
@@ -42,11 +43,9 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
       _selectionController.selectedItems.clear();
       final selectedArg = Get.arguments[1];
 
-      // Handle both List<WordModel> and List<String> (word IDs)
       if (selectedArg is List<WordModel>) {
         _selectionController.selectedItems.addAll(selectedArg);
       } else if (selectedArg is List<String>) {
-        // Convert word IDs to WordModel objects
         final selectedWords = _wordController.wordsList
             .where((word) => selectedArg.contains(word.id))
             .toList();
@@ -204,37 +203,57 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
     final wordFilteringItems = AppStrings.wordFilteringItems;
     return SizedBox(
       height: 35,
-      child: ListView.builder(
+      child: ListView(
         padding: EdgeInsets.symmetric(horizontal: 20),
         scrollDirection: Axis.horizontal,
-        itemCount: 3,
-        itemBuilder: (context, index) {
-          return FilterButton(
+        children: [
+          // sort buttons -->
+          FilterButton(
             onTap: () {
               Get.bottomSheet(
                 backgroundColor: ConstUiColors.backgroundColor,
-                FilterSheetWidget(
-                  onChanged: (indexOfSelectedFilterItem) {
-                    _wordController.selectFilters(
-                      type: wordFilteringItems[index][AppStrings.keyType],
-                      filterItem: indexOfSelectedFilterItem,
+                SortSheetWidget(
+                  onChanged: (selectedSortType) {
+                    _wordController.selectSort(sortType: selectedSortType);
+                  },
+                  isSelected: (selectedSortType) {
+                    return _wordController.isSortSelected(
+                      sortType: selectedSortType,
                     );
                   },
-                  isSelected: (indexOfSelectedFilterItem) {
-                    return _wordController.isFilterSelected(
-                      type: wordFilteringItems[index][AppStrings.keyType],
-                      filterItem: indexOfSelectedFilterItem,
-                    );
-                  },
-                  filterItems:
-                      wordFilteringItems[index][AppStrings.keyFilterItems],
-                  type: wordFilteringItems[index][AppStrings.keyType],
                 ),
               );
             },
-            title: wordFilteringItems[index][AppStrings.keyName],
-          );
-        },
+            title: 'Sort',
+          ),
+          for (int index = 0; index < wordFilteringItems.length; index++)
+            // filter buttons -->
+            FilterButton(
+              onTap: () {
+                Get.bottomSheet(
+                  backgroundColor: ConstUiColors.backgroundColor,
+                  FilterSheetWidget(
+                    onChanged: (indexOfSelectedFilterItem) {
+                      _wordController.selectFilters(
+                        type: wordFilteringItems[index][AppStrings.keyType],
+                        filterItem: indexOfSelectedFilterItem,
+                      );
+                    },
+                    isSelected: (indexOfSelectedFilterItem) {
+                      return _wordController.isFilterSelected(
+                        type: wordFilteringItems[index][AppStrings.keyType],
+                        filterItem: indexOfSelectedFilterItem,
+                      );
+                    },
+                    filterItems:
+                        wordFilteringItems[index][AppStrings.keyFilterItems],
+                    type: wordFilteringItems[index][AppStrings.keyType],
+                  ),
+                );
+              },
+              title: wordFilteringItems[index][AppStrings.keyName],
+            ),
+        ],
       ),
     );
   }
