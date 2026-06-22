@@ -50,7 +50,7 @@ class UIStrings {
   static const delete = 'delete';
   static const deleting = 'Deleting!';
   static const thereIsNoBookYet = 'there is no book yet!';
-  static const thereIsNoWordYet = 'There is no word yet';
+  static const wordBoxIsEmpty = 'Words box is empty';
   static const addBooks = 'Add books';
   static const manageBooks = 'Manage books';
   static const manageWords = 'Manage words';
@@ -94,7 +94,7 @@ class AppStrings {
   static const keyExample = 'example';
   static const keyType = 'type';
   static const keyIcon = 'icon';
-  static const keyDifficulty = 'difficulty';
+  static const keyDifficulty = 'level';
   static const keyFilterItems = 'FilterItems';
 
   // DIALOGS -->

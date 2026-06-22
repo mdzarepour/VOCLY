@@ -18,6 +18,12 @@ class WordController extends GetxController {
   WordModel? get currentWord => _currentWord.value;
   Rxn<WordModel> get currentWordRx => _currentWord;
 
+  final RxBool _isLoading = false.obs;
+  bool get isLoading => _isLoading.value;
+  void _updateLoadingState({required bool value}) {
+    _isLoading.value = value;
+  }
+
   final RxList<WordModel> _words = <WordModel>[].obs;
   List<WordModel> get words {
     final filteredWords = _words.where(_matchesFilters).toList();
@@ -25,10 +31,10 @@ class WordController extends GetxController {
     return filteredWords;
   }
 
-  // raw items list (used by selection controller)
+  // used by selection controller -->
   List<WordModel> get items => _words;
 
-  // FILTERING OPERATIONS -->
+  // filtering operations -->
   bool _matchesFilters(WordModel word) {
     if (_colorFilters.isNotEmpty && !_colorFilters.contains(word.color)) {
       return false;
@@ -114,8 +120,8 @@ class WordController extends GetxController {
     loadItems();
   }
 
-  // CRUD OPERATIONS -->
-  void loadItems() {
+  // crud operations -->
+   loadItems() {
     try {
       final freshWords = wordRepository.getAllWords();
       _words.assignAll(freshWords);
@@ -126,10 +132,13 @@ class WordController extends GetxController {
 
   Future<void> deleteWords({required List<WordModel> selectedWords}) async {
     try {
+      _updateLoadingState(value: true);
       await wordRepository.deleteWords(selectedWords: selectedWords);
       loadItems();
     } catch (error) {
       Get.snackbar('Oops!', error.toString());
+    } finally {
+      _updateLoadingState(value: false);
     }
   }
 
@@ -154,7 +163,7 @@ class WordController extends GetxController {
     Get.back();
   }
 
-  bool isWordExist({required final String name}) {
+  Future<bool> isWordExist({required final String name}) async{
     try {
       return wordRepository.isWordExist(name: name);
     } catch (error) {

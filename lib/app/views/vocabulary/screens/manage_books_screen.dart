@@ -23,28 +23,35 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
   final _bookController = Get.find<BookController>();
   final _selectionController = Get.find<BookSelectionController>();
 
+  List<BookModel> _books = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appbarWidget(),
       body: Obx(() {
-        final books = _bookController.books;
-        return books.isEmpty
-            ? _emptyState()
-            : GridView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 15,
-                  crossAxisSpacing: 15,
-                  childAspectRatio: 1 / 1,
-                ),
-                itemCount: books.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final book = books[index];
-                  return _bookWidget(currentBook: book);
-                },
-              );
+        final isLoading = _bookController.isLoading;
+        _books = _bookController.books;
+        if (isLoading) {
+          return _deletingLoading();
+        } else {
+          return _books.isEmpty
+              ? _emptyState()
+              : GridView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 15,
+                    crossAxisSpacing: 15,
+                    childAspectRatio: 1 / 1,
+                  ),
+                  itemCount: _books.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final book = _books[index];
+                    return _bookWidget(currentBook: book);
+                  },
+                );
+        }
       }),
     );
   }
@@ -114,11 +121,11 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
 
         return Row(
           children: [
-            // APPBAR TITLE -->
+            // appbar title -->
             Text(UIStrings.manageBooks, style: AppTextTheme.titleMedium),
             const Spacer(),
             if (mode)
-              // DELETE ICON -->
+              // delete icon -->
               InkWell(
                 onTap: () {
                   _deleteBook(selectedBooks: selectedBooks.cast<BookModel>());
@@ -130,15 +137,28 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
                 ),
               ),
             SizedBox(width: 10),
-            // SELECT ALL ICON -->
+            // select all icon -->
             InkWell(
-              onTap: () => _selectionController.selectAllItems(),
+              onTap: () => _selectionController.selectAllItems(
+                currentSelectedItems: _books,
+              ),
               child: Icon(_selectionController.selectButtonIcon),
             ),
             SizedBox(width: 20),
           ],
         );
       }),
+    );
+  }
+
+  Widget _deletingLoading() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      spacing: 5,
+      children: [
+        CircularProgressIndicator(),
+        Text(style: AppTextTheme.titleMedium, 'Deleting books please wait..'),
+      ],
     );
   }
 

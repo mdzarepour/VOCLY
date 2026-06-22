@@ -17,3 +17,8 @@ abstract class BookRepository {
   Future<void> deleteBooks({required List<BookModel> selectedItems});
   bool isBookExist({required String name});
 }
+
+abstract class BackupRepository {
+  Future<String> exportHiveContent();
+  Future<void> importHiveContent({required List<Map<String, dynamic>> content});
+}

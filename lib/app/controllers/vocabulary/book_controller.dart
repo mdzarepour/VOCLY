@@ -13,6 +13,12 @@ class BookController extends GetxController {
   final List<BookModel> _books = <BookModel>[].obs;
   List<BookModel> get books => _books;
 
+  final RxBool _isLoading = false.obs;
+  bool get isLoading => _isLoading.value;
+  void _updateLoadingState({required bool value}) {
+    _isLoading.value = value;
+  }
+
   void loadBooks() {
     try {
       final freshWords = bookRepository.getAllBooks();
@@ -24,10 +30,13 @@ class BookController extends GetxController {
 
   Future<void> deleteBooks({required List<BookModel> selectedBooks}) async {
     try {
+      _updateLoadingState(value: true);
       await bookRepository.deleteBooks(selectedItems: selectedBooks);
       loadBooks();
     } catch (error) {
       Get.snackbar('Oops!', error.toString());
+    } finally {
+      _updateLoadingState(value: false);
     }
   }
 

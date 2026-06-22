@@ -341,7 +341,7 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
   }
 
   Future<void> _addWord({required final WordModel model}) async {
-    final bool isWordExist = _wordController.isWordExist(name: model.name);
+    final bool isWordExist =await _wordController.isWordExist(name: model.name);
 
     if (!isWordExist) {
       _wordController.addWord(word: model);

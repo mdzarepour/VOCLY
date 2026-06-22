@@ -18,6 +18,9 @@ class AppUiTheme {
     iconTheme: iconTheme(),
     tabBarTheme: tabbraTheme(),
     popupMenuTheme: popupMenuTheme(),
+    progressIndicatorTheme: ProgressIndicatorThemeData(
+      color: ConstUiColors.thirdColor,
+    ),
   );
 
   static PopupMenuThemeData popupMenuTheme() {

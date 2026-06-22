@@ -1,17 +1,17 @@
-﻿import 'package:flutter/services.dart';
-import 'package:get/get.dart';
+﻿import 'package:get/get.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:vocly/app/bindings/initial_binding.dart';
 import 'package:vocly/app/core/router/app_router.dart';
-import 'package:vocly/app/common/constants/const_strings.dart';
 import 'package:vocly/app/common/theme/app_ui_theme.dart';
-import 'package:vocly/app/models/entities/book_model.dart';
 import 'package:vocly/app/models/entities/word_model.dart';
+import 'package:vocly/app/models/entities/book_model.dart';
+import 'package:vocly/app/core/bindings/initial_binding.dart';
+import 'package:vocly/app/common/constants/const_strings.dart';
 
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   await Hive.initFlutter();
@@ -42,3 +42,12 @@ class Application extends StatelessWidget {
     );
   }
 }
+//TODO check id's of words tehen importing
+//TODO fix date sorting by changing datetime format
+//TODO make screen sliver
+//TODO fix empty state after deleting words in manage words screen
+//TODO fix position of empty words in read book screen
+//TODO use isolates in possible heavy tasks 
+//TODO add task cancelling for backups
+//TODO cancle proccess and state when bottom sheets closing in backup
+//TODO make repo implementation dry

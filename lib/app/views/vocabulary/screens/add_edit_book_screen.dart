@@ -124,13 +124,8 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
       },
       child: CardWidget(
         height: 50,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 10,
-          children: [
-            Text(style: AppTextTheme.titleMedium, '${_selectedWords.length}'),
-            Text(style: AppTextTheme.titleMedium, 'Words'),
-          ],
+        child: Center(
+          child: Text(style: AppTextTheme.titleMedium, 'Selected words'),
         ),
       ),
     );
@@ -276,7 +271,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
   }
 
   Future<void> _addBook({required final BookModel model}) async {
-    final bool isBookExist = _bookController.isBookExist(name: model.name);
+    final bool isBookExist =await _bookController.isBookExist(name: model.name);
 
     if (!isBookExist) {
       _bookController.addBook(book: model);
@@ -298,6 +293,5 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
   void dispose() {
     super.dispose();
     _nameController.dispose();
-    _descriptionController.dispose();
   }
 }

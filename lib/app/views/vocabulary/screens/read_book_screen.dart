@@ -129,12 +129,10 @@ class _ReadBookScreenState extends State<ReadBookScreen> {
         ? Column(
             spacing: 10,
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
             children: [
               Icon(Icons.search_off),
-              Text(
-                'you don\'t added any words yet',
-                style: AppTextTheme.titleMedium,
-              ),
+              Text('Words box is empty', style: AppTextTheme.titleMedium),
             ],
           )
         : GridView.builder(
@@ -148,7 +146,6 @@ class _ReadBookScreenState extends State<ReadBookScreen> {
             itemCount: currentBookWords.length,
             itemBuilder: (context, index) {
               final WordModel currentWord = currentBookWords[index];
-
               return InkWell(
                 onTap: () {
                   Get.toNamed(Routes.readWordScreen, arguments: currentWord);

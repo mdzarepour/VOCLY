@@ -1,5 +1,5 @@
 import 'package:get/get_navigation/get_navigation.dart';
-import 'package:vocly/app/bindings/vocabulary_binding.dart';
+import 'package:vocly/app/core/bindings/vocabulary_binding.dart';
 import 'package:vocly/app/views/vocabulary/screens/add_edit_book_screen.dart';
 import 'package:vocly/app/views/vocabulary/screens/home_screen.dart';
 import 'package:vocly/app/views/vocabulary/screens/add_edit_word_screen.dart';

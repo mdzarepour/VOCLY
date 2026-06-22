@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:vocly/app/controllers/vocabulary/backup_controller.dart';
 import 'package:vocly/app/controllers/vocabulary/book_controller.dart';
 import 'package:vocly/app/controllers/vocabulary/search_controller.dart';
 import 'package:vocly/app/controllers/vocabulary/selection_controller.dart';
@@ -31,7 +32,12 @@ class VocabularyBinding extends Bindings {
       ),
     );
     Get.lazyPut<SpellingController>(
-      () => SpellingController(currentWord: Get.find<WordController>().currentWordRx),
+      () => SpellingController(
+        currentWord: Get.find<WordController>().currentWordRx,
+      ),
+    );
+    Get.lazyPut<BackupController>(
+      () => BackupController(backupRepository: Get.find<BackupRepository>()),
     );
   }
 }

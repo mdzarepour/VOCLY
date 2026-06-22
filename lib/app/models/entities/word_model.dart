@@ -47,7 +47,7 @@ class WordModel extends HiveObject with EquatableMixin {
 
   factory WordModel.fromMap(Map<String, dynamic> map) {
     return WordModel(
-      id: Uuid().v4(),
+      id: map['id'] ?? Uuid().v4(),
       createAt: DateTime.now().microsecond.toString(),
       name: map['name'],
       meaning: map['meaning'],
@@ -55,7 +55,7 @@ class WordModel extends HiveObject with EquatableMixin {
       icon: map['icon'],
       type: map['type'],
       color: map['color'],
-      level: map['difficulty'],
+      level: map['level'],
     );
   }
 
@@ -66,7 +66,21 @@ class WordModel extends HiveObject with EquatableMixin {
     icon = map['icon'];
     type = map['type'];
     color = map['color'];
-    level = map['difficulty'];
+    level = map['level'];
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'meaning': meaning,
+      'example': example,
+      'icon': icon,
+      'type': type,
+      'color': color,
+      'level': level,
+      'createAt': createAt,
+    };
   }
 
   @override

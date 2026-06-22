@@ -1,13 +1,16 @@
+import 'dart:convert';
+import 'dart:isolate';
 import 'package:hive/hive.dart';
 import 'package:vocly/app/models/entities/book_model.dart';
 import 'package:vocly/app/models/entities/word_model.dart';
 import 'package:vocly/app/models/repositories/vocabulary_repository.dart';
 
-class HiveVocabularyRepository implements WordRepository, BookRepository {
+class VocabularyRepositoryImp
+    implements WordRepository, BookRepository, BackupRepository {
   final Box<WordModel> wordsBox;
   final Box<BookModel> booksBox;
 
-  HiveVocabularyRepository({required this.booksBox, required this.wordsBox});
+  VocabularyRepositoryImp({required this.booksBox, required this.wordsBox});
 
   @override
   Future<void> addBook({required BookModel book}) async {
@@ -115,9 +118,43 @@ class HiveVocabularyRepository implements WordRepository, BookRepository {
 
   @override
   List<WordModel> getBookWords({required BookModel book}) {
-    return book.words
-        .map((id) => wordsBox.get(id))
-        .whereType<WordModel>()
-        .toList();
+    try {
+        return book.words
+            .map((id) => wordsBox.get(id))
+            .whereType<WordModel>()
+            .toList();
+    } on HiveError catch (error) {
+      throw error.message;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<String> exportHiveContent() async {
+    try {
+      final List<WordModel> allWords = wordsBox.values.toList();
+      final List<Map<String, dynamic>> rawMap = allWords.map((e) => e.toMap(),).toList();
+
+      return jsonEncode(rawMap);
+    } on HiveError catch (error) {
+      return error.message;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> importHiveContent({
+    required List<Map<String, dynamic>> content,
+  }) async {
+    try {
+       List<WordModel> newWords = content.map<WordModel>((e) => WordModel.fromMap(e)).toList();
+       await wordsBox.addAll(newWords);
+    } on HiveError catch (error) {
+      throw error.message;
+    } catch (error) {
+      rethrow;
+    }
   }
 }

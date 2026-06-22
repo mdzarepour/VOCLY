@@ -28,7 +28,6 @@ class _SearchScreenState extends State<SearchScreen> {
       appBar: _searchWidget(),
       body: Obx(() {
         final words = _searchController.words;
-
         if (words.isEmpty) {
           return Center(child: _emptyStateWidget());
         } else {
@@ -88,7 +87,7 @@ class _SearchScreenState extends State<SearchScreen> {
       spacing: 10,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(UIStrings.thereIsNoWordYet, style: AppTextTheme.titleMedium),
+        Text(UIStrings.wordBoxIsEmpty, style: AppTextTheme.titleMedium),
         Icon(Icons.search_off_outlined, size: 30),
       ],
     );

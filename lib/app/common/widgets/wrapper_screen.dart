@@ -1,7 +1,10 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/get_instance.dart';
 import 'package:vocly/app/common/theme/app_text_theme.dart';
 import 'package:vocly/app/common/constants/const_strings.dart';
 import 'package:vocly/app/common/constants/const_colors.dart';
+import 'package:vocly/app/core/services/link_service.dart';
 import 'package:vocly/app/views/vocabulary/screens/home_screen.dart';
 
 class WarpperScreen extends StatefulWidget {
@@ -12,7 +15,9 @@ class WarpperScreen extends StatefulWidget {
 }
 
 class _WarpperScreenState extends State<WarpperScreen> {
+  final _linkService = Get.find<LinkService>();
   final GlobalKey<ScaffoldState> _key = GlobalKey();
+
   int _selectedScreenIndex = 0;
   int _selectedTileIndex = 0;
 
@@ -53,21 +58,30 @@ class _WarpperScreenState extends State<WarpperScreen> {
             const SizedBox(height: 10),
             _DrawerTile(
               isSelected: _selectedTileIndex == 1,
-              onTap: () => _changeSelectedTileIndex(index: 1),
+              onTap: () async {
+                _changeSelectedTileIndex(index: 1);
+                await _linkService.shareAppLink();
+              },
               icon: Icons.send_rounded,
               title: UIStrings.shareToFriends,
             ),
             const SizedBox(height: 10),
             _DrawerTile(
               isSelected: _selectedTileIndex == 2,
-              onTap: () => _changeSelectedTileIndex(index: 2),
+              onTap: () async {
+                _changeSelectedTileIndex(index: 2);
+                await _linkService.openDonationLink();
+              },
               icon: Icons.battery_charging_full_outlined,
               title: UIStrings.donationToCreator,
             ),
             const SizedBox(height: 10),
             _DrawerTile(
               isSelected: _selectedTileIndex == 3,
-              onTap: () => _changeSelectedTileIndex(index: 3),
+              onTap: () async {
+                _changeSelectedTileIndex(index: 3);
+                await _linkService.sendEmail();
+              },
               icon: Icons.phone,
               title: UIStrings.helpAndFeedback,
             ),

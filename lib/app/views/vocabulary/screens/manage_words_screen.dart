@@ -29,6 +29,7 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
   final _selectionController = Get.find<WordSelectionController>();
 
   late final bool _isManagingMode;
+  List<WordModel> _words = [];
   bool _isGridLayout = false;
 
   @override
@@ -41,7 +42,9 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final selectedArg = Get.arguments[1] as List<String>;
-      _selectionController.initPreviouslySelectedWords(selectedWords: selectedArg) ;
+      _selectionController.initPreviouslySelectedWords(
+        selectedWords: selectedArg,
+      );
     });
   }
 
@@ -50,18 +53,23 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
     return Scaffold(
       appBar: _appbarWidget(),
       body: Obx(() {
-        final words = _wordController.words;
+        final isLoading = _wordController.isLoading;
+        _words = _wordController.words;
+        print(_words.isEmpty);
+        print('rebuilded');
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             SizedBox(height: 10),
             _filterWidget(),
             SizedBox(height: 10),
-            Expanded(
-              child: words.isEmpty
-                  ? _emptyStateWidget()
-                  : _wordsListWidget(words),
-            ),
+            if (isLoading) Expanded(child: _deletingLoading()),
+            if (!isLoading)
+              Expanded(
+                child: _words.isEmpty
+                    ? _emptyStateWidget()
+                    : _wordsListWidget(words: _words),
+              ),
             if (!_isManagingMode) _addButton(),
           ],
         );
@@ -69,7 +77,21 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
     );
   }
 
-  Widget _wordsListWidget(List<WordModel> words) {
+  Widget _deletingLoading() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      spacing: 10,
+      children: [
+        CircularProgressIndicator(),
+        Text(
+          style: AppTextTheme.titleMedium,
+          'Deleting words please dont leave',
+        ),
+      ],
+    );
+  }
+
+  Widget _wordsListWidget({required List<WordModel> words}) {
     return GridView.builder(
       padding: EdgeInsets.only(left: 20, right: 20, bottom: 30),
       itemCount: words.length,
@@ -141,7 +163,7 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
       spacing: 10,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(UIStrings.thereIsNoWordYet, style: AppTextTheme.titleMedium),
+        Text(UIStrings.wordBoxIsEmpty, style: AppTextTheme.titleMedium),
         Icon(Icons.search_off_outlined, size: 30),
       ],
     );
@@ -155,10 +177,10 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
         final mode = _selectionController.isSelectionMode;
         return Row(
           children: [
-            Text(UIStrings.manageBooks, style: AppTextTheme.titleMedium),
+            Text(UIStrings.manageWords, style: AppTextTheme.titleMedium),
             const Spacer(),
             if (mode)
-              // DELETE ICON -->
+              // delete icon -->
               InkWell(
                 onTap: () {
                   _deleteWord(selectedWords: selectedItem.cast<WordModel>());
@@ -170,15 +192,19 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
                 ),
               ),
             SizedBox(width: 10),
-            // LAYOUT ICON -->
+            // layout icon-->
             InkWell(
               onTap: () => _changeLayout(),
               child: Icon(_getLayoutIcon()),
             ),
             SizedBox(width: 10),
-            // SELECT ALL ICON -->
+            // select all icon -->
             InkWell(
-              onTap: () => _selectionController.selectAllItems(),
+              onTap: () {
+                _selectionController.selectAllItems(
+                  currentSelectedItems: _words,
+                );
+              },
               child: Icon(_selectionController.selectButtonIcon),
             ),
             SizedBox(width: 20),
@@ -196,7 +222,7 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
         padding: EdgeInsets.symmetric(horizontal: 20),
         scrollDirection: Axis.horizontal,
         children: [
-          // SORT BUTTONS -->
+          // sort buttons -->
           FilterButton(
             onTap: () {
               Get.bottomSheet(
@@ -216,7 +242,7 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
             title: 'Sort',
           ),
           for (int index = 0; index < wordFilteringItems.length; index++)
-            // FILTER BUTTONS-->
+            // filter buttons -->
             FilterButton(
               onTap: () {
                 Get.bottomSheet(

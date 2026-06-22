@@ -15,6 +15,9 @@ abstract class _SelectionController<T> extends GetxController {
 
   IconData get selectButtonIcon {
     final items = providedItems();
+    if (_selectedItems.isEmpty) {
+      return Icons.done_all_outlined;
+    }
     if (_selectedItems.length >= items.length) {
       return Icons.do_not_disturb_alt_outlined;
     } else {
@@ -48,16 +51,20 @@ abstract class _SelectionController<T> extends GetxController {
     }
   }
 
-  void selectAllItems() {
-    final items = providedItems();
-    if (_selectedItems.isEmpty || _selectedItems.length < items.length) {
+  void selectAllItems({required List<T> currentSelectedItems}) {
+    if (_selectedItems.isEmpty || _selectedItems.length < currentSelectedItems.length) {
       updateSelectionMode(mode: true);
       _selectedItems.clear();
-      _selectedItems.addAll(items);
+      _selectedItems.addAll(currentSelectedItems);
     } else {
       updateSelectionMode(mode: false);
       _selectedItems.clear();
     }
+  }
+
+  void clearSelection() {
+    _selectedItems.clear();
+    updateSelectionMode(mode: false);
   }
 
   @override
@@ -69,12 +76,14 @@ abstract class _SelectionController<T> extends GetxController {
 }
 
 class WordSelectionController extends _SelectionController<WordModel> {
-  void initPreviouslySelectedWords({required List<String> selectedWords}){
+  void initPreviouslySelectedWords({required List<String> selectedWords}) {
     final List<WordModel> allWords = providedItems();
     selectedItems.clear();
-      final List<WordModel> previouslySelectedWords = allWords.where((word) => selectedWords.contains(word.id)).toList() ;
-      selectedItems.addAll(previouslySelectedWords);
-      updateSelectionMode(mode: true);
+    final List<WordModel> previouslySelectedWords = allWords
+        .where((word) => selectedWords.contains(word.id))
+        .toList();
+    selectedItems.addAll(previouslySelectedWords);
+    updateSelectionMode(mode: true);
   }
 
   WordSelectionController({required super.providedItems});
