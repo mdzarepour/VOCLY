@@ -46,11 +46,10 @@ class VocabularyRepositoryImp
   @override
   Future<void> deleteWords({required List<WordModel> selectedWords}) async {
     try {
-      for (var item in selectedWords) {
-        if (item.isInBox) {
-          await wordsBox.delete(item.id);
-        }
-      }
+      final List<String> idsToMap = selectedWords.map((e) => e.id).toList();
+      final List<String> keys = await Isolate.run(() => idsToMap.toList());
+
+      await wordsBox.deleteAll(keys);
     } on HiveError catch (error) {
       throw error.message;
     }
@@ -119,10 +118,10 @@ class VocabularyRepositoryImp
   @override
   List<WordModel> getBookWords({required BookModel book}) {
     try {
-        return book.words
-            .map((id) => wordsBox.get(id))
-            .whereType<WordModel>()
-            .toList();
+      return book.words
+          .map((id) => wordsBox.get(id))
+          .whereType<WordModel>()
+          .toList();
     } on HiveError catch (error) {
       throw error.message;
     } catch (error) {
@@ -133,24 +132,37 @@ class VocabularyRepositoryImp
   @override
   Future<String> exportHiveContent() async {
     try {
-      final List<WordModel> allWords = wordsBox.values.toList();
-      final List<Map<String, dynamic>> rawMap = allWords.map((e) => e.toMap(),).toList();
+      final List<Map<String, dynamic>> rawList = wordsBox.values
+          .map<Map<String, dynamic>>((word) => word.toMap())
+          .toList();
 
-      return jsonEncode(rawMap);
+      final String encodedData = await Isolate.run(() {
+        return jsonEncode(rawList);
+      });
+
+      return encodedData;
     } on HiveError catch (error) {
-      return error.message;
+      throw error.message;
     } catch (error) {
       rethrow;
     }
   }
 
   @override
-  Future<void> importHiveContent({
-    required List<Map<String, dynamic>> content,
-  }) async {
+  Future<void> importHiveContent({required String content}) async {
     try {
-       List<WordModel> newWords = content.map<WordModel>((e) => WordModel.fromMap(e)).toList();
-       await wordsBox.addAll(newWords);
+      final Map<dynamic, WordModel> wordsMap = await Isolate.run(() {
+        final decodedList = jsonDecode(content) as List<dynamic>;
+
+        final Map<dynamic, WordModel> map = {};
+        for (var item in decodedList) {
+          final word = WordModel.fromMap(item);
+          map[word.id] = word;
+        }
+        return map;
+      });
+
+      await wordsBox.putAll(wordsMap);
     } on HiveError catch (error) {
       throw error.message;
     } catch (error) {

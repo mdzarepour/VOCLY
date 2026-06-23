@@ -20,15 +20,16 @@ class WordController extends GetxController {
 
   final RxBool _isLoading = false.obs;
   bool get isLoading => _isLoading.value;
+  
   void _updateLoadingState({required bool value}) {
     _isLoading.value = value;
   }
 
   final RxList<WordModel> _words = <WordModel>[].obs;
   List<WordModel> get words {
-    final filteredWords = _words.where(_matchesFilters).toList();
-    filteredWords.sort(_compareBySortType);
-    return filteredWords;
+    // final filteredWords = _words.where(_matchesFilters).toList();
+    // filteredWords.sort(_compareBySortType);
+    return _words;
   }
 
   // used by selection controller -->
@@ -121,7 +122,7 @@ class WordController extends GetxController {
   }
 
   // crud operations -->
-   loadItems() {
+  void loadItems() {
     try {
       final freshWords = wordRepository.getAllWords();
       _words.assignAll(freshWords);
@@ -163,7 +164,7 @@ class WordController extends GetxController {
     Get.back();
   }
 
-  Future<bool> isWordExist({required final String name}) async{
+  Future<bool> isWordExist({required final String name}) async {
     try {
       return wordRepository.isWordExist(name: name);
     } catch (error) {

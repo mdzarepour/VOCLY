@@ -11,7 +11,7 @@ import 'package:vocly/app/common/constants/const_strings.dart';
 import 'package:vocly/app/core/enums/enums.dart';
 import 'package:vocly/app/core/router/app_router.dart';
 import 'package:vocly/app/core/services/speech_service.dart';
-import 'package:vocly/app/controllers/vocabulary/spelling_controller.dart';
+import 'package:vocly/app/common/controllers/spelling_controller.dart';
 
 import 'package:vocly/app/models/entities/word_model.dart';
 

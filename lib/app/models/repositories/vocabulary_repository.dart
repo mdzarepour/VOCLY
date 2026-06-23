@@ -20,5 +20,5 @@ abstract class BookRepository {
 
 abstract class BackupRepository {
   Future<String> exportHiveContent();
-  Future<void> importHiveContent({required List<Map<String, dynamic>> content});
+  Future<void> importHiveContent({required String content});
 }

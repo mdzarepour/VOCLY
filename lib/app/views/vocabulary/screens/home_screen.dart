@@ -1,4 +1,5 @@
-﻿import 'package:get/get.dart';
+﻿import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:vocly/app/common/widgets/input_widget.dart';
 import 'package:vocly/app/controllers/vocabulary/backup_controller.dart';
@@ -202,13 +203,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       _wordController.loadItems();
                     },
                     child: Obx(() {
-                      final isLoading = _backupController.isLoading;
+                      final isLoading = _backupController.importLoading;
                       return CardWidget(
                         selectedBorderColor: ConstUiColors.positiveColor,
                         height: 70,
                         child: Center(
                           child: isLoading
-                              ? CircularProgressIndicator()
+                              ? SpinKitThreeInOut(
+                                  size: 15,
+                                  color: ConstUiColors.thirdColor,
+                                )
                               : Text(
                                   style: AppTextTheme.titleMedium,
                                   'Confirm',
@@ -244,27 +248,30 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _exportWidget() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(width: double.infinity, height: 15),
-          Container(
-            width: 50,
-            height: 3,
-            decoration: BoxDecoration(color: ConstUiColors.thirdColor),
-          ),
-          SizedBox(height: 15),
-          Text(style: AppTextTheme.titleMedium, 'Export data'),
-          SizedBox(height: 20),
-          InkWell(
-            onTap: () => _backupController.exportToFile(),
-            child: Obx(() {
-              final isLoading = _backupController.isLoading;
-              return CardWidget(
+      child: Obx(() {
+        final isLoading = _backupController.exportLoading;
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(width: double.infinity, height: 15),
+            Container(
+              width: 50,
+              height: 3,
+              decoration: BoxDecoration(color: ConstUiColors.thirdColor),
+            ),
+            SizedBox(height: 15),
+            Text(style: AppTextTheme.titleMedium, 'Export data'),
+            SizedBox(height: 20),
+            InkWell(
+              onTap: () => _backupController.exportToFile(),
+              child: CardWidget(
                 height: 70,
                 child: Center(
-                  child: isLoading
-                      ? CircularProgressIndicator()
+                  child: isLoading == ExportStatus.file
+                      ? SpinKitThreeInOut(
+                          size: 15,
+                          color: ConstUiColors.thirdColor,
+                        )
                       : Row(
                           spacing: 5,
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -277,43 +284,48 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                 ),
-              );
-            }),
-          ),
-          SizedBox(height: 15),
-          InkWell(
-            onTap: () => _backupController.exportToClipboard(),
-            child: CardWidget(
-              height: 70,
-              child: Center(
-                child: Row(
-                  spacing: 5,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.paste),
-                    Text(
-                      style: AppTextTheme.titleMedium,
-                      'Export to clipboard',
-                    ),
-                  ],
+              ),
+            ),
+            SizedBox(height: 15),
+            InkWell(
+              onTap: () => _backupController.exportToClipboard(),
+              child: CardWidget(
+                height: 70,
+                child: isLoading == ExportStatus.clipboard
+                    ? SpinKitThreeInOut(
+                        size: 15,
+                        color: ConstUiColors.thirdColor,
+                      )
+                    : Center(
+                        child: Row(
+                          spacing: 5,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.paste),
+                            Text(
+                              style: AppTextTheme.titleMedium,
+                              'Export to clipboard',
+                            ),
+                          ],
+                        ),
+                      ),
+              ),
+            ),
+            SizedBox(height: 15),
+            InkWell(
+              onTap: () => Get.back(),
+              child: CardWidget(
+                selectedBorderColor: ConstUiColors.errorColor,
+                height: 70,
+                child: Center(
+                  child: Text(style: AppTextTheme.titleMedium, 'Cancle'),
                 ),
               ),
             ),
-          ),
-          SizedBox(height: 15),
-          InkWell(
-            onTap: () => Get.back(),
-            child: CardWidget(
-              selectedBorderColor: ConstUiColors.errorColor,
-              height: 70,
-              child: Center(
-                child: Text(style: AppTextTheme.titleMedium, 'Cancle'),
-              ),
-            ),
-          ),
-          SizedBox(height: 15),
-        ],
-      ),
+            SizedBox(height: 15),
+          ],
+        );
+      }),
     );
   }
 
