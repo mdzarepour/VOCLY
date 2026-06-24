@@ -1,5 +1,6 @@
 ﻿import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:vocly/app/controllers/vocabulary/word_controller.dart';
 import 'package:vocly/app/common/theme/app_text_theme.dart';
@@ -47,35 +48,37 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
         title: Text(UIStrings.wordReview, style: AppTextTheme.titleMedium),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Obx(() {
-              final currentWord = _wordController.currentWord;
-              if (currentWord == null) {
-                return CircularProgressIndicator();
-              } else {
-                return Column(
-                  children: [
-                    SizedBox(height: 20),
-                    _cardWidget(currentWord: currentWord),
-                    SizedBox(height: 20),
-                    _listenButton(),
-                    SizedBox(height: 20),
-                    spellWidget(),
-                    SizedBox(height: 20),
-                    _editButton(currentWord: currentWord),
-                  ],
-                );
-              }
-            }),
-          ),
-        ),
+        child: Obx(() {
+          final currentWord = _wordController.currentWord;
+          if (currentWord == null) {
+            return SpinKitThreeInOut(size: 15, color: ConstUiColors.thirdColor);
+          } else {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(child: SizedBox(height: 20)),
+                  SliverToBoxAdapter(
+                    child: _cardWidget(currentWord: currentWord),
+                  ),
+                  SliverToBoxAdapter(child: SizedBox(height: 20)),
+                  SliverToBoxAdapter(child: _listenButton()),
+                  SliverToBoxAdapter(child: SizedBox(height: 20)),
+                  SliverToBoxAdapter(child: _spellWidget()),
+                  SliverToBoxAdapter(child: SizedBox(height: 20)),
+                  SliverToBoxAdapter(
+                    child: _editButton(currentWord: currentWord),
+                  ),
+                ],
+              ),
+            );
+          }
+        }),
       ),
     );
   }
 
-  Widget spellWidget() {
+  Widget _spellWidget() {
     return Obx(() {
       final selectedChars = _spellingController.selectedChars;
       final word = _spellingController.word;

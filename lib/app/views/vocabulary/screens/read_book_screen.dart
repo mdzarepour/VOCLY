@@ -1,5 +1,6 @@
 ﻿import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:vocly/app/controllers/vocabulary/book_controller.dart';
 import 'package:vocly/app/common/theme/app_text_theme.dart';
@@ -43,31 +44,56 @@ class _ReadBookScreenState extends State<ReadBookScreen> {
         title: Text(UIStrings.bookReview, style: AppTextTheme.titleMedium),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Obx(() {
-              final currentBook = _bookController.currentBook;
-              if (currentBook == null) {
-                return CircularProgressIndicator();
-              } else {
-                return Column(
-                  children: [
-                    _cardWidget(currentBook: currentBook),
-                    SizedBox(height: 20),
-                    _editButton(currentBook: currentBook),
-                    SizedBox(height: 20),
-                    _wordsList(
-                      currentBookWords: _bookController.getBookWords(
-                        currentBook,
-                      ),
-                    ),
-                  ],
-                );
-              }
-            }),
-          ),
+        child: Padding(
+          padding: EdgeInsetsGeometry.symmetric(horizontal: 20),
+          child: Obx(() {
+            final currentBook = _bookController.currentBook;
+            if (currentBook == null) {
+              return SpinKitThreeInOut(
+                size: 15,
+                color: ConstUiColors.thirdColor,
+              );
+            } else {
+              return CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: _cardWidget(currentBook: currentBook),
+                  ),
+                  SliverToBoxAdapter(child: SizedBox(height: 20)),
+                  SliverToBoxAdapter(
+                    child: _editButton(currentBook: currentBook),
+                  ),
+                  _getWordsListView(currentBook: currentBook),
+                ],
+              );
+            }
+          }),
         ),
+      ),
+    );
+  }
+
+  Widget _getWordsListView({required BookModel currentBook}) {
+    if (currentBook.words.isEmpty) {
+      return _emptyStateWidget();
+    } else {
+      return _wordsList(
+        currentBookWords: _bookController.getBookWords(currentBook),
+      );
+    }
+  }
+
+  SliverFillRemaining _emptyStateWidget() {
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      fillOverscroll: false,
+      child: Column(
+        spacing: 5,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.search_off_outlined),
+          Text(style: AppTextTheme.titleMedium, 'You dont added words yet!'),
+        ],
       ),
     );
   }
@@ -125,42 +151,34 @@ class _ReadBookScreenState extends State<ReadBookScreen> {
   }
 
   Widget _wordsList({required final List<WordModel> currentBookWords}) {
-    return currentBookWords.isEmpty
-        ? Column(
-            spacing: 10,
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Icon(Icons.search_off),
-              Text('Words box is empty', style: AppTextTheme.titleMedium),
-            ],
-          )
-        : GridView.builder(
-            shrinkWrap: true,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 15,
-              crossAxisSpacing: 15,
-              mainAxisExtent: 70,
-            ),
-            itemCount: currentBookWords.length,
-            itemBuilder: (context, index) {
-              final WordModel currentWord = currentBookWords[index];
-              return InkWell(
-                onTap: () {
-                  Get.toNamed(Routes.readWordScreen, arguments: currentWord);
-                },
-                child: WordTile(
-                  name: currentWord.name,
-                  meaning: currentWord.meaning,
-                  icon: currentWord.icon,
-                  type: currentWord.type,
-                  isSmallTile: true,
-                  color: currentWord.color,
-                ),
-              );
+    return SliverPadding(
+      padding: EdgeInsetsGeometry.only(top: 20),
+      sliver: SliverGrid.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 15,
+          crossAxisSpacing: 15,
+          mainAxisExtent: 70,
+        ),
+        itemCount: currentBookWords.length,
+        itemBuilder: (context, index) {
+          final WordModel currentWord = currentBookWords[index];
+          return InkWell(
+            onTap: () {
+              Get.toNamed(Routes.readWordScreen, arguments: currentWord);
             },
+            child: WordTile(
+              name: currentWord.name,
+              meaning: currentWord.meaning,
+              icon: currentWord.icon,
+              type: currentWord.type,
+              isSmallTile: true,
+              color: currentWord.color,
+            ),
           );
+        },
+      ),
+    );
   }
 
   Widget _editButton({required final BookModel currentBook}) {

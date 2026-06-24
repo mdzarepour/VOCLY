@@ -52,7 +52,14 @@ abstract class _SelectionController<T> extends GetxController {
   }
 
   void selectAllItems({required List<T> currentSelectedItems}) {
-    if (_selectedItems.isEmpty || _selectedItems.length < currentSelectedItems.length) {
+    final items = providedItems();
+    if (items.isEmpty) {
+      Get.snackbar('Cant select', 'there is no item for select');
+      return;
+    }
+    
+    if (_selectedItems.isEmpty ||
+        _selectedItems.length < currentSelectedItems.length) {
       updateSelectionMode(mode: true);
       _selectedItems.clear();
       _selectedItems.addAll(currentSelectedItems);

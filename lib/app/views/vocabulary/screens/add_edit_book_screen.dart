@@ -235,10 +235,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(_isEditingType ? Icons.edit : Icons.done),
-                  Text(
-                    _isEditingType ? UIStrings.edit : UIStrings.done,
-                    style: AppTextTheme.titleMedium,
-                  ),
+                  Text(UIStrings.done, style: AppTextTheme.titleMedium),
                 ],
               ),
             ),
@@ -271,7 +268,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
   }
 
   Future<void> _addBook({required final BookModel model}) async {
-    final bool isBookExist =await _bookController.isBookExist(name: model.name);
+    final bool isBookExist = _bookController.isBookExist(name: model.name);
 
     if (!isBookExist) {
       _bookController.addBook(book: model);

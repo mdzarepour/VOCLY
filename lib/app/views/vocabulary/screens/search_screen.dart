@@ -30,34 +30,32 @@ class _SearchScreenState extends State<SearchScreen> {
         final words = _searchController.words;
         if (words.isEmpty) {
           return Center(child: _emptyStateWidget());
-        } else {
-          return Column(
-            children: [
-              const SizedBox(height: 15),
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  itemCount: words.length,
-                  itemBuilder: (context, index) {
-                    final currentWord = words[index];
-                    final query = _searchController.query;
-                    return InkWell(
-                      onTap: () => Get.toNamed(
-                        Routes.readWordScreen,
-                        arguments: currentWord,
-                      ),
-                      child: _SearchWordTile(
-                        currentWord: currentWord,
-                        query: query,
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          );
-        }
+        } else {}
+        return CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(child: SizedBox(height: 20)),
+            _wordsListView(words),
+          ],
+        );
       }),
+    );
+  }
+
+  Widget _wordsListView(List<WordModel> words) {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      sliver: SliverList.builder(
+        itemCount: words.length,
+        itemBuilder: (context, index) {
+          final currentWord = words[index];
+          final query = _searchController.query;
+          return InkWell(
+            onTap: () =>
+                Get.toNamed(Routes.readWordScreen, arguments: currentWord),
+            child: _SearchWordTile(currentWord: currentWord, query: query),
+          );
+        },
+      ),
     );
   }
 
@@ -83,13 +81,17 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _emptyStateWidget() {
-    return Column(
-      spacing: 10,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(UIStrings.wordBoxIsEmpty, style: AppTextTheme.titleMedium),
-        Icon(Icons.search_off_outlined, size: 30),
-      ],
+    return SliverFillRemaining(
+      fillOverscroll: false,
+      hasScrollBody: false,
+      child: Column(
+        spacing: 10,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(UIStrings.wordBoxIsEmpty, style: AppTextTheme.titleMedium),
+          Icon(Icons.search_off_outlined, size: 30),
+        ],
+      ),
     );
   }
 

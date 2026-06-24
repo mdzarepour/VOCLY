@@ -42,11 +42,9 @@ class Application extends StatelessWidget {
     );
   }
 }
-//TODO check id's of words when importing [done👍]
 //TODO fix date sorting by changing datetime format
-//TODO make screen sliver
+
 //TODO fix empty state after deleting words in manage words screen [its about filtering]
-//TODO fix position of empty words in read book screen
 //TODO make repo implementation dry
 
 ///[for smooth manage words screen]
@@ -58,11 +56,3 @@ class Application extends StatelessWidget {
 //TODO add pagination to word controller
 //step four
 //TODO use two getter and avoid using loadWords() every time -- use add.new word or updated word to visible words list instead of entire list
-
-///[for backup feature]
-//step one [done 👍]
-//TODO move export and import methods inside isolate
-//step two 
-//TODO add process canceling feature 
-//ste three
-//TODO cancle process when sheet closed

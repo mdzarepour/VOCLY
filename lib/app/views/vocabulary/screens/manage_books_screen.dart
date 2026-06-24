@@ -35,25 +35,33 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
         if (isLoading) {
           return _deletingLoading();
         } else {
-          return _books.isEmpty
-              ? _emptyState()
-              : GridView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 15,
-                    crossAxisSpacing: 15,
-                    childAspectRatio: 1 / 1,
-                  ),
-                  itemCount: _books.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final book = _books[index];
-                    return _bookWidget(currentBook: book);
-                  },
-                );
+          return CustomScrollView(slivers: [_getBooksListView(books: _books)]);
         }
       }),
     );
+  }
+
+  Widget _getBooksListView({required List<BookModel> books}) {
+    if (books.isEmpty) {
+      return _emptyState();
+    } else {
+      return SliverPadding(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        sliver: SliverGrid.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 15,
+            crossAxisSpacing: 15,
+            childAspectRatio: 1 / 1,
+          ),
+          itemCount: _books.length,
+          itemBuilder: (BuildContext context, int index) {
+            final book = _books[index];
+            return _bookWidget(currentBook: book);
+          },
+        ),
+      );
+    }
   }
 
   Widget _bookWidget({required final BookModel currentBook}) {
@@ -101,14 +109,18 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
   }
 
   Widget _emptyState() {
-    return Column(
-      spacing: 10,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(width: double.infinity),
-        Icon(Icons.search_off_outlined),
-        Text(style: AppTextTheme.titleMedium, UIStrings.thereIsNoBookYet),
-      ],
+    return SliverFillRemaining(
+      fillOverscroll: false,
+      hasScrollBody: false,
+      child: Column(
+        spacing: 10,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(width: double.infinity),
+          Icon(Icons.search_off_outlined),
+          Text(style: AppTextTheme.titleMedium, UIStrings.thereIsNoBookYet),
+        ],
+      ),
     );
   }
 
