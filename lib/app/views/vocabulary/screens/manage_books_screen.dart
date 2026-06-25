@@ -5,13 +5,13 @@ import 'package:vocly/app/common/widgets/filter_button.dart';
 import 'package:vocly/app/common/widgets/filter_sheet_widget.dart';
 import 'package:vocly/app/common/widgets/sort_sheet_widget.dart';
 import 'package:vocly/app/controllers/vocabulary/book_controller.dart';
-import 'package:vocly/app/controllers/vocabulary/selection_controller.dart';
+import 'package:vocly/app/common/controllers/filter_controller.dart';
+import 'package:vocly/app/common/controllers/selection_controller.dart';
 import 'package:vocly/app/common/theme/app_text_theme.dart';
 import 'package:vocly/app/common/constants/const_strings.dart';
 import 'package:vocly/app/common/widgets/card_widget.dart';
 import 'package:vocly/app/common/constants/const_colors.dart';
 import 'package:vocly/app/common/constants/const_icons.dart';
-import 'package:vocly/app/controllers/vocabulary/word_controller.dart';
 import 'package:vocly/app/core/router/app_router.dart';
 import 'package:vocly/app/core/services/dialog_service.dart';
 import 'package:vocly/app/models/entities/book_model.dart';
@@ -26,9 +26,8 @@ class ManageBooksScreen extends StatefulWidget {
 class _ManageBooksScreenState extends State<ManageBooksScreen> {
   final _dialogService = Get.find<DialogService>();
   final _bookController = Get.find<BookController>();
-  //TODO delete word controller
-  final _wordController = Get.find<WordController>();
   final _selectionController = Get.find<BookSelectionController>();
+  final _filterController = Get.find<FilterController<BookModel>>();
 
   List<BookModel> _books = [];
 
@@ -38,7 +37,9 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
       appBar: _appbarWidget(),
       body: Obx(() {
         final isLoading = _bookController.isLoading;
-        _books = _bookController.books;
+        _books = _filterController.getFilteredItems(
+          items: _bookController.books,
+        );
         return CustomScrollView(
           slivers: [
             SliverToBoxAdapter(child: _filterWidget()),
@@ -103,10 +104,10 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
                 backgroundColor: ConstUiColors.backgroundColor,
                 SortSheetWidget(
                   onChanged: (selectedSortType) {
-                    _wordController.selectSort(sortType: selectedSortType);
+                    _filterController.selectSort(sortType: selectedSortType);
                   },
                   isSelected: (selectedSortType) {
-                    return _wordController.isSortSelected(
+                    return _filterController.isSortSelected(
                       sortType: selectedSortType,
                     );
                   },
@@ -123,13 +124,13 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
                   backgroundColor: ConstUiColors.backgroundColor,
                   FilterSheetWidget(
                     onChanged: (indexOfSelectedFilterItem) {
-                      _wordController.selectFilters(
+                      _filterController.selectFilters(
                         type: filteringItems[index][AppStrings.keyType],
                         filterItem: indexOfSelectedFilterItem,
                       );
                     },
                     isSelected: (indexOfSelectedFilterItem) {
-                      return _wordController.isFilterSelected(
+                      return _filterController.isFilterSelected(
                         type: filteringItems[index][AppStrings.keyType],
                         filterItem: indexOfSelectedFilterItem,
                       );

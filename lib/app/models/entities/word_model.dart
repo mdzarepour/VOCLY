@@ -2,13 +2,16 @@ import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
+import 'package:vocly/app/models/vacabulary_model.dart';
 part 'word_model.g.dart';
 
 @HiveType(typeId: 0)
-class WordModel extends HiveObject with EquatableMixin {
+class WordModel extends VacabularyModel with EquatableMixin, HiveObjectMixin {
+  @override
   @HiveField(0)
   final String id;
 
+  @override
   @HiveField(1)
   String name;
 
@@ -18,20 +21,27 @@ class WordModel extends HiveObject with EquatableMixin {
   @HiveField(3)
   String example;
 
+  @override
   @HiveField(4)
   int icon;
 
+  @override
   @HiveField(5)
   int type;
 
+  @override
   @HiveField(6)
   int color;
 
+  @override
   @HiveField(7)
   int level;
 
+  @override
   @HiveField(8)
   String createAt;
+
+  
 
   WordModel({
     required this.id,
@@ -40,10 +50,18 @@ class WordModel extends HiveObject with EquatableMixin {
     required this.example,
     required this.icon,
     required this.type,
-    required this.color,
     required this.level,
+    required this.color,
     required this.createAt,
-  });
+  }) : super(
+         id: id,
+         name: name,
+         color: color,
+         icon: icon,
+         level: level,
+         createAt: createAt,
+         type: type
+       );
 
   factory WordModel.fromMap(Map<String, dynamic> map) {
     return WordModel(
@@ -60,13 +78,13 @@ class WordModel extends HiveObject with EquatableMixin {
   }
 
   void updateWordModel({required Map<String, dynamic> map}) {
-    name = map['name'];
-    meaning = map['meaning'];
-    example = map['example'];
-    icon = map['icon'];
-    type = map['type'];
-    color = map['color'];
-    level = map['level'];
+    name = map['name'] ?? name;
+    meaning = map['meaning'] ?? meaning;
+    example = map['example'] ?? example;
+    icon = map['icon'] ?? icon;
+    type = map['type'] ?? type;
+    color = map['color'] ?? color;
+    level = map['level'] ?? level;
   }
 
   Map<String, dynamic> toMap() {

@@ -42,18 +42,16 @@ class Application extends StatelessWidget {
     );
   }
 }
-//TODO fix date sorting by changing datetime format
 
-//TODO fix empty state after deleting words in manage words screen [its about filtering]
 //TODO make repo implementation dry
 //TODO fix duplicated import problem
 
 ///[for smooth manage words screen]
-//step one
+//step one [done]
 //TODO separate sorting and filtering logic from word controller (will use in other controllers)
-//step two
+//step two [done]
 //TODO delete sorting and filtering from _words getter
-//step three
+//step three [dont need]
 //TODO add pagination to word controller
-//step four
+//step four 
 //TODO use two getter and avoid using loadWords() every time -- use add.new word or updated word to visible words list instead of entire list

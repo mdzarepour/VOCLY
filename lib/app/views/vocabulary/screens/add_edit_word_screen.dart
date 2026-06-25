@@ -56,7 +56,7 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
     _selectedIconIndex = _editingWord.icon;
     _selectedTypeIndex = _editingWord.type;
     _selectedColorIndex = _editingWord.color;
-    _selectedDifficultyIndex = _editingWord.level;
+    _selectedDifficultyIndex = _editingWord.type;
   }
 
   @override
@@ -341,7 +341,9 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
   }
 
   Future<void> _addWord({required final WordModel model}) async {
-    final bool isWordExist =await _wordController.isWordExist(name: model.name);
+    final bool isWordExist = await _wordController.isWordExist(
+      name: model.name,
+    );
 
     if (!isWordExist) {
       _wordController.addWord(word: model);

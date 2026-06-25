@@ -17,13 +17,16 @@ class BookModelAdapter extends TypeAdapter<BookModel> {
       color: fields[3] as int,
       icon: fields[4] as int,
       words: (fields[5] as List).cast<String>(),
+      level: fields[6] as int,
+      createAt: fields[7] as String,
+      type: fields[8] as int
     );
   }
 
   @override
   void write(BinaryWriter writer, BookModel obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -35,7 +38,13 @@ class BookModelAdapter extends TypeAdapter<BookModel> {
       ..writeByte(4)
       ..write(obj.icon)
       ..writeByte(5)
-      ..write(obj.words);
+      ..write(obj.words)
+      ..writeByte(6)
+      ..write(obj.level)
+      ..writeByte(7)
+      ..write(obj.createAt)
+      ..writeByte(8)
+      ..write(obj.type);
   }
 
   @override

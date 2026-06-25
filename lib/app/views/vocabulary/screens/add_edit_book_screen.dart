@@ -217,6 +217,8 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
                   AppStrings.keyColor: _selectedColorIndex,
                   AppStrings.keyBanner: _selectedIconIndex,
                   AppStrings.keyWords: _selectedWords,
+                  'level': 1,
+                  'type': 1,
                 };
                 if (_isEditingType) {
                   _editingBook!.updateBook(map: map);

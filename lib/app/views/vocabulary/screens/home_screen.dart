@@ -56,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
               }),
               // add words button -->
               Obx(() {
-                final wordsLength = _wordController.items.length;
+                final wordsLength = _wordController.words.length;
                 return Expanded(
                   child: _HomeButton(
                     icon: Icons.language_outlined,

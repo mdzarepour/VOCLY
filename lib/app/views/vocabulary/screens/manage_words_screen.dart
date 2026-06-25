@@ -3,7 +3,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:get/route_manager.dart';
 import 'package:get/state_manager.dart';
-import 'package:vocly/app/controllers/vocabulary/selection_controller.dart';
+import 'package:vocly/app/common/controllers/filter_controller.dart';
+import 'package:vocly/app/common/controllers/selection_controller.dart';
 import 'package:vocly/app/controllers/vocabulary/word_controller.dart';
 import 'package:vocly/app/common/widgets/filter_button.dart';
 import 'package:vocly/app/common/widgets/filter_sheet_widget.dart';
@@ -27,6 +28,7 @@ class ManageWordsScreen extends StatefulWidget {
 class _ManageWordsScreenState extends State<ManageWordsScreen> {
   final _dialogService = Get.find<DialogService>();
   final _wordController = Get.find<WordController>();
+  final _filterController = Get.find<FilterController<WordModel>>();
   final _selectionController = Get.find<WordSelectionController>();
 
   late final bool _isManagingMode;
@@ -45,7 +47,9 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
       appBar: _appbarWidget(),
       body: Obx(() {
         final isLoading = _wordController.isLoading;
-        _words = _wordController.words;
+        _words = _filterController.getFilteredItems(
+          items: _wordController.words,
+        );
         return CustomScrollView(
           slivers: [
             SliverToBoxAdapter(child: SizedBox(height: 20)),
@@ -119,10 +123,10 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
                 backgroundColor: ConstUiColors.backgroundColor,
                 SortSheetWidget(
                   onChanged: (selectedSortType) {
-                    _wordController.selectSort(sortType: selectedSortType);
+                    _filterController.selectSort(sortType: selectedSortType);
                   },
                   isSelected: (selectedSortType) {
-                    return _wordController.isSortSelected(
+                    return _filterController.isSortSelected(
                       sortType: selectedSortType,
                     );
                   },
@@ -139,13 +143,13 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
                   backgroundColor: ConstUiColors.backgroundColor,
                   FilterSheetWidget(
                     onChanged: (indexOfSelectedFilterItem) {
-                      _wordController.selectFilters(
+                      _filterController.selectFilters(
                         type: wordFilteringItems[index][AppStrings.keyType],
                         filterItem: indexOfSelectedFilterItem,
                       );
                     },
                     isSelected: (indexOfSelectedFilterItem) {
-                      return _wordController.isFilterSelected(
+                      return _filterController.isFilterSelected(
                         type: wordFilteringItems[index][AppStrings.keyType],
                         filterItem: indexOfSelectedFilterItem,
                       );
@@ -319,6 +323,6 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
   void dispose() {
     super.dispose();
     _selectionController.dispose();
-    _wordController.deleteFilters();
+    _filterController.deleteFilters();
   }
 }
