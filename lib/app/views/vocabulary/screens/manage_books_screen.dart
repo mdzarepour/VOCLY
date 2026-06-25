@@ -1,5 +1,9 @@
-﻿import 'package:get/get.dart';
+﻿import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:vocly/app/common/widgets/filter_button.dart';
+import 'package:vocly/app/common/widgets/filter_sheet_widget.dart';
+import 'package:vocly/app/common/widgets/sort_sheet_widget.dart';
 import 'package:vocly/app/controllers/vocabulary/book_controller.dart';
 import 'package:vocly/app/controllers/vocabulary/selection_controller.dart';
 import 'package:vocly/app/common/theme/app_text_theme.dart';
@@ -7,6 +11,7 @@ import 'package:vocly/app/common/constants/const_strings.dart';
 import 'package:vocly/app/common/widgets/card_widget.dart';
 import 'package:vocly/app/common/constants/const_colors.dart';
 import 'package:vocly/app/common/constants/const_icons.dart';
+import 'package:vocly/app/controllers/vocabulary/word_controller.dart';
 import 'package:vocly/app/core/router/app_router.dart';
 import 'package:vocly/app/core/services/dialog_service.dart';
 import 'package:vocly/app/models/entities/book_model.dart';
@@ -21,6 +26,8 @@ class ManageBooksScreen extends StatefulWidget {
 class _ManageBooksScreenState extends State<ManageBooksScreen> {
   final _dialogService = Get.find<DialogService>();
   final _bookController = Get.find<BookController>();
+  //TODO delete word controller
+  final _wordController = Get.find<WordController>();
   final _selectionController = Get.find<BookSelectionController>();
 
   List<BookModel> _books = [];
@@ -32,43 +39,149 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
       body: Obx(() {
         final isLoading = _bookController.isLoading;
         _books = _bookController.books;
-        if (isLoading) {
-          return _deletingLoading();
-        } else {
-          return CustomScrollView(slivers: [_getBooksListView(books: _books)]);
-        }
+        return CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(child: _filterWidget()),
+            SliverToBoxAdapter(child: SizedBox(height: 20)),
+            _getMainWidget(isLoading: isLoading, isEmpty: _books.isEmpty),
+          ],
+        );
       }),
     );
   }
 
-  Widget _getBooksListView({required List<BookModel> books}) {
-    if (books.isEmpty) {
-      return _emptyState();
-    } else {
-      return SliverPadding(
+  AppBar _appbarWidget() {
+    return AppBar(
+      automaticallyImplyLeading: true,
+      title: Obx(() {
+        final mode = _selectionController.isSelectionMode;
+        final selectedBooks = _selectionController.selectedItems;
+        return Row(
+          children: [
+            // appbar title -->
+            Text(UIStrings.manageBooks, style: AppTextTheme.titleMedium),
+            const Spacer(),
+            if (mode)
+              // delete icon -->
+              InkWell(
+                onTap: () {
+                  _deleteBook(selectedBooks: selectedBooks.cast<BookModel>());
+                },
+                child: SizedBox(
+                  height: 40,
+                  width: 40,
+                  child: Icon(Icons.delete_outline),
+                ),
+              ),
+            SizedBox(width: 10),
+            // select all icon -->
+            InkWell(
+              onTap: () => _selectionController.selectAllItems(
+                currentSelectedItems: _books,
+              ),
+              child: Icon(_selectionController.selectButtonIcon),
+            ),
+            SizedBox(width: 20),
+          ],
+        );
+      }),
+    );
+  }
+
+  Widget _filterWidget() {
+    final filteringItems = AppStrings.wordFilteringItems;
+    return SizedBox(
+      height: 35,
+      child: ListView(
         padding: EdgeInsets.symmetric(horizontal: 20),
-        sliver: SliverGrid.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 15,
-            crossAxisSpacing: 15,
-            childAspectRatio: 1 / 1,
+        scrollDirection: Axis.horizontal,
+        children: [
+          // sort buttons -->
+          FilterButton(
+            onTap: () {
+              Get.bottomSheet(
+                backgroundColor: ConstUiColors.backgroundColor,
+                SortSheetWidget(
+                  onChanged: (selectedSortType) {
+                    _wordController.selectSort(sortType: selectedSortType);
+                  },
+                  isSelected: (selectedSortType) {
+                    return _wordController.isSortSelected(
+                      sortType: selectedSortType,
+                    );
+                  },
+                ),
+              );
+            },
+            title: 'Sort',
           ),
-          itemCount: _books.length,
-          itemBuilder: (BuildContext context, int index) {
-            final book = _books[index];
-            return _bookWidget(currentBook: book);
-          },
-        ),
-      );
+          for (int index = 0; index < filteringItems.length; index++)
+            // filter buttons -->
+            FilterButton(
+              onTap: () {
+                Get.bottomSheet(
+                  backgroundColor: ConstUiColors.backgroundColor,
+                  FilterSheetWidget(
+                    onChanged: (indexOfSelectedFilterItem) {
+                      _wordController.selectFilters(
+                        type: filteringItems[index][AppStrings.keyType],
+                        filterItem: indexOfSelectedFilterItem,
+                      );
+                    },
+                    isSelected: (indexOfSelectedFilterItem) {
+                      return _wordController.isFilterSelected(
+                        type: filteringItems[index][AppStrings.keyType],
+                        filterItem: indexOfSelectedFilterItem,
+                      );
+                    },
+                    filterItems:
+                        filteringItems[index][AppStrings.keyFilterItems],
+                    type: filteringItems[index][AppStrings.keyType],
+                  ),
+                );
+              },
+              title: filteringItems[index][AppStrings.keyName],
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _getMainWidget({required bool isLoading, required bool isEmpty}) {
+    if (isLoading) {
+      return _deletingLoading();
+    } else {
+      if (isEmpty) {
+        return _emptyStateWidget();
+      } else {
+        return _booksListView();
+      }
     }
+  }
+
+  Widget _booksListView() {
+    return SliverPadding(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      sliver: SliverGrid.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 15,
+          crossAxisSpacing: 15,
+          childAspectRatio: 1 / 1,
+        ),
+        itemCount: _books.length,
+        itemBuilder: (BuildContext context, int index) {
+          final book = _books[index];
+          return _bookWidget(currentBook: book);
+        },
+      ),
+    );
   }
 
   Widget _bookWidget({required final BookModel currentBook}) {
     return Obx(() {
       final mode = _selectionController.isSelectionMode;
       final isSelected = _selectionController.isSelected(item: currentBook);
-
       return InkWell(
         onLongPress: () {
           _selectionController.changeSelectionMode(item: currentBook);
@@ -108,7 +221,7 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
     });
   }
 
-  Widget _emptyState() {
+  Widget _emptyStateWidget() {
     return SliverFillRemaining(
       fillOverscroll: false,
       hasScrollBody: false,
@@ -124,51 +237,12 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
     );
   }
 
-  AppBar _appbarWidget() {
-    return AppBar(
-      automaticallyImplyLeading: true,
-      title: Obx(() {
-        final mode = _selectionController.isSelectionMode;
-        final selectedBooks = _selectionController.selectedItems;
-
-        return Row(
-          children: [
-            // appbar title -->
-            Text(UIStrings.manageBooks, style: AppTextTheme.titleMedium),
-            const Spacer(),
-            if (mode)
-              // delete icon -->
-              InkWell(
-                onTap: () {
-                  _deleteBook(selectedBooks: selectedBooks.cast<BookModel>());
-                },
-                child: SizedBox(
-                  height: 40,
-                  width: 40,
-                  child: Icon(Icons.delete_outline),
-                ),
-              ),
-            SizedBox(width: 10),
-            // select all icon -->
-            InkWell(
-              onTap: () => _selectionController.selectAllItems(
-                currentSelectedItems: _books,
-              ),
-              child: Icon(_selectionController.selectButtonIcon),
-            ),
-            SizedBox(width: 20),
-          ],
-        );
-      }),
-    );
-  }
-
   Widget _deletingLoading() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       spacing: 5,
       children: [
-        CircularProgressIndicator(),
+        SpinKitThreeInOut(size: 15, color: ConstUiColors.thirdColor),
         Text(style: AppTextTheme.titleMedium, 'Deleting books please wait..'),
       ],
     );

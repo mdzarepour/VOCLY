@@ -36,17 +36,7 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
   @override
   void initState() {
     super.initState();
-    final type = Get.arguments[0] as ManageWordsScreenType;
-    _isManagingMode = type == ManageWordsScreenType.manageWords ? true : false;
-
-    if (Get.arguments[1] == null) return;
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final selectedArg = Get.arguments[1] as List<String>;
-      _selectionController.initPreviouslySelectedWords(
-        selectedWords: selectedArg,
-      );
-    });
+    _determineScreenType();
   }
 
   @override
@@ -61,125 +51,11 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
             SliverToBoxAdapter(child: SizedBox(height: 20)),
             SliverToBoxAdapter(child: _filterWidget()),
             SliverToBoxAdapter(child: SizedBox(height: 20)),
-            _getWordsList(isLoading: isLoading, words: _words),
+            _getMainWidget(isLoading: isLoading, isEmpty: _words.isEmpty),
           ],
         );
       }),
-    );
-  }
-
-  Widget _getWordsList({
-    required bool isLoading,
-    required List<WordModel> words,
-  }) {
-    if (isLoading) {
-      return _deletingLoading();
-    } else {
-      if (words.isEmpty) {
-        return _emptyStateWidget();
-      } else {
-        return _wordsListWidget(words: words);
-      }
-    }
-  }
-
-  Widget _deletingLoading() {
-    return SliverFillRemaining(
-      fillOverscroll: false,
-      hasScrollBody: false,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        spacing: 10,
-        children: [
-          SpinKitThreeInOut(size: 15, color: ConstUiColors.thirdColor),
-          Text(
-            style: AppTextTheme.titleMedium,
-            'Deleting words please dont leave',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _wordsListWidget({required List<WordModel> words}) {
-    return SliverPadding(
-      padding: EdgeInsets.only(left: 20, right: 20, bottom: 30),
-      sliver: SliverGrid.builder(
-        itemCount: words.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          mainAxisExtent: 70,
-          crossAxisCount: _isGridLayout ? 2 : 1,
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 10,
-        ),
-        itemBuilder: (context, index) {
-          final currentWord = words[index];
-          return Obx(() {
-            final mode = _selectionController.isSelectionMode;
-            final isSelected = _selectionController.isSelected(
-              item: currentWord,
-            );
-
-            return WordTile(
-              selectedBorderColor: isSelected
-                  ? ConstUiColors.thirdColor
-                  : ConstUiColors.backgroundColor2,
-              isSmallTile: _isGridLayout,
-              name: currentWord.name,
-              meaning: currentWord.meaning,
-              icon: currentWord.icon,
-              type: currentWord.type,
-              color: currentWord.color,
-              onLongPress: () {
-                _selectionController.changeSelectionMode(item: currentWord);
-              },
-              onTap: () {
-                if (mode) {
-                  _selectionController.selectItem(item: currentWord);
-                } else {
-                  Get.toNamed(Routes.readWordScreen, arguments: currentWord);
-                }
-              },
-            );
-          });
-        },
-      ),
-    );
-  }
-
-  Widget _addButton() {
-    return Obx(() {
-      final selectedWords = _selectionController.selectedItems;
-      return InkWell(
-        onTap: () => Get.back(result: selectedWords),
-        child: Container(
-          decoration: BoxDecoration(
-            border: BorderDirectional(
-              top: BorderSide(color: ConstUiColors.backgroundColor2),
-            ),
-          ),
-          height: 70,
-          child: Row(
-            spacing: 20,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(style: AppTextTheme.titleMedium, UIStrings.addBooks),
-              Text(style: AppTextTheme.titleMedium, '${selectedWords.length}'),
-            ],
-          ),
-        ),
-      );
-    });
-  }
-
-  Widget _emptyStateWidget() {
-    return Column(
-      spacing: 10,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(UIStrings.wordBoxIsEmpty, style: AppTextTheme.titleMedium),
-        Icon(Icons.search_off_outlined, size: 30),
-      ],
+      bottomNavigationBar: !_isManagingMode ? _wordSelectingButton() : null,
     );
   }
 
@@ -285,6 +161,135 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
         ],
       ),
     );
+  }
+
+  Widget _getMainWidget({required bool isLoading, required bool isEmpty}) {
+    if (isLoading) {
+      return _deletingLoading();
+    } else {
+      if (isEmpty) {
+        return _emptyStateWidget();
+      } else {
+        return _wordsListWidget();
+      }
+    }
+  }
+
+  Widget _wordsListWidget() {
+    return SliverPadding(
+      padding: EdgeInsets.only(left: 20, right: 20, bottom: 30),
+      sliver: SliverGrid.builder(
+        itemCount: _words.length,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          mainAxisExtent: 70,
+          crossAxisCount: _isGridLayout ? 2 : 1,
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
+        ),
+        itemBuilder: (context, index) {
+          final currentWord = _words[index];
+          return Obx(() {
+            final mode = _selectionController.isSelectionMode;
+            final isSelected = _selectionController.isSelected(
+              item: currentWord,
+            );
+            return WordTile(
+              selectedBorderColor: isSelected
+                  ? ConstUiColors.thirdColor
+                  : ConstUiColors.backgroundColor2,
+              isSmallTile: _isGridLayout,
+              name: currentWord.name,
+              meaning: currentWord.meaning,
+              icon: currentWord.icon,
+              type: currentWord.type,
+              color: currentWord.color,
+              onLongPress: () {
+                _selectionController.changeSelectionMode(item: currentWord);
+              },
+              onTap: () {
+                if (mode) {
+                  _selectionController.selectItem(item: currentWord);
+                } else {
+                  Get.toNamed(Routes.readWordScreen, arguments: currentWord);
+                }
+              },
+            );
+          });
+        },
+      ),
+    );
+  }
+
+  Widget _deletingLoading() {
+    return SliverFillRemaining(
+      fillOverscroll: false,
+      hasScrollBody: false,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        spacing: 10,
+        children: [
+          SpinKitThreeInOut(size: 15, color: ConstUiColors.thirdColor),
+          Text(
+            style: AppTextTheme.titleMedium,
+            'Deleting words please dont leave',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _emptyStateWidget() {
+    return SliverFillRemaining(
+      fillOverscroll: false,
+      hasScrollBody: false,
+      child: Column(
+        spacing: 10,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(UIStrings.wordBoxIsEmpty, style: AppTextTheme.titleMedium),
+          Icon(Icons.search_off_outlined, size: 30),
+        ],
+      ),
+    );
+  }
+
+  Widget _wordSelectingButton() {
+    return Obx(() {
+      final selectedWords = _selectionController.selectedItems;
+      return InkWell(
+        onTap: () => Get.back(result: selectedWords),
+        child: Container(
+          decoration: BoxDecoration(
+            border: BorderDirectional(
+              top: BorderSide(color: ConstUiColors.backgroundColor2),
+            ),
+          ),
+          height: 70,
+          child: Row(
+            spacing: 20,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(style: AppTextTheme.titleMedium, UIStrings.addBooks),
+              Text(style: AppTextTheme.titleMedium, '${selectedWords.length}'),
+            ],
+          ),
+        ),
+      );
+    });
+  }
+
+  void _determineScreenType() {
+    final type = Get.arguments[0] as ManageWordsScreenType;
+    _isManagingMode = type == ManageWordsScreenType.manageWords ? true : false;
+
+    if (Get.arguments[1] == null) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final selectedArg = Get.arguments[1] as List<String>;
+      _selectionController.initPreviouslySelectedWords(
+        selectedWords: selectedArg,
+      );
+    });
   }
 
   Future<void> _deleteWord({required List<WordModel> selectedWords}) async {

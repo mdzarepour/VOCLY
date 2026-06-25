@@ -46,6 +46,7 @@ class Application extends StatelessWidget {
 
 //TODO fix empty state after deleting words in manage words screen [its about filtering]
 //TODO make repo implementation dry
+//TODO fix duplicated import problem
 
 ///[for smooth manage words screen]
 //step one
