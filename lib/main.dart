@@ -2,16 +2,15 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:vocly/app/core/router/app_router.dart';
-import 'package:vocly/app/common/theme/app_ui_theme.dart';
-import 'package:vocly/app/models/entities/word_model.dart';
-import 'package:vocly/app/models/entities/book_model.dart';
-import 'package:vocly/app/core/bindings/initial_binding.dart';
-import 'package:vocly/app/common/constants/const_strings.dart';
+import 'package:vocly/features/vocabulary/binding/initial_binding.dart';
+import 'package:vocly/core/router/app_router.dart';
+import 'package:vocly/features/vocabulary/model/entities/book_model.dart';
+import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
+import 'package:vocly/shared/constants/const_strings.dart';
+import 'package:vocly/shared/theme/app_ui_theme.dart';
 
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   await Hive.initFlutter();
@@ -42,16 +41,3 @@ class Application extends StatelessWidget {
     );
   }
 }
-
-//TODO make repo implementation dry
-//TODO fix duplicated import problem
-
-///[for smooth manage words screen]
-//step one [done]
-//TODO separate sorting and filtering logic from word controller (will use in other controllers)
-//step two [done]
-//TODO delete sorting and filtering from _words getter
-//step three [dont need]
-//TODO add pagination to word controller
-//step four 
-//TODO use two getter and avoid using loadWords() every time -- use add.new word or updated word to visible words list instead of entire list
