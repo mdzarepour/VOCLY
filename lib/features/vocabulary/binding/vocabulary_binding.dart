@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
-import 'package:vocly/core/services/filter_service.dart';
-import 'package:vocly/features/vocabulary/controller/backup_controller.dart';
+import 'package:vocly/features/vocabulary/controller/home_controller.dart';
 import 'package:vocly/features/vocabulary/controller/book_controller.dart';
 import 'package:vocly/shared/controllers/filter_controller.dart';
 import 'package:vocly/features/vocabulary/controller/search_controller.dart';
@@ -28,21 +27,17 @@ class VocabularyBinding extends Bindings {
       () => BookSelectionController(bookRepository: Get.find<BookRepository>()),
     );
     Get.lazyPut<WordSearchController>(
-      () => WordSearchController(wordRepository: Get.find<WordRepository>()),
+      () => WordSearchController(),
     );
     Get.lazyPut<SpellingController>(
       () => SpellingController(
         currentWord: Get.find<WordController>().currentWordRx,
       ),
     );
-    Get.lazyPut<BackupController>(
-      () => BackupController(backupRepository: Get.find<BackupRepository>()),
+    Get.lazyPut<HomeController>(
+      () => HomeController(),
     );
-    Get.lazyPut<FilterController<WordModel>>(
-      () => FilterController(filterService: Get.find<FilterService>()),
-    );
-    Get.lazyPut<FilterController<BookModel>>(
-      () => FilterController(filterService: Get.find<FilterService>()),
-    );
+    Get.lazyPut<FilterController<WordModel>>(() => FilterController());
+    Get.lazyPut<FilterController<BookModel>>(() => FilterController());
   }
 }

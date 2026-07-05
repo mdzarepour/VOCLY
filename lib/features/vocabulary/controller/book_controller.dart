@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:vocly/core/error/app_exeption.dart';
+import 'package:vocly/core/error/app_exception.dart';
 import 'package:vocly/features/vocabulary/model/entities/book_model.dart';
 import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
 import 'package:vocly/features/vocabulary/model/repositories/vocabulary_repository.dart';
@@ -20,30 +20,23 @@ class BookController extends GetxController {
     _isLoading.value = value;
   }
 
-  String _errorMessage(Object? error) {
-    if (error is AppExeption) {
-      return error.message;
-    }
-    return error.toString();
-  }
-
   void loadBooks() {
     try {
       final freshWords = bookRepository.getAllBooks();
       _books.assignAll(freshWords);
     } catch (error) {
-      Get.snackbar('Failed!', _errorMessage(error));
+   //   Get.snackbar('Failed!', _errorMessage(error));
     }
   }
 
   Future<void> deleteBooks({required List<BookModel> selectedBooks}) async {
     try {
       _updateLoadingState(value: true);
-      await bookRepository.deleteBooks(selectedItems: selectedBooks);
-      loadBooks();
+      await bookRepository.deleteBooks(selectedBooks: selectedBooks);
     } catch (error) {
-      Get.snackbar('Oops!', _errorMessage(error));
+    //  Get.snackbar('Oops!', _errorMessage(error));
     } finally {
+      loadBooks();
       _updateLoadingState(value: false);
     }
   }
@@ -53,27 +46,30 @@ class BookController extends GetxController {
       await bookRepository.updateBook(book: newBook);
       _currentBook.value = newBook;
       _currentBook.refresh();
-      loadBooks();
     } catch (error) {
-      Get.snackbar('Oops!', _errorMessage(error));
+     // Get.snackbar('Oops!', _errorMessage(error));
+    } finally {
+      loadBooks();
     }
   }
 
-  Future<void> addBook({required BookModel book}) async {
+  Future<void> addBook({required Map<String, dynamic> map}) async {
     try {
+      final BookModel book = BookModel.fromMap(map: map);
       await bookRepository.addBook(book: book);
-      loadBooks();
     } catch (error) {
-      Get.snackbar('Oops!', _errorMessage(error));
+    //  Get.snackbar('Oops!', _errorMessage(error));
+    } finally {
+      Get.back();
+      loadBooks();
     }
-    Get.back();
   }
 
   bool isBookExist({required final String name}) {
     try {
       return bookRepository.isBookExist(name: name);
     } catch (error) {
-      Get.snackbar('Oops!', _errorMessage(error));
+   //   Get.snackbar('Oops!', _errorMessage(error));
       return false;
     }
   }
@@ -83,7 +79,7 @@ class BookController extends GetxController {
       final List<WordModel> bookWords = bookRepository.getBookWords(book: book);
       return bookWords;
     } catch (error) {
-      Get.snackbar('Oops!', _errorMessage(error));
+   //   Get.snackbar('Oops!', _errorMessage(error));
       return [];
     }
   }

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:isolate';
 import 'package:hive/hive.dart';
-import 'package:vocly/core/error/app_exeption.dart';
+import 'package:vocly/core/error/app_exception.dart';
 import 'package:vocly/features/vocabulary/model/entities/book_model.dart';
 import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
 import 'package:vocly/features/vocabulary/model/repositories/vocabulary_repository.dart';
@@ -13,57 +13,53 @@ class VocabularyRepository
 
   VocabularyRepository({required this.booksBox, required this.wordsBox});
 
-  AppExeption _wrapException(Object error, {String? code}) {
-    if (error is AppExeption) {
-      return error;
-    }
-    return AppExeption(
-      message: error.toString(),
-      code: code,
-      cause: error,
-      stackTrace: StackTrace.current,
-    );
-  }
+  @override
+  int get getBooksCount => booksBox.values.length;
+
+  @override
+  int get getWordsCount => wordsBox.values.length;
 
   @override
   Future<void> addBook({required BookModel book}) async {
     try {
-      await booksBox.put(book.id, book);
+      await booksBox.add(book);
     } on HiveError catch (error) {
-      throw _wrapException(error, code: 'hive_error');
+      throw AppError(errorMessage: error.toString(), cause: error);
     }
   }
 
   @override
   Future<void> addWord({required WordModel word}) async {
     try {
-      await wordsBox.put(word.id, word);
+      await wordsBox.add(word);
     } on HiveError catch (error) {
-      throw _wrapException(error, code: 'hive_error');
+      throw AppError(errorMessage: error.toString(), cause: error);
     }
   }
 
   @override
-  Future<void> deleteBooks({required List<BookModel> selectedItems}) async {
+  Future<void> deleteBooks({required List<BookModel> selectedBooks}) async {
     try {
-      for (var item in selectedItems) {
-        if (item.isInBox) {
-          await booksBox.delete(item.id);
+      for (var currentBook in selectedBooks) {
+        if (currentBook.isInBox) {
+          await currentBook.delete();
         }
       }
     } on HiveError catch (error) {
-      throw _wrapException(error, code: 'hive_error');
+      throw AppError(errorMessage: error.toString(), cause: error);
     }
   }
 
   @override
   Future<void> deleteWords({required List<WordModel> selectedWords}) async {
     try {
-      final List<String> idsToMap = selectedWords.map((e) => e.id).toList();
-      final List<String> keys = await Isolate.run(() => idsToMap.toList());
-      await wordsBox.deleteAll(keys);
+      for (var currentWord in selectedWords) {
+        if (currentWord.isInBox) {
+          await currentWord.delete();
+        }
+      }
     } on HiveError catch (error) {
-      throw _wrapException(error, code: 'hive_error');
+      throw AppError(errorMessage: error.toString(), cause: error);
     }
   }
 
@@ -73,7 +69,7 @@ class VocabularyRepository
       final List<BookModel> books = booksBox.values.toList();
       return books;
     } catch (error) {
-      throw _wrapException(error, code: 'read_error');
+      throw AppError(errorMessage: error.toString(), cause: error);
     }
   }
 
@@ -81,9 +77,9 @@ class VocabularyRepository
   List<WordModel> getAllWords() {
     try {
       final List<WordModel> words = wordsBox.values.toList();
-      return words;
+      return words.reversed.toList();
     } catch (error) {
-      throw _wrapException(error, code: 'read_error');
+      throw AppError(errorMessage: error.toString(), cause: error);
     }
   }
 
@@ -94,7 +90,7 @@ class VocabularyRepository
         (element) => element.name.toLowerCase().contains(name.toLowerCase()),
       );
     } catch (error) {
-      throw _wrapException(error, code: 'read_error');
+      throw AppError(errorMessage: error.toString(), cause: error);
     }
   }
 
@@ -105,42 +101,39 @@ class VocabularyRepository
         (element) => element.name.toLowerCase().contains(name.toLowerCase()),
       );
     } catch (error) {
-      throw _wrapException(error, code: 'read_error');
+      throw AppError(errorMessage: error.toString(), cause: error);
     }
   }
 
   @override
-  List<WordModel> searchWords({
-    required List<WordModel> words,
-    required String query,
-  }) {
+  List<WordModel> searchWords({required String query}) {
+    final allWords = wordsBox.values.toList();
     final normalizedQuery = query.trim().toLowerCase();
+
     if (normalizedQuery.isEmpty) {
-      return words;
+      return allWords;
     }
-    return words.where((word) {
-      final name = word.name.toLowerCase();
-      final example = word.example.toLowerCase();
-      return name.contains(normalizedQuery) ||
-          example.contains(normalizedQuery);
+    return allWords.where((word) {
+      return word.name.toLowerCase().contains(normalizedQuery) ||
+          word.example.toLowerCase().contains(normalizedQuery);
     }).toList();
   }
 
   @override
   Future<void> updateBook({required BookModel book}) async {
     try {
-      await booksBox.put(book.id, book);
+      await book.save();
     } on HiveError catch (error) {
-      throw _wrapException(error, code: 'hive_error');
+      throw AppError(errorMessage: error.toString(), cause: error);
     }
   }
 
   @override
   Future<void> updateWord({required WordModel word}) async {
     try {
-      await wordsBox.put(word.id, word);
+      await word.save();
     } on HiveError catch (error) {
-      throw _wrapException(error, code: 'hive_error');
+      throw AppError(errorMessage: error.toString(), cause: error);
     }
   }
 
@@ -152,58 +145,38 @@ class VocabularyRepository
           .whereType<WordModel>()
           .toList();
     } on HiveError catch (error) {
-      throw _wrapException(error, code: 'hive_error');
-    } catch (error) {
-      throw _wrapException(error, code: 'read_error');
+      throw AppError(errorMessage: error.toString(), cause: error);
     }
   }
 
   @override
   Future<String> exportHiveContent() async {
     try {
-      final List<Map<String, dynamic>> rawList = wordsBox.values
+      final rawList = wordsBox.values
           .map<Map<String, dynamic>>((word) => word.toMap())
           .toList();
-
       final String encodedData = await Isolate.run(() {
         return jsonEncode(rawList);
       });
       return encodedData;
     } on HiveError catch (error) {
-      throw _wrapException(error, code: 'hive_error');
-    } catch (error) {
-      throw _wrapException(error, code: 'export_error');
+      throw AppError(errorMessage: error.toString(), cause: error);
     }
   }
 
   @override
   Future<void> importHiveContent({required String content}) async {
-    try {
-      final Map<dynamic, WordModel> wordsMap = await Isolate.run(() {
-        final decodedList = jsonDecode(content) as List<dynamic>;
-
-        final Map<dynamic, WordModel> map = {};
-        for (var item in decodedList) {
-          final word = WordModel.fromMap(item);
-          map[word.id] = word;
-        }
-        return map;
-      });
-      if (wordsBox.values.length + wordsMap.length > 50000) {
-        final remainCapacity = 50000 - wordsBox.values.length;
-        throw _wrapException(
-          'Remains word capacity is $remainCapacity ',
-          code: 'capacity_error',
-        );
-      }
-      await wordsBox.putAll(wordsMap);
-    } on HiveError catch (error) {
-      throw _wrapException(error, code: 'hive_error');
-    } catch (error) {
-      if (error is AppExeption) {
-        rethrow;
-      }
-      throw _wrapException(error, code: 'import_error');
+    final decoded = await Isolate.run(
+      () => jsonDecode(content) as List<dynamic>,
+    );
+    if (wordsBox.length + decoded.length > 50000) {
+      throw AppError(errorMessage: 'Capacity exceeded');
     }
+    final existing = wordsBox.values.map((e) => e.id).toSet();
+    final items = decoded
+        .map((e) => WordModel.fromMap(Map<String, dynamic>.from(e)))
+        .where((w) => !existing.contains(w.id))
+        .toList();
+    await wordsBox.addAll(items);
   }
 }

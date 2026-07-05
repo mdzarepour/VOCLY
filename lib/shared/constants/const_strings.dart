@@ -1,5 +1,4 @@
-﻿import 'package:vocly/core/types/enums.dart';
-
+﻿
 class UIStrings {
   UIStrings._();
   static const appName = 'VOCLY';

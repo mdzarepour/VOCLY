@@ -18,7 +18,7 @@ class BookModelAdapter extends TypeAdapter<BookModel> {
       icon: fields[4] as int,
       words: (fields[5] as List).cast<String>(),
       level: fields[6] as int,
-      createAt: fields[7] as String,
+      createAt: fields[7] as int,
       type: fields[8] as int
     );
   }

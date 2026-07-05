@@ -7,10 +7,8 @@ abstract class WordRepository {
   Future<void> updateWord({required WordModel word});
   Future<void> deleteWords({required List<WordModel> selectedWords});
   bool isWordExist({required String name});
-  List<WordModel> searchWords({
-    required List<WordModel> words,
-    required String query,
-  });
+  List<WordModel> searchWords({required String query});
+  int get getWordsCount;
 }
 
 abstract class BookRepository {
@@ -18,8 +16,9 @@ abstract class BookRepository {
   List<WordModel> getBookWords({required BookModel book});
   Future<void> addBook({required BookModel book});
   Future<void> updateBook({required BookModel book});
-  Future<void> deleteBooks({required List<BookModel> selectedItems});
+  Future<void> deleteBooks({required List<BookModel> selectedBooks});
   bool isBookExist({required String name});
+  int get getBooksCount;
 }
 
 abstract class BackupRepository {

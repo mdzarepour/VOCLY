@@ -1,13 +1,13 @@
-class VacabularyModel {
+class VocabularyModel {
   String id;
   String name;
   int color;
   int icon;
   int level;
-  String createAt;
+  int createAt;
   int type;
 
-  VacabularyModel({
+  VocabularyModel({
     required this.level,
     required this.id,
     required this.name,

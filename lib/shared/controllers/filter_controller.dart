@@ -1,41 +1,23 @@
 import 'package:get/state_manager.dart';
 import 'package:vocly/core/types/enums.dart';
-import 'package:vocly/features/vocabulary/model/entities/vacabulary_model.dart';
-import 'package:vocly/core/services/filter_service.dart';
+import 'package:vocly/core/types/vocabulary_model.dart';
 
-class FilterController<T extends VacabularyModel> extends GetxController {
-  final FilterService filterService;
-  FilterController({required this.filterService});
-
-  final Rx<SortType> _sortType = SortType.newest.obs;
+class FilterController<T extends VocabularyModel> extends GetxController {
   final RxMap<FilterType, Set> _activeFilters = <FilterType, Set>{}.obs;
 
-  List<T> getFilteredItems({required List<T> items}) {
-    return filterService.applyFilters<T>(
-      items: items,
-      sortType: _sortType.value,
-      activeFilters: _activeFilters,
-    );
-  }
-
-  void selectSort({required SortType sortType}) {
-    _sortType.value = sortType;
-  }
-
-  bool isSortSelected({required SortType sortType}) {
-    return _sortType.value == sortType;
-  }
-
-  void selectFilters({required FilterType type, required int filterItem}) {
+  void selectFilter({required FilterType type, required int filterItem}) {
     if (!_activeFilters.containsKey(type)) {
       _activeFilters[type] = {};
     }
-    final currentSet = _activeFilters[type]!;
-    if (currentSet.contains(filterItem)) {
-      currentSet.remove(filterItem);
-      if (currentSet.isEmpty) _activeFilters.remove(type);
+    final currentFilter = _activeFilters[type]!;
+    if (currentFilter.contains(filterItem)) {
+      currentFilter.remove(filterItem);
+
+      if (currentFilter.isEmpty) {
+        _activeFilters.remove(type);
+      }
     } else {
-      currentSet.add(filterItem);
+      currentFilter.add(filterItem);
     }
     _activeFilters.refresh();
   }
@@ -44,11 +26,33 @@ class FilterController<T extends VacabularyModel> extends GetxController {
     return _activeFilters[type]?.contains(filterItem) ?? false;
   }
 
-  Set getFilterItems(FilterType type) {
-    return _activeFilters[type] ?? {};
-  }
-
   void deleteFilters() {
     _activeFilters.clear();
   }
+
+  // List<T> getFilteredItems({required List<T> items}) {
+  //   if (_activeFilters.isEmpty) {
+  //     return items;
+  //   }
+  //   List<T> result = List<T>.from(items);
+
+  //   for (var entry in _activeFilters.entries) {
+  //     final type = entry.key;
+  //     final selectedFilterItems = entry.value;
+
+  //     result = result.where((element) {
+  //       switch (type) {
+  //         case FilterType.icon:
+  //           return selectedFilterItems.contains(element.icon);
+  //         case FilterType.color:
+  //           return selectedFilterItems.contains(element.color);
+  //         case FilterType.level:
+  //           return selectedFilterItems.contains(element.level);
+  //         case FilterType.type:
+  //           return selectedFilterItems.contains(element.type);
+  //       }
+  //     }).toList();
+  //   }
+  //   return result;
+  // }
 }

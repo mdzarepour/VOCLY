@@ -19,7 +19,7 @@ class WordModelAdapter extends TypeAdapter<WordModel> {
       type: fields[5] as int,
       color: fields[6] as int,
       level: fields[7] as int,
-      createAt: fields[8] as String,
+      createAt: fields[8] as int,
     );
   }
 

@@ -2,9 +2,7 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:vocly/shared/widgets/input_widget.dart';
-import 'package:vocly/features/vocabulary/controller/backup_controller.dart';
-import 'package:vocly/features/vocabulary/controller/book_controller.dart';
-import 'package:vocly/features/vocabulary/controller/word_controller.dart';
+import 'package:vocly/features/vocabulary/controller/home_controller.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
 import 'package:vocly/shared/widgets/card_widget.dart';
@@ -12,20 +10,9 @@ import 'package:vocly/shared/constants/const_colors.dart';
 import 'package:vocly/core/types/enums.dart';
 import 'package:vocly/core/router/app_router.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends GetView<HomeController> {
   final void Function()? onTap;
   const HomeScreen({super.key, this.onTap});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  final _backupInputController = TextEditingController();
-
-  final _wordController = Get.find<WordController>();
-  final _bookController = Get.find<BookController>();
-  final _backupController = Get.find<BackupController>();
 
   @override
   Widget build(BuildContext context) {
@@ -37,35 +24,33 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(height: 20),
           _searchWidget(),
           const SizedBox(height: 30),
+          // title
           Text(UIStrings.yourVocabulary, style: AppTextTheme.titleMedium),
           const SizedBox(height: 15),
           Row(
             spacing: 10,
             children: [
-              // manage books button -->
+              // manage books button
               Obx(() {
-                final booksLength = _bookController.books.length;
+                final booksLength = controller.booksCount;
                 return Expanded(
                   child: _HomeButton(
                     icon: Icons.chrome_reader_mode_outlined,
                     title: UIStrings.books,
                     data: '$booksLength Books',
-                    onTap: () => Get.toNamed(Routes.manageBooksScreen),
+                    onTap: () => controller.goToManageBooksScreen(),
                   ),
                 );
               }),
-              // add words button -->
+              // add words button
               Obx(() {
-                final wordsLength = _wordController.words.length;
+                final wordsLength = controller.wordsCount;
                 return Expanded(
                   child: _HomeButton(
                     icon: Icons.language_outlined,
                     title: UIStrings.words,
                     data: '$wordsLength Words',
-                    onTap: () => Get.toNamed(
-                      Routes.manageWordsScreen,
-                      arguments: [ManageWordsScreenType.manageWords, null],
-                    ),
+                    onTap: () => controller.goToManageWordsScreen(),
                   ),
                 );
               }),
@@ -75,42 +60,42 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             spacing: 10,
             children: [
-              // add book button -->
+              // add book button
               Expanded(
                 child: _HomeButton(
                   icon: Icons.add_outlined,
                   title: UIStrings.newBook,
-                  onTap: () => Get.toNamed(
-                    Routes.addEditBookScreen,
-                    arguments: [BookScreenType.addBook, null],
-                  ),
+                  onTap: () => controller.goToAddEditBookScreen(),
                 ),
               ),
-              // add word button -->
+              // add word button
               Expanded(
                 child: _HomeButton(
                   icon: Icons.add_outlined,
                   title: UIStrings.newWord,
-                  onTap: () => Get.toNamed(
-                    Routes.addEditWordScreen,
-                    arguments: [WordScreenType.addWord, null],
-                  ),
+                  onTap: () => controller.goToAddEditWordScreen(),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 30),
+          // title
           Text('Use Prepared Books', style: AppTextTheme.titleMedium),
           const SizedBox(height: 15),
+          // book library web link
           _HomeButton(
             icon: Icons.coffee_outlined,
             title: 'Use vocabulary',
             data: 'We are prepared some vocabulary for you',
-            onTap: () {},
+            onTap: () {
+              controller.openBookLibrary();
+            },
           ),
           const SizedBox(height: 30),
+          // title
           Text(UIStrings.yourData, style: AppTextTheme.titleMedium),
           const SizedBox(height: 15),
+          // export bottom sheet
           _HomeButton(
             icon: Icons.folder_outlined,
             title: UIStrings.exportYour,
@@ -123,6 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           const SizedBox(height: 10),
+          // import bottom sheet
           _HomeButton(
             icon: Icons.import_export,
             title: UIStrings.importYourData,
@@ -132,7 +118,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 backgroundColor: ConstUiColors.backgroundColor,
                 _importWidget(),
               );
-              _backupInputController.clear();
             },
           ),
         ],
@@ -149,27 +134,41 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             SizedBox(width: double.infinity, height: 15),
+            // drag effect widget
             Container(
               width: 50,
               height: 3,
               decoration: BoxDecoration(color: ConstUiColors.thirdColor),
             ),
             SizedBox(height: 15),
+            // title
             Text(style: AppTextTheme.titleMedium, 'Import data'),
             SizedBox(height: 15),
+            // content text field
             InputWidget(
               hint: 'Data',
-              controller: _backupInputController,
+              controller: controller.inputController,
               icon: Icons.import_export_outlined,
             ),
             SizedBox(height: 20),
+            // select file button
             InkWell(
-              onTap: () => _backupController.selectFile(),
+              onTap: () async {
+                final either = await controller.selectFile();
+                either.fold(
+                  (appError) {
+                    Get.snackbar('Oops!', appError.errorMessage);
+                  },
+                  (appSuccess) {
+                    Get.snackbar('Success', appSuccess.successMessage);
+                  },
+                );
+              },
               child: CardWidget(
                 height: 70,
                 child: Center(
                   child: Obx(() {
-                    final fileName = _backupController.fileName;
+                    final fileName = controller.fileName;
                     return Row(
                       spacing: 5,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -186,24 +185,27 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SizedBox(height: 15),
+            // action buttons
             Row(
               spacing: 10,
               children: [
+                // confirm button
                 Expanded(
                   child: InkWell(
                     onTap: () async {
-                      if (_backupInputController.text.isEmpty) {
-                        await _backupController.importFromFile();
-                      } else {
-                        final content = _backupInputController.text;
-                        await _backupController.importFromClipBoard(
-                          content: content,
-                        );
-                      }
-                      _wordController.loadItems();
+                      final either = await controller.handleImport();
+                      either.fold(
+                        (appError) {
+                          Get.snackbar('Oops!', appError.errorMessage);
+                        },
+                        (appSuccess) {
+                          Get.back();
+                          Get.snackbar('Success', appSuccess.successMessage);
+                        },
+                      );
                     },
                     child: Obx(() {
-                      final isLoading = _backupController.importLoading;
+                      final isLoading = controller.importLoading;
                       return CardWidget(
                         selectedBorderColor: ConstUiColors.positiveColor,
                         height: 70,
@@ -222,17 +224,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     }),
                   ),
                 ),
+                // cancel button
                 Expanded(
                   child: InkWell(
                     onTap: () {
                       Get.back();
-                      _backupController.clearBackupSession();
+                      controller.clearBackupSession();
                     },
                     child: CardWidget(
                       selectedBorderColor: ConstUiColors.errorColor,
                       height: 70,
                       child: Center(
-                        child: Text(style: AppTextTheme.titleMedium, 'Cancle'),
+                        child: Text(style: AppTextTheme.titleMedium, 'Cancel'),
                       ),
                     ),
                   ),
@@ -249,21 +252,35 @@ class _HomeScreenState extends State<HomeScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Obx(() {
-        final isLoading = _backupController.exportLoading;
+        final isLoading = controller.exportLoading;
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             SizedBox(width: double.infinity, height: 15),
+            // drag effect widget
             Container(
               width: 50,
               height: 3,
               decoration: BoxDecoration(color: ConstUiColors.thirdColor),
             ),
             SizedBox(height: 15),
+            // title
             Text(style: AppTextTheme.titleMedium, 'Export data'),
             SizedBox(height: 20),
+            // export to file button
             InkWell(
-              onTap: () => _backupController.exportToFile(),
+              onTap: () async {
+                final either = await controller.exportToFile();
+                either.fold(
+                  (appError) {
+                    Get.snackbar('Oops!', appError.errorMessage);
+                  },
+                  (appSuccess) {
+                    Get.back();
+                    Get.snackbar('Success', appSuccess.successMessage);
+                  },
+                );
+              },
               child: CardWidget(
                 height: 70,
                 child: Center(
@@ -287,8 +304,20 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SizedBox(height: 15),
+            // export to clip board button
             InkWell(
-              onTap: () => _backupController.exportToClipboard(),
+              onTap: () async {
+                final either = await controller.exportToClipboard();
+                either.fold(
+                  (appError) {
+                    Get.snackbar('Oops!', appError.errorMessage);
+                  },
+                  (appSuccess) {
+                    Get.back();
+                    Get.snackbar('Success!', appSuccess.successMessage);
+                  },
+                );
+              },
               child: CardWidget(
                 height: 70,
                 child: isLoading == ExportStatus.clipboard
@@ -312,13 +341,14 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             SizedBox(height: 15),
+            // cancel button
             InkWell(
               onTap: () => Get.back(),
               child: CardWidget(
                 selectedBorderColor: ConstUiColors.errorColor,
                 height: 70,
                 child: Center(
-                  child: Text(style: AppTextTheme.titleMedium, 'Cancle'),
+                  child: Text(style: AppTextTheme.titleMedium, 'Cancel'),
                 ),
               ),
             ),
@@ -343,30 +373,27 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // drawer menu open button
             InkWell(
-              onTap: widget.onTap,
+              onTap: onTap,
               child: Padding(
                 padding: const EdgeInsets.only(left: 20),
                 child: Icon(Icons.menu, size: 25),
               ),
             ),
             const SizedBox(width: 10),
+            // title
             Align(
               alignment: AlignmentGeometry.center,
               child: Text(UIStrings.search, style: AppTextTheme.titleMedium),
             ),
             const Spacer(),
+            // right hand search icon
             const Icon(Icons.search, size: 25),
           ],
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _backupInputController.dispose();
   }
 }
 
@@ -393,6 +420,7 @@ class _HomeButton extends StatelessWidget {
         child: Row(
           spacing: 20,
           children: [
+            // left hand single icon
             Expanded(flex: 1, child: Icon(icon)),
             Expanded(
               flex: 8,
@@ -401,11 +429,13 @@ class _HomeButton extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // title text
                   Text(
                     overflow: TextOverflow.ellipsis,
                     style: AppTextTheme.titleMedium,
                     title,
                   ),
+                  // description text
                   if (data != null)
                     Text(
                       overflow: TextOverflow.ellipsis,
@@ -421,3 +451,6 @@ class _HomeButton extends StatelessWidget {
     );
   }
 }
+                      //
+                      // TODO this hould fix by using valuelistnable
+                      // _wordController.loadItems();

@@ -1,21 +1,12 @@
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:vocly/core/error/app_exeption.dart';
+import 'package:vocly/core/error/app_exception.dart';
 
 class LinkService {
   final SharePlus sharePlus;
   LinkService({required this.sharePlus});
 
-  AppExeption _wrapException(Object error, {required String message}) {
-    if (error is AppExeption) {
-      return error;
-    }
-    return AppExeption(
-      message: message,
-      cause: error,
-      stackTrace: StackTrace.current,
-    );
-  }
+  // ================ Share Plus Function ======================================
 
   Future<void> shareAppLink() async {
     try {
@@ -24,16 +15,29 @@ class LinkService {
       );
       await sharePlus.share(params);
     } catch (error) {
-      throw _wrapException(error, message: 'Failed to share app link');
+      throw AppError(errorMessage: 'Failed to share app link', cause: error);
     }
   }
+  // ================ Url Luncher Function =====================================
 
   Future<void> openDonationLink() async {
     try {
       final Uri url = Uri.parse('https://ko-fi.com/');
       await launchUrl(url, mode: LaunchMode.externalApplication);
     } catch (error) {
-      throw _wrapException(error, message: 'Failed to open donation link');
+      throw AppError(
+        errorMessage: 'Failed to open donation link',
+        cause: error,
+      );
+    }
+  }
+
+  Future<void> openBookLibraryPage() async {
+    try {
+      final Uri url = Uri.parse('https://mdzarepour.github.io/vocly_download/');
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } catch (error) {
+      throw AppError(errorMessage: 'Failed to open web link', cause: error);
     }
   }
 
@@ -45,7 +49,7 @@ class LinkService {
       );
       await launchUrl(emailLaunchUri);
     } catch (error) {
-      throw _wrapException(error, message: 'Failed to send email');
+      throw AppError(errorMessage: 'Failed to send email', cause: error);
     }
   }
 }

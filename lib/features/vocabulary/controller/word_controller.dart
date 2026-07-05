@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:vocly/core/error/app_exeption.dart';
+import 'package:vocly/core/error/app_exception.dart';
 import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
 import 'package:vocly/features/vocabulary/model/repositories/vocabulary_repository.dart';
 
@@ -22,25 +22,12 @@ class WordController extends GetxController {
   final RxList<WordModel> _words = <WordModel>[].obs;
   List<WordModel> get words => _words;
 
-  String _errorMessage(Object? error) {
-    if (error is AppExeption) {
-      return error.message;
-    }
-    return error.toString();
-  }
-
-  @override
-  void onInit() {
-    super.onInit();
-    loadItems();
-  }
-
   void loadItems() {
     try {
       final freshWords = wordRepository.getAllWords();
       _words.assignAll(freshWords);
     } catch (error) {
-      Get.snackbar('Failed!', _errorMessage(error));
+    //  Get.snackbar('Failed!', _errorMessage(error));
     }
   }
 
@@ -48,10 +35,10 @@ class WordController extends GetxController {
     try {
       _updateLoadingState(value: true);
       await wordRepository.deleteWords(selectedWords: selectedWords);
-      loadItems();
     } catch (error) {
-      Get.snackbar('Oops!', _errorMessage(error));
+    //  Get.snackbar('Oops!', _errorMessage(error));
     } finally {
+      loadItems();
       _updateLoadingState(value: false);
     }
   }
@@ -61,29 +48,43 @@ class WordController extends GetxController {
       await wordRepository.updateWord(word: newWord);
       _currentWord.value = newWord;
       _currentWord.refresh();
-      loadItems();
     } catch (error) {
-      Get.snackbar('Oops!', _errorMessage(error));
+    //  Get.snackbar('Oops!', _errorMessage(error));
+    } finally {
+      loadItems();
     }
   }
 
-  Future<void> addWord({required WordModel word}) async {
+  Future<void> addWord({required Map<String, dynamic> map}) async {
     try {
+      final WordModel word = WordModel.fromMap(map);
       await wordRepository.addWord(word: word);
-      loadItems();
     } catch (error) {
-      Get.snackbar('Oops!', _errorMessage(error));
+    //  Get.snackbar('Oops!', _errorMessage(error));
+    } finally {
+      loadItems();
+      Get.back();
     }
-    Get.back();
   }
 
   Future<bool> isWordExist({required final String name}) async {
     try {
       return wordRepository.isWordExist(name: name);
     } catch (error) {
-      Get.snackbar('Oops!', _errorMessage(error));
+   //   Get.snackbar('Oops!', _errorMessage(error));
       return false;
     }
+  }
+  // ================ Life Cycle =====================
+  @override
+  void onInit() {
+    super.onInit();
+    loadItems();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
 

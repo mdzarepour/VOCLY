@@ -9,28 +9,21 @@ import 'package:vocly/shared/constants/const_strings.dart';
 import 'package:vocly/core/router/app_router.dart';
 import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
 
-class SearchScreen extends StatefulWidget {
+class SearchScreen extends GetView<WordSearchController> {
   const SearchScreen({super.key});
-
-  @override
-  State<SearchScreen> createState() => _SearchScreenState();
-}
-
-class _SearchScreenState extends State<SearchScreen> {
-  final _searchController = Get.find<WordSearchController>();
-
-  final TextEditingController _queryController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ConstUiColors.forthColor,
+      // search widget as appbar
       appBar: _searchWidget(),
       body: Obx(() {
-        final words = _searchController.words;
+        final words = controller.words;
         return CustomScrollView(
           slivers: [
             SliverToBoxAdapter(child: SizedBox(height: 20)),
+            // empty state - listview
             _getMaiWidget(words: words),
           ],
         );
@@ -53,10 +46,12 @@ class _SearchScreenState extends State<SearchScreen> {
         itemCount: words.length,
         itemBuilder: (context, index) {
           final currentWord = words[index];
-          final query = _searchController.query;
+          final query = controller.query;
+          // listview child
           return InkWell(
-            onTap: () =>
-                Get.toNamed(Routes.readWordScreen, arguments: currentWord),
+            onTap: () {
+              Get.toNamed(Routes.readWordScreen, arguments: currentWord);
+            },
             child: _SearchWordTile(currentWord: currentWord, query: query),
           );
         },
@@ -66,6 +61,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   AppBar _searchWidget() {
     return AppBar(
+      // bottom line effect widget
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(0),
         child: Container(
@@ -74,13 +70,14 @@ class _SearchScreenState extends State<SearchScreen> {
           color: ConstUiColors.firsColor,
         ),
       ),
+      // search text field
       title: TextField(
         autofocus: true,
         cursorColor: ConstUiColors.thirdColor,
-        controller: _queryController,
+        controller: controller.queryController,
         style: AppTextTheme.titleMedium,
         decoration: InputDecoration(hintText: UIStrings.search),
-        onChanged: (value) => _searchController.updateQuery(value: value),
+        onChanged: (value) => controller.updateQuery(value: value),
       ),
     );
   }
@@ -98,12 +95,6 @@ class _SearchScreenState extends State<SearchScreen> {
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _queryController.dispose();
-    super.dispose();
   }
 }
 
@@ -130,6 +121,7 @@ class _SearchWordTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // word name text
                 Expanded(
                   child: SubstringHighlight(
                     text: currentWord.name,
@@ -141,6 +133,7 @@ class _SearchWordTile extends StatelessWidget {
                     ),
                   ),
                 ),
+                // word example text
                 Expanded(
                   child: SubstringHighlight(
                     text: currentWord.example,
@@ -155,6 +148,7 @@ class _SearchWordTile extends StatelessWidget {
               ],
             ),
           ),
+          // right hand icon
           Icon(ConstIcons.icons[currentWord.icon]),
         ],
       ),

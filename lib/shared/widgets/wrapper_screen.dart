@@ -6,14 +6,14 @@ import 'package:vocly/shared/constants/const_colors.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
 
-class WarpperScreen extends StatefulWidget {
-  const WarpperScreen({super.key});
+class WrapperScreen extends StatefulWidget {
+  const WrapperScreen({super.key});
 
   @override
-  State<WarpperScreen> createState() => _WarpperScreenState();
+  State<WrapperScreen> createState() => _WrapperScreenState();
 }
 
-class _WarpperScreenState extends State<WarpperScreen> {
+class _WrapperScreenState extends State<WrapperScreen> {
   final _linkService = Get.find<LinkService>();
   final GlobalKey<ScaffoldState> _key = GlobalKey();
 

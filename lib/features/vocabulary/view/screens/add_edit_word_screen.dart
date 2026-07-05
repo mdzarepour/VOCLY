@@ -296,8 +296,7 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
                   _editingWord!.updateWordModel(map: map);
                   _updateWord();
                 } else {
-                  final WordModel model = WordModel.fromMap(map);
-                  _addWord(model: model);
+                  _addWord(map: map);
                 }
               }
             },
@@ -341,13 +340,13 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
     Get.back();
   }
 
-  Future<void> _addWord({required final WordModel model}) async {
+  Future<void> _addWord({required Map<String, dynamic> map}) async {
     final bool isWordExist = await _wordController.isWordExist(
-      name: model.name,
+      name: map[AppStrings.keyName],
     );
 
     if (!isWordExist) {
-      _wordController.addWord(word: model);
+      _wordController.addWord(map: map);
       return;
     }
 
@@ -358,7 +357,7 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
     );
 
     if (permission!) {
-      _wordController.addWord(word: model);
+      _wordController.addWord(map: map);
     } else {
       Get.back();
     }

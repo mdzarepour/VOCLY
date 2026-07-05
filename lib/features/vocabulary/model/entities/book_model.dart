@@ -1,11 +1,11 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
-import 'package:vocly/features/vocabulary/model/entities/vacabulary_model.dart';
+import 'package:vocly/core/types/vocabulary_model.dart';
 part 'book_model.g.dart';
 
 @HiveType(typeId: 1)
-class BookModel extends VacabularyModel with EquatableMixin, HiveObjectMixin {
+class BookModel extends VocabularyModel with EquatableMixin, HiveObjectMixin {
   @override
   @HiveField(0)
   String id;
@@ -34,7 +34,7 @@ class BookModel extends VacabularyModel with EquatableMixin, HiveObjectMixin {
 
   @override
   @HiveField(7)
-  String createAt;
+  int createAt;
 
   @override
   @HiveField(8)
@@ -63,7 +63,7 @@ class BookModel extends VacabularyModel with EquatableMixin, HiveObjectMixin {
   factory BookModel.fromMap({required final Map<String, dynamic> map}) {
     return BookModel(
       id: Uuid().v4(),
-      createAt: DateTime.now().microsecond.toString(),
+      createAt: DateTime.now().microsecondsSinceEpoch,
       name: map['name'],
       icon: map['banner'],
       color: map['color'],

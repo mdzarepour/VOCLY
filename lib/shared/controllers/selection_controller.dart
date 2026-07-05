@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import 'package:vocly/features/vocabulary/model/entities/book_model.dart';
 import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
 import 'package:vocly/features/vocabulary/model/repositories/vocabulary_repository.dart';
@@ -55,10 +54,7 @@ abstract class SelectionController<T> extends GetxController {
 
   void selectAllItems({required List<T> currentSelectedItems}) {
     if (items.isEmpty) {
-      Get.snackbar(
-        "Can't select",
-        "There are no items to select.",
-      );
+      Get.snackbar("Can't select", "There are no items to select.");
       return;
     }
 
@@ -88,10 +84,7 @@ abstract class SelectionController<T> extends GetxController {
 
 class WordSelectionController extends SelectionController<WordModel> {
   final WordRepository wordRepository;
-
-  WordSelectionController({
-    required this.wordRepository,
-  });
+  WordSelectionController({required this.wordRepository});
 
   @override
   void onInit() {
@@ -99,29 +92,19 @@ class WordSelectionController extends SelectionController<WordModel> {
     items = wordRepository.getAllWords();
   }
 
-  void initPreviouslySelectedWords({
-    required List<String> selectedWordIds,
-  }) {
+  void initPreviouslySelectedWords({required List<String> selectedWordIds}) {
     selectedItems.clear();
-
     final previouslySelectedWords = items
         .where((word) => selectedWordIds.contains(word.id))
         .toList();
-
     selectedItems.addAll(previouslySelectedWords);
-
-    if (selectedItems.isNotEmpty) {
-      updateSelectionMode(mode: true);
-    }
+    if (selectedItems.isNotEmpty) updateSelectionMode(mode: true);
   }
 }
 
 class BookSelectionController extends SelectionController<BookModel> {
   final BookRepository bookRepository;
-
-  BookSelectionController({
-    required this.bookRepository,
-  });
+  BookSelectionController({required this.bookRepository});
 
   @override
   void onInit() {

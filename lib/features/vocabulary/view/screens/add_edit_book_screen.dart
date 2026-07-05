@@ -309,8 +309,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
                   _editingBook!.updateBook(map: map);
                   _updateBook();
                 } else {
-                  final BookModel model = BookModel.fromMap(map: map);
-                  _addBook(model: model);
+                  _addBook(map: map);
                 }
               }
             },
@@ -354,11 +353,12 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
     Get.back();
   }
 
-  Future<void> _addBook({required final BookModel model}) async {
-    final bool isBookExist = _bookController.isBookExist(name: model.name);
-
+  Future<void> _addBook({required final Map<String, dynamic> map}) async {
+    final bool isBookExist = _bookController.isBookExist(
+      name: map[AppStrings.keyName],
+    );
     if (!isBookExist) {
-      _bookController.addBook(book: model);
+      _bookController.addBook(map: map);
       return;
     }
     final bool? permission = await _dialogService.showDialog(
@@ -367,7 +367,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
       confirmTitle: AppStrings.dialogDuplicatedBookConfirm,
     );
     if (permission!) {
-      _bookController.addBook(book: model);
+      _bookController.addBook(map: map);
     } else {
       Get.back();
     }

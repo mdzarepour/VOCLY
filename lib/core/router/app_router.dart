@@ -10,14 +10,13 @@ import 'package:vocly/features/vocabulary/view/screens/read_word_screen.dart';
 import 'package:vocly/features/vocabulary/view/screens/search_screen.dart';
 import 'package:vocly/shared/widgets/wrapper_screen.dart';
 
-
 class AppRouter {
   AppRouter._();
   static final routes = [
     GetPage(
       showCupertinoParallax: false,
       name: Routes.initial,
-      page: () => WarpperScreen(),
+      page: () => WrapperScreen(),
       binding: VocabularyBinding(),
     ),
     GetPage(

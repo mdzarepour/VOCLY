@@ -2,11 +2,11 @@ import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
-import 'package:vocly/features/vocabulary/model/entities/vacabulary_model.dart';
+import 'package:vocly/core/types/vocabulary_model.dart';
 part 'word_model.g.dart';
 
 @HiveType(typeId: 0)
-class WordModel extends VacabularyModel with EquatableMixin, HiveObjectMixin {
+class WordModel extends VocabularyModel with EquatableMixin, HiveObjectMixin {
   @override
   @HiveField(0)
   final String id;
@@ -39,7 +39,7 @@ class WordModel extends VacabularyModel with EquatableMixin, HiveObjectMixin {
 
   @override
   @HiveField(8)
-  String createAt;
+  int createAt;
 
   WordModel({
     required this.id,
@@ -64,7 +64,7 @@ class WordModel extends VacabularyModel with EquatableMixin, HiveObjectMixin {
   factory WordModel.fromMap(Map<String, dynamic> map) {
     return WordModel(
       id: Uuid().v4(),
-      createAt: DateTime.now().microsecond.toString(),
+      createAt: DateTime.now().microsecondsSinceEpoch,
       name: map['name'],
       meaning: map['meaning'],
       example: map['example'],

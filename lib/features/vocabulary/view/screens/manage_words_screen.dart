@@ -48,9 +48,11 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
       appBar: _appbarWidget(),
       body: Obx(() {
         final isLoading = _wordController.isLoading;
-        _words = _filterController.getFilteredItems(
-          items: _wordController.words,
-        );
+        _words =
+            // _filterController.getFilteredItems(
+            // items:
+            _wordController.words;
+        //  );
         return CustomScrollView(
           slivers: [
             SliverToBoxAdapter(child: SizedBox(height: 20)),
@@ -118,24 +120,24 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
         scrollDirection: Axis.horizontal,
         children: [
           // sort buttons -->
-          FilterButton(
-            onTap: () {
-              Get.bottomSheet(
-                backgroundColor: ConstUiColors.backgroundColor,
-                SortSheetWidget(
-                  onChanged: (selectedSortType) {
-                    _filterController.selectSort(sortType: selectedSortType);
-                  },
-                  isSelected: (selectedSortType) {
-                    return _filterController.isSortSelected(
-                      sortType: selectedSortType,
-                    );
-                  },
-                ),
-              );
-            },
-            title: 'Sort',
-          ),
+          // FilterButton(
+          //   onTap: () {
+          //     Get.bottomSheet(
+          //       backgroundColor: ConstUiColors.backgroundColor,
+          //       SortSheetWidget(
+          //         onChanged: (selectedSortType) {
+          //           _filterController.selectSort(sortType: selectedSortType);
+          //         },
+          //         isSelected: (selectedSortType) {
+          //           return _filterController.isSortSelected(
+          //             sortType: selectedSortType,
+          //           );
+          //         },
+          //       ),
+          //     );
+          //   },
+          //   title: 'Sort',
+          // ),
           for (int index = 0; index < wordFilteringItems.length; index++)
             // filter buttons -->
             FilterButton(
@@ -144,7 +146,7 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
                   backgroundColor: ConstUiColors.backgroundColor,
                   FilterSheetWidget(
                     onChanged: (indexOfSelectedFilterItem) {
-                      _filterController.selectFilters(
+                      _filterController.selectFilter(
                         type: wordFilteringItems[index][AppStrings.keyType],
                         filterItem: indexOfSelectedFilterItem,
                       );

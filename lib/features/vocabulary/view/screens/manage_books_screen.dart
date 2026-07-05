@@ -38,9 +38,11 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
       appBar: _appbarWidget(),
       body: Obx(() {
         final isLoading = _bookController.isLoading;
-        _books = _filterController.getFilteredItems(
-          items: _bookController.books,
-        );
+        _books =
+            // _filterController.getFilteredItems(
+            //  items:
+            _bookController.books;
+        //  );
         return CustomScrollView(
           slivers: [
             SliverToBoxAdapter(child: _filterWidget()),
@@ -99,24 +101,24 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
         scrollDirection: Axis.horizontal,
         children: [
           // sort buttons -->
-          FilterButton(
-            onTap: () {
-              Get.bottomSheet(
-                backgroundColor: ConstUiColors.backgroundColor,
-                SortSheetWidget(
-                  onChanged: (selectedSortType) {
-                    _filterController.selectSort(sortType: selectedSortType);
-                  },
-                  isSelected: (selectedSortType) {
-                    return _filterController.isSortSelected(
-                      sortType: selectedSortType,
-                    );
-                  },
-                ),
-              );
-            },
-            title: 'Sort',
-          ),
+          // FilterButton(
+          //   onTap: () {
+          //     Get.bottomSheet(
+          //       backgroundColor: ConstUiColors.backgroundColor,
+          //       SortSheetWidget(
+          //         onChanged: (selectedSortType) {
+          //           _filterController.selectSort(sortType: selectedSortType);
+          //         },
+          //         isSelected: (selectedSortType) {
+          //           return _filterController.isSortSelected(
+          //             sortType: selectedSortType,
+          //           );
+          //         },
+          //       ),
+          //     );
+          //   },
+          //   title: 'Sort',
+          // ),
           for (int index = 0; index < filteringItems.length; index++)
             // filter buttons -->
             FilterButton(
@@ -125,7 +127,7 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
                   backgroundColor: ConstUiColors.backgroundColor,
                   FilterSheetWidget(
                     onChanged: (indexOfSelectedFilterItem) {
-                      _filterController.selectFilters(
+                      _filterController.selectFilter(
                         type: filteringItems[index][AppStrings.keyType],
                         filterItem: indexOfSelectedFilterItem,
                       );
