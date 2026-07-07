@@ -160,7 +160,7 @@ class HomeScreen extends GetView<HomeController> {
                     Get.snackbar('Oops!', appError.errorMessage);
                   },
                   (appSuccess) {
-                    Get.snackbar('Success', appSuccess.successMessage);
+                    Get.snackbar('Success', appSuccess.successMessage!);
                   },
                 );
               },
@@ -200,7 +200,7 @@ class HomeScreen extends GetView<HomeController> {
                         },
                         (appSuccess) {
                           Get.back();
-                          Get.snackbar('Success', appSuccess.successMessage);
+                          Get.snackbar('Success', appSuccess.successMessage!);
                         },
                       );
                     },
@@ -277,7 +277,7 @@ class HomeScreen extends GetView<HomeController> {
                   },
                   (appSuccess) {
                     Get.back();
-                    Get.snackbar('Success', appSuccess.successMessage);
+                    Get.snackbar('Success', appSuccess.successMessage!);
                   },
                 );
               },
@@ -314,7 +314,7 @@ class HomeScreen extends GetView<HomeController> {
                   },
                   (appSuccess) {
                     Get.back();
-                    Get.snackbar('Success!', appSuccess.successMessage);
+                    Get.snackbar('Success!', appSuccess.successMessage!);
                   },
                 );
               },
@@ -451,6 +451,3 @@ class _HomeButton extends StatelessWidget {
     );
   }
 }
-                      //
-                      // TODO this hould fix by using valuelistnable
-                      // _wordController.loadItems();

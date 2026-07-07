@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:vocly/core/router/app_router.dart';
 import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
 import 'package:vocly/features/vocabulary/model/repositories/vocabulary_repository.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
@@ -24,6 +25,12 @@ class WordSearchController extends GetxController {
   void updateQuery({required String value}) {
     _query.value = value;
     _words.assignAll(wordRepository.searchWords(query: _query.value));
+  }
+
+  // ================ Navigation ===============================================
+
+  void goToReadWordScreen() {
+    Get.toNamed(Routes.readWordScreen, arguments: currentWord);
   }
 
   // ================ Life Cycle ===============================================

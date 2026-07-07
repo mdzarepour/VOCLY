@@ -16,27 +16,3 @@ class ConstUiColors {
   static const Color blueHighLightColor = Color(0xFF6495ED);
 }
 
-class ConstEntityColors {
-  ConstEntityColors._();
-
-  static const List<Color> colors = [
-    Color(0xFFFF727A),
-    Color(0xFFFF9F54),
-    Color(0xFFF7D358),
-    Color(0xFFFFD700),
-    Color(0xFF9ACD32),
-    Color(0xFF4ADE80),
-    Color(0xFF48D1CC),
-    Color(0xFF40E0D0),
-    Color(0xFF40C4FF),
-    Color(0xFF4FA8FF),
-    Color(0xFF6495ED),
-    Color(0xFF7B68EE),
-    Color(0xFFA57CF0),
-    Color(0xFFB983FF),
-    Color(0xFFE066FF),
-    Color(0xFFFF85C1),
-    Color(0xFFFF6B81),
-    Color(0xFF94AABF),
-  ];
-}

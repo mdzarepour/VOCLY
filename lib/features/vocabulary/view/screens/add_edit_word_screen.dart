@@ -1,64 +1,17 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vocly/core/types/entity_types.dart';
-import 'package:vocly/features/vocabulary/controller/word_controller.dart';
+import 'package:vocly/features/vocabulary/controller/word_crud_controller.dart';
 import 'package:vocly/shared/widgets/card_widget.dart';
 import 'package:vocly/shared/widgets/expansion_widget.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
 import 'package:vocly/shared/constants/const_colors.dart';
-import 'package:vocly/shared/constants/const_icons.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
 import 'package:vocly/shared/widgets/input_widget.dart';
 import 'package:vocly/core/types/enums.dart';
-import 'package:vocly/core/services/dialog_service.dart';
-import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
 
-class AddEditWordScreen extends StatefulWidget {
+class AddEditWordScreen extends GetView<WordCrudController> {
   const AddEditWordScreen({super.key});
-
-  @override
-  State<AddEditWordScreen> createState() => _AddEditWordScreenState();
-}
-
-class _AddEditWordScreenState extends State<AddEditWordScreen> {
-  final _dialogService = Get.find<DialogService>();
-  final _wordController = Get.find<WordController>();
-
-  final _formKey = GlobalKey<FormState>();
-
-  final _nameController = TextEditingController();
-  final _meaningController = TextEditingController();
-  final _exampleController = TextEditingController();
-
-  int _selectedIconIndex = 0;
-  int _selectedTypeIndex = 0;
-  int _selectedColorIndex = 0;
-  int _selectedLevelIndex = 0;
-
-  late final bool _isEditingMode;
-  late final WordModel? _editingWord;
-
-  @override
-  void initState() {
-    super.initState();
-    _initFields();
-  }
-
-  void _initFields() {
-    final type = Get.arguments[0] as WordScreenType;
-    _isEditingMode = type == WordScreenType.editWord ? true : false;
-
-    if (Get.arguments[1] == null) return;
-
-    _editingWord = Get.arguments[1] as WordModel;
-    _nameController.text = _editingWord!.name;
-    _meaningController.text = _editingWord.meaning;
-    _exampleController.text = _editingWord.example;
-    _selectedIconIndex = _editingWord.icon;
-    _selectedTypeIndex = _editingWord.type;
-    _selectedColorIndex = _editingWord.color;
-    _selectedLevelIndex = _editingWord.type;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +21,9 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
         appBar: AppBar(
           centerTitle: false,
           title: Text(
-            _isEditingMode ? 'Edit word' : 'Add new word',
+            controller.wordScreenType == WordScreenType.editWord
+                ? 'Edit word'
+                : 'Add new word',
             style: AppTextTheme.titleMedium,
           ),
         ),
@@ -77,7 +32,7 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: SingleChildScrollView(
               child: Form(
-                key: _formKey,
+                key: controller.formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -86,25 +41,25 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
                     SizedBox(height: 10),
                     InputWidget(
                       icon: Icons.language,
-                      controller: _nameController,
+                      controller: controller.nameController,
                       hint: UIStrings.name,
                     ),
                     const SizedBox(height: 15),
                     InputWidget(
                       icon: Icons.lightbulb_outline,
-                      controller: _meaningController,
+                      controller: controller.meaningController,
                       hint: UIStrings.meaning,
                     ),
                     const SizedBox(height: 15),
                     InputWidget(
                       icon: Icons.newspaper_outlined,
-                      controller: _exampleController,
+                      controller: controller.exampleController,
                       hint: UIStrings.example,
                     ),
                     SizedBox(height: 15),
                     _typeSelection(),
                     SizedBox(height: 15),
-                    _difficultySelection(),
+                    _levelSelection(),
                     const SizedBox(height: 30),
                     Text(UIStrings.visual, style: AppTextTheme.titleMedium),
                     SizedBox(height: 10),
@@ -127,148 +82,40 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
   Widget _iconSelection() {
     return ExpansionWidget(
       title: UIStrings.icon,
-      children: [
-        Wrap(
-          spacing: 15,
-          runSpacing: 15,
-          children: [
-            for (int i = 0; i < ConstIcons.icons.length; i++)
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    _selectedIconIndex = i;
-                  });
-                },
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: ConstUiColors.backgroundColor2),
-                    borderRadius: const BorderRadius.all(Radius.circular(15)),
-                    color: i == _selectedIconIndex
-                        ? ConstUiColors.backgroundColor2
-                        : ConstUiColors.forthColor,
-                  ),
-                  child: Icon(ConstIcons.icons[i]),
-                ),
-              ),
-          ],
-        ),
-      ],
+      onChildTap: (i) => controller.updateSelectedIcon(value: i),
+      selectedChildIndex: controller.selectedIconIndex,
+      type: ExpantionWidgetType.entityIcon,
+      children: EntityIcon.children,
     );
   }
 
   Widget _typeSelection() {
     return ExpansionWidget(
       title: UIStrings.type,
-      children: [
-        Wrap(
-          spacing: 15,
-          runSpacing: 15,
-          children: [
-            for (int i = 0; i < ConstWordTypes.wordTypes.length; i++)
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    _selectedTypeIndex = i;
-                  });
-                },
-                child: Container(
-                  height: 40,
-                  width: MediaQuery.of(context).size.width / 3,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: ConstUiColors.backgroundColor2),
-                    borderRadius: const BorderRadius.all(Radius.circular(15)),
-                    color: i == _selectedTypeIndex
-                        ? ConstUiColors.backgroundColor2
-                        : ConstUiColors.forthColor,
-                  ),
-                  child: Center(
-                    child: Text(
-                      ConstWordTypes.wordTypes[i],
-                      style: AppTextTheme.headlineSmall,
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ],
+      onChildTap: (i) => controller.updateSelectedType(value: i),
+      selectedChildIndex: controller.selectedTypeIndex,
+      type: ExpantionWidgetType.entityType,
+      children: WordTypes.children,
     );
   }
 
-  Widget _difficultySelection() {
+  Widget _levelSelection() {
     return ExpansionWidget(
       title: UIStrings.difficulty,
-      children: [
-        Wrap(
-          spacing: 15,
-          runSpacing: 15,
-          children: [
-            for (int i = 0; i < ConstEntityLevel.levels.length; i++)
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    _selectedLevelIndex = i;
-                  });
-                },
-                child: Container(
-                  height: 40,
-                  width: MediaQuery.of(context).size.width / 3,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: ConstUiColors.backgroundColor2),
-                    borderRadius: const BorderRadius.all(Radius.circular(15)),
-                    color: i == _selectedLevelIndex
-                        ? ConstUiColors.backgroundColor2
-                        : ConstUiColors.forthColor,
-                  ),
-                  child: Center(
-                    child: Text(
-                      ConstEntityLevel.levels[i],
-                      style: AppTextTheme.headlineSmall,
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ],
+      onChildTap: (i) => controller.updateSelectedLevel(value: i),
+      selectedChildIndex: controller.selectedLevelIndex,
+      type: ExpantionWidgetType.entityLevel,
+      children: EntityLevel.children,
     );
   }
 
   Widget _colorSelection() {
     return ExpansionWidget(
       title: UIStrings.color,
-      children: [
-        Wrap(
-          spacing: 15,
-          runSpacing: 15,
-          children: [
-            for (int i = 0; i < ConstEntityColors.colors.length; i++)
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    _selectedColorIndex = i;
-                  });
-                },
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  padding: i == _selectedColorIndex
-                      ? EdgeInsets.all(15)
-                      : EdgeInsets.all(100),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                    color: ConstEntityColors.colors[i],
-                  ),
-                  child: CircleAvatar(
-                    backgroundColor: ConstUiColors.backgroundColor,
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ],
+      onChildTap: (i) => controller.updateSelectedColor(value: i),
+      selectedChildIndex: controller.selectedColorIndex,
+      type: ExpantionWidgetType.entityColor,
+      children: EntityColor.children,
     );
   }
 
@@ -281,24 +128,7 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
           child: InkWell(
             onTap: () {
               FocusManager.instance.primaryFocus!.unfocus();
-              if (_formKey.currentState!.validate()) {
-                final Map<String, dynamic> map = {
-                  AppStrings.keyName: _nameController.text,
-                  AppStrings.keyMeaning: _meaningController.text,
-                  AppStrings.keyExample: _exampleController.text,
-                  AppStrings.keyIcon: _selectedIconIndex,
-                  AppStrings.keyType: _selectedTypeIndex,
-                  AppStrings.keyColor: _selectedColorIndex,
-                  AppStrings.level: _selectedLevelIndex,
-                };
-
-                if (_isEditingMode) {
-                  _editingWord!.updateWordModel(map: map);
-                  _updateWord();
-                } else {
-                  _addWord(map: map);
-                }
-              }
+              controller.handleAction();
             },
             child: CardWidget(
               selectedBorderColor: ConstUiColors.positiveColor,
@@ -307,7 +137,11 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
                 spacing: 10,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(_isEditingMode ? Icons.edit_outlined : Icons.done),
+                  Icon(
+                    controller.wordScreenType == WordScreenType.editWord
+                        ? Icons.edit_outlined
+                        : Icons.done,
+                  ),
                   Text(UIStrings.done, style: AppTextTheme.titleMedium),
                 ],
               ),
@@ -333,41 +167,5 @@ class _AddEditWordScreenState extends State<AddEditWordScreen> {
         ),
       ],
     );
-  }
-
-  void _updateWord() {
-    _wordController.updateCurrentWord(newWord: _editingWord!);
-    Get.back();
-  }
-
-  Future<void> _addWord({required Map<String, dynamic> map}) async {
-    final bool isWordExist = await _wordController.isWordExist(
-      name: map[AppStrings.keyName],
-    );
-
-    if (!isWordExist) {
-      _wordController.addWord(map: map);
-      return;
-    }
-
-    final bool? permission = await _dialogService.showDialog(
-      title: AppStrings.dialogDuplicatedWordTitle,
-      content: AppStrings.dialogDuplicatedWordContent,
-      confirmTitle: AppStrings.dialogDuplicatedWordConfirm,
-    );
-
-    if (permission!) {
-      _wordController.addWord(map: map);
-    } else {
-      Get.back();
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _nameController.dispose();
-    _meaningController.dispose();
-    _exampleController.dispose();
   }
 }

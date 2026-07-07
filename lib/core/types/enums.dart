@@ -31,3 +31,10 @@ enum ExportStatus {
   file,
   clipboard 
   }
+
+enum ExpantionWidgetType {
+  entityColor,
+  entityType,
+  entityIcon,
+  entityLevel,
+}

@@ -1,9 +1,9 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:substring_highlight/substring_highlight.dart';
+import 'package:vocly/core/types/entity_types.dart';
 import 'package:vocly/features/vocabulary/controller/search_controller.dart';
 import 'package:vocly/shared/constants/const_colors.dart';
-import 'package:vocly/shared/constants/const_icons.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
 import 'package:vocly/core/router/app_router.dart';
@@ -149,7 +149,7 @@ class _SearchWordTile extends StatelessWidget {
             ),
           ),
           // right hand icon
-          Icon(ConstIcons.icons[currentWord.icon]),
+          Icon(EntityIcon.children[currentWord.icon]),
         ],
       ),
     );

@@ -53,7 +53,7 @@ class WordTile extends StatelessWidget {
                           style: AppTextTheme.titleMedium,
                         ),
                         Text(
-                          ConstWordTypes.wordTypes[type!],
+                          WordTypes.wordTypes[type!],
                           overflow: TextOverflow.ellipsis,
                           style: AppTextTheme.titleSmall,
                         ),

@@ -223,7 +223,7 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
                   Text(
                     textAlign: TextAlign.center,
                     style: AppTextTheme.titleMedium,
-                    ConstWordTypes.wordTypes[currentWord.type],
+                    WordTypes.wordTypes[currentWord.type],
                   ),
                 ],
               ),

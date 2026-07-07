@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:vocly/core/types/entity_types.dart';
 import 'package:vocly/shared/widgets/filter_button.dart';
 import 'package:vocly/shared/widgets/filter_sheet_widget.dart';
-import 'package:vocly/shared/widgets/sort_sheet_widget.dart';
 import 'package:vocly/features/vocabulary/controller/book_controller.dart';
 import 'package:vocly/shared/controllers/filter_controller.dart';
 import 'package:vocly/shared/controllers/selection_controller.dart';
@@ -93,7 +92,7 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
   }
 
   Widget _filterWidget() {
-    final filteringItems = ConstBookTypes.bookFilteringItems;
+    final filteringItems = BookTypes.bookFilteringItems;
     return SizedBox(
       height: 35,
       child: ListView(

@@ -10,11 +10,12 @@ class AppError implements Exception {
   }
 }
 
-class AppSuccess implements Exception {
-  final String successMessage;
+class AppSuccess<T> implements Exception {
+  final String? successMessage;
+  final T? successData;
   final Object? cause;
 
-  const AppSuccess({required this.successMessage, this.cause});
+  const AppSuccess({this.successMessage, this.successData, this.cause});
 
   @override
   String toString() {

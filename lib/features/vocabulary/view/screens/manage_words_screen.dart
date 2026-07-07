@@ -10,7 +10,6 @@ import 'package:vocly/shared/controllers/selection_controller.dart';
 import 'package:vocly/features/vocabulary/controller/word_controller.dart';
 import 'package:vocly/shared/widgets/filter_button.dart';
 import 'package:vocly/shared/widgets/filter_sheet_widget.dart';
-import 'package:vocly/shared/widgets/sort_sheet_widget.dart';
 import 'package:vocly/core/types/enums.dart';
 import 'package:vocly/core/services/dialog_service.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
@@ -112,7 +111,7 @@ class _ManageWordsScreenState extends State<ManageWordsScreen> {
   }
 
   Widget _filterWidget() {
-    final wordFilteringItems = ConstWordTypes.wordFilteringItems;
+    final wordFilteringItems = WordTypes.wordFilteringItems;
     return SizedBox(
       height: 35,
       child: ListView(

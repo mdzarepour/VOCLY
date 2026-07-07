@@ -126,7 +126,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
           spacing: 15,
           runSpacing: 15,
           children: [
-            for (int i = 0; i < ConstBookTypes.bookTypes.length; i++)
+            for (int i = 0; i < BookTypes.bookTypes.length; i++)
               InkWell(
                 onTap: () {
                   setState(() {
@@ -145,7 +145,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
                   ),
                   child: Center(
                     child: Text(
-                      ConstBookTypes.bookTypes[i],
+                      BookTypes.bookTypes[i],
                       style: AppTextTheme.headlineSmall,
                     ),
                   ),
@@ -165,7 +165,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
           spacing: 15,
           runSpacing: 15,
           children: [
-            for (int i = 0; i < ConstEntityLevel.levels.length; i++)
+            for (int i = 0; i < EntityLevel.levels.length; i++)
               InkWell(
                 onTap: () {
                   setState(() {
@@ -184,7 +184,7 @@ class _AddEditBookScreenState extends State<AddEditBookScreen> {
                   ),
                   child: Center(
                     child: Text(
-                      ConstEntityLevel.levels[i],
+                      EntityLevel.levels[i],
                       style: AppTextTheme.headlineSmall,
                     ),
                   ),

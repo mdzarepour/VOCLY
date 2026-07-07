@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:vocly/core/error/app_exception.dart';
 import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
 import 'package:vocly/features/vocabulary/model/repositories/vocabulary_repository.dart';
 
@@ -82,10 +81,6 @@ class WordController extends GetxController {
     loadItems();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }
 
 
