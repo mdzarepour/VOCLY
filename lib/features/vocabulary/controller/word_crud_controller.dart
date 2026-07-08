@@ -11,7 +11,9 @@ import 'package:vocly/shared/constants/const_strings.dart';
 class WordCrudController extends GetxController {
   late final WordRepository _wordRepository;
   late final DialogService _dialogService;
-  late final WordScreenType wordScreenType;
+
+  late WordScreenType? wordScreenType;
+  late WordModel? currentWord;
 
   // ================ Form Key =================================================
 
@@ -24,9 +26,6 @@ class WordCrudController extends GetxController {
   final exampleController = TextEditingController();
 
   // ================ Reactive Variables =======================================
-
-  final Rxn<WordModel> _currentWord = Rxn<WordModel>();
-  WordModel? get currentWord => _currentWord.value;
 
   final RxInt _selectedIconIndex = 0.obs;
   int get selectedIconIndex => _selectedIconIndex.value;
@@ -62,20 +61,17 @@ class WordCrudController extends GetxController {
 
   Future<Either<AppError, AppSuccess>> _addWord() async {
     try {
-      final map = _createMap();
-      final WordModel word = WordModel.fromMap(map: map);
-      final isWordExist = _isWordExist(name: word.name);
-      
-      if (isWordExist) {
+      final word = WordModel.fromMap(map: _createMap());
+      final isExist = _isWordExist(name: word.name);
+
+      if (!isExist) {
         final bool? permission = await _dialogService.showDialog(
           title: AppStrings.dialogDuplicatedWordTitle,
           content: AppStrings.dialogDuplicatedWordContent,
           confirmTitle: AppStrings.dialogDuplicatedWordConfirm,
         );
-        if (permission!) {
-          await _wordRepository.addWord(word: word);
-        } else {
-          return left(AppError(errorMessage: 'Permision Denied'));
+        if (permission == null || !permission) {
+          return left(AppError(errorMessage: 'Permission Denied'));
         }
       }
       await _wordRepository.addWord(word: word);
@@ -96,11 +92,9 @@ class WordCrudController extends GetxController {
   Future<Either<AppError, AppSuccess>> _updateWord() async {
     try {
       final Map<String, dynamic> map = _createMap();
-      _currentWord.value!.updateWord(map: map);
-      await _wordRepository.updateWord(word: _currentWord.value!);
-      return right(
-        AppSuccess(successMessage: '${_currentWord.value!.name} updated'),
-      );
+      currentWord!.updateWord(map: map);
+      await _wordRepository.updateWord(word: currentWord!);
+      return right(AppSuccess(successMessage: '${currentWord!.name} updated'));
     } catch (error) {
       return left(AppError(errorMessage: error.toString()));
     }
@@ -120,6 +114,23 @@ class WordCrudController extends GetxController {
       AppStrings.keyLevel: _selectedLevelIndex.value,
     };
     return map;
+  }
+
+  void _initControllerEssentials() {
+    wordScreenType = Get.arguments['type'];
+    if (wordScreenType == WordScreenType.addWord) {
+      return;
+    }
+    currentWord = Get.arguments['word'];
+
+    nameController.text = currentWord!.name;
+    meaningController.text = currentWord!.meaning;
+    exampleController.text = currentWord!.example;
+
+    _selectedIconIndex.value = currentWord!.icon;
+    _selectedTypeIndex.value = currentWord!.type;
+    _selectedColorIndex.value = currentWord!.color;
+    _selectedLevelIndex.value = currentWord!.level;
   }
 
   Future<Either<AppError, AppSuccess>> handleAction() async {
@@ -142,14 +153,14 @@ class WordCrudController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    wordScreenType = Get.arguments;
     _wordRepository = Get.find();
     _dialogService = Get.find();
+    _initControllerEssentials();
   }
 
   @override
-  void dispose() {
-    super.dispose();
+  void onClose() {
+    super.onClose();
     nameController.dispose();
     exampleController.dispose();
     meaningController.dispose();

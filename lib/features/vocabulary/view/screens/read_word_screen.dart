@@ -84,73 +84,86 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
       final chars = _spellingController.chars;
       final accuracy = _spellingController.accuracy;
 
-      return ExpansionWidget(
-        // onExpansionChanged: (value) {
-        //   _spellingController.startPractice(isClosed: value);
-        // },
-        //TODO write own expantion widget
-        title: UIStrings.spellingPractice,
-        children: [
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
+      return CardWidget(
+        child: Theme(
+          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          child: ExpansionTile(
+            dense: true,
+            minTileHeight: 50,
+            showTrailingIcon: false,
+            splashColor: Colors.transparent,
+            childrenPadding: EdgeInsets.only(bottom: 30),
+            title: Center(
+              child: Text(
+                UIStrings.spellingPractice,
+                style: AppTextTheme.titleMedium,
+              ),
+            ),
             children: [
-              SizedBox(width: double.infinity),
-              for (int i = 0; i < word.length; i++)
-                InkWell(
-                  onTap: () {
-                    _spellingController.unselectChar(char: selectedChars[i]);
-                  },
-                  child: AnimatedScale(
-                    scale: 1,
-                    duration: Duration(milliseconds: 200),
-                    child: CardWidget(
-                      isHavePadding: false,
-                      selectedBorderColor: _getSpellCharColor(
-                        accuracy: accuracy,
-                      ),
-                      height: 45,
-                      width: 45,
-                      child: Center(
-                        child: Text(
-                          style: AppTextTheme.titleMedium,
-                          i > selectedChars.length - 1
-                              ? AppStrings.emptyChar
-                              : selectedChars[i].char.toUpperCase(),
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: [
+                  SizedBox(width: double.infinity),
+                  for (int i = 0; i < word.length; i++)
+                    InkWell(
+                      onTap: () {
+                        _spellingController.unselectChar(
+                          char: selectedChars[i],
+                        );
+                      },
+                      child: AnimatedScale(
+                        scale: 1,
+                        duration: Duration(milliseconds: 200),
+                        child: CardWidget(
+                          isHavePadding: false,
+                          selectedBorderColor: _getSpellCharColor(
+                            accuracy: accuracy,
+                          ),
+                          height: 45,
+                          width: 45,
+                          child: Center(
+                            child: Text(
+                              style: AppTextTheme.titleMedium,
+                              i > selectedChars.length - 1
+                                  ? AppStrings.emptyChar
+                                  : selectedChars[i].char.toUpperCase(),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-            ],
-          ),
-          SizedBox(height: 15),
-          Divider(),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: [
-              SizedBox(width: double.infinity),
-              for (int i = 0; i < word.length; i++)
-                InkWell(
-                  onTap: () {
-                    _spellingController.selectChar(char: chars[i]);
-                  },
-                  child: CardWidget(
-                    isHavePadding: false,
-                    height: 45,
-                    width: 45,
-                    child: Center(
-                      child: Text(
-                        style: AppTextTheme.titleMedium,
-                        chars[i].char.toUpperCase(),
+                ],
+              ),
+              SizedBox(height: 15),
+              Divider(),
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: [
+                  SizedBox(width: double.infinity),
+                  for (int i = 0; i < word.length; i++)
+                    InkWell(
+                      onTap: () {
+                        _spellingController.selectChar(char: chars[i]);
+                      },
+                      child: CardWidget(
+                        isHavePadding: false,
+                        height: 45,
+                        width: 45,
+                        child: Center(
+                          child: Text(
+                            style: AppTextTheme.titleMedium,
+                            chars[i].char.toUpperCase(),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
+                ],
+              ),
             ],
           ),
-        ],
+        ),
       );
     });
   }

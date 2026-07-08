@@ -18,11 +18,11 @@ class ExpansionWidget extends StatelessWidget {
 
   const ExpansionWidget({
     super.key,
-    this.onChildTap,
-    this.selectedChildIndex,
-    this.title,
-    this.type,
-    this.children,
+    required this.onChildTap,
+    required this.selectedChildIndex,
+    required this.title,
+    required this.type,
+    required this.children,
   });
 
   @override
@@ -53,6 +53,7 @@ class ExpansionWidget extends StatelessWidget {
                 for (int i = 0; i < children!.length; i++)
                   // get children widget according to type
                   InkWell(
+                    // send i to ui for changing reactive variable
                     onTap: () => onChildTap!.call(i),
                     child: getDynamicChildWidget(i: i),
                   ),

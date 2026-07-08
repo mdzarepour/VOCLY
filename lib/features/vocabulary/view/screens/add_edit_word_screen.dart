@@ -29,36 +29,46 @@ class AddEditWordScreen extends GetView<WordCrudController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
+                    // title
                     Text(UIStrings.details, style: AppTextTheme.titleMedium),
                     SizedBox(height: 10),
+                    // word name text field
                     InputWidget(
                       icon: Icons.language,
                       controller: controller.nameController,
                       hint: UIStrings.name,
                     ),
                     const SizedBox(height: 15),
+                    // word meaning text field
                     InputWidget(
                       icon: Icons.lightbulb_outline,
                       controller: controller.meaningController,
                       hint: UIStrings.meaning,
                     ),
                     const SizedBox(height: 15),
+                    // word example text field
                     InputWidget(
                       icon: Icons.newspaper_outlined,
                       controller: controller.exampleController,
                       hint: UIStrings.example,
                     ),
                     SizedBox(height: 15),
+                    // expantion widget for type
                     _typeSelection(),
                     SizedBox(height: 15),
+                    // expantion widget for level
                     _levelSelection(),
                     const SizedBox(height: 30),
+                    // title
                     Text(UIStrings.visual, style: AppTextTheme.titleMedium),
                     SizedBox(height: 10),
+                    // expantion widget for icon
                     _iconSelection(),
                     const SizedBox(height: 15),
+                    // expantion widget for color
                     _colorSelection(),
                     SizedBox(height: 30),
+                    // action buttons row
                     _actionButtons(),
                     SizedBox(height: 30),
                   ],
@@ -171,7 +181,7 @@ class AddEditWordScreen extends GetView<WordCrudController> {
       },
       (appSuccess) {
         controller.goToBack();
-        Get.snackbar('Oops!', appSuccess.successMessage!);
+        Get.snackbar('Success', appSuccess.successMessage!);
       },
     );
   }

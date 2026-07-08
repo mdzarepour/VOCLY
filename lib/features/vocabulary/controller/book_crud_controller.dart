@@ -168,8 +168,8 @@ class BookCrudController extends GetxController {
   }
 
   @override
-  void dispose() {
-    super.dispose();
+  void onClose() {
+    super.onClose();
     nameController.dispose();
     descriptionController.dispose();
   }

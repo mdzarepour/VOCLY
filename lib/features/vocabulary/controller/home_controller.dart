@@ -9,6 +9,7 @@ import 'package:vocly/core/services/link_service.dart';
 import 'package:vocly/core/services/platform_service.dart';
 import 'package:vocly/core/types/enums.dart';
 import 'package:vocly/core/error/app_exception.dart';
+import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
 import 'package:vocly/features/vocabulary/model/repositories/vocabulary_repository.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
 
@@ -83,7 +84,7 @@ class HomeController extends GetxController {
         return left(AppError(errorMessage: 'File Not Save!'));
       } else {
         return right(
-          AppSuccess(successMessage: 'Backup exported successfully!'),
+          AppSuccess(successMessage: 'Backup Exported Successfully!'),
         );
       }
     } catch (error) {
@@ -101,7 +102,7 @@ class HomeController extends GetxController {
         return left(AppError(errorMessage: 'There Is Nothing To Export!'));
       } else {
         await _platformService.setContentToClipBoard(content: content);
-        return right(AppSuccess(successMessage: 'Backup copied to clipboard!'));
+        return right(AppSuccess(successMessage: 'Backup Copied To Clipboard!'));
       }
     } catch (error) {
       return left(AppError(errorMessage: 'Content Is Too Large For ClipBoard'));
@@ -116,12 +117,12 @@ class HomeController extends GetxController {
     try {
       _importLoading.value = true;
       if (_selectedFileContent == null) {
-        return left(AppError(errorMessage: 'Please select file first'));
+        return left(AppError(errorMessage: 'Please Select File First'));
       } else {
         await _backupRepository.importHiveContent(
           content: _selectedFileContent!,
         );
-        return right(AppSuccess(successMessage: 'Data imported from file!'));
+        return right(AppSuccess(successMessage: 'Data Imported From File!'));
       }
     } catch (error) {
       return left(AppError(errorMessage: error.toString()));
@@ -134,7 +135,7 @@ class HomeController extends GetxController {
     try {
       final content = inputController.text.trim();
       await _backupRepository.importHiveContent(content: content);
-      return right(AppSuccess(successMessage: 'Data imported from clipboard!'));
+      return right(AppSuccess(successMessage: 'Data Imported From Clipboard!'));
     } catch (error) {
       return left(AppError(errorMessage: error.toString()));
     } finally {
@@ -185,7 +186,10 @@ class HomeController extends GetxController {
   }
 
   void goToAddEditWordScreen() {
-    Get.toNamed(Routes.addEditWordScreen, arguments: WordScreenType.addWord);
+    Get.toNamed(
+      Routes.addEditWordScreen,
+      arguments: {'type': WordScreenType.addWord},
+    );
   }
 
   // ================ Life Cycle ===============================================
@@ -201,8 +205,8 @@ class HomeController extends GetxController {
   }
 
   @override
-  void dispose() {
-    super.dispose();
+  void onClose() {
+    super.onClose();
     inputController.dispose();
   }
 }
