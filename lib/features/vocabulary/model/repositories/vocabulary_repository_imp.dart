@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:isolate';
-import 'package:hive/hive.dart';
+import 'package:flutter/foundation.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:vocly/core/error/app_exception.dart';
 import 'package:vocly/features/vocabulary/model/entities/book_model.dart';
 import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
@@ -18,6 +19,16 @@ class VocabularyRepository
 
   @override
   int get getWordsCount => wordsBox.values.length;
+
+  @override
+  ValueListenable<Box<WordModel>> get wordValueListenable {
+    return wordsBox.listenable();
+  }
+
+  @override
+  ValueListenable<Box<BookModel>> get bookValueListenable {
+    return booksBox.listenable();
+  }
 
   @override
   Future<void> addBook({required BookModel book}) async {
@@ -174,7 +185,7 @@ class VocabularyRepository
     }
     final existing = wordsBox.values.map((e) => e.id).toSet();
     final items = decoded
-        .map((e) => WordModel.fromMap(Map<String, dynamic>.from(e)))
+        .map((e) => WordModel.fromMap(map: Map<String, dynamic>.from(e)))
         .where((w) => !existing.contains(w.id))
         .toList();
     await wordsBox.addAll(items);

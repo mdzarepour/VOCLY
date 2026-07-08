@@ -1,5 +1,4 @@
-﻿
-class UIStrings {
+﻿class UIStrings {
   UIStrings._();
   static const appName = 'VOCLY';
   static const newBook = 'New book';
@@ -72,7 +71,7 @@ class AppStrings {
   static const keyExample = 'example';
   static const keyType = 'type';
   static const keyIcon = 'icon';
-  static const level = 'level';
+  static const keyLevel = 'level';
   static const keyFilterItems = 'FilterItems';
 
   // DIALOGS -->
@@ -91,8 +90,4 @@ class AppStrings {
       'Are you sure about deleting these words?';
   static const dialogConfirmDeleteAction = 'delete';
   static const bookWordsCount = 'You have {count} words in this book';
-
-
-
-
 }

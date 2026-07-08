@@ -61,7 +61,7 @@ class WordModel extends VocabularyModel with EquatableMixin, HiveObjectMixin {
          type: type,
        );
 
-  factory WordModel.fromMap(Map<String, dynamic> map) {
+  factory WordModel.fromMap({required Map<String, dynamic> map}) {
     return WordModel(
       id: Uuid().v4(),
       createAt: DateTime.now().microsecondsSinceEpoch,
@@ -75,7 +75,7 @@ class WordModel extends VocabularyModel with EquatableMixin, HiveObjectMixin {
     );
   }
 
-  void updateWordModel({required Map<String, dynamic> map}) {
+  void updateWord({required Map<String, dynamic> map}) {
     name = map['name'] ?? name;
     meaning = map['meaning'] ?? meaning;
     example = map['example'] ?? example;

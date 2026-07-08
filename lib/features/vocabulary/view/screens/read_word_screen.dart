@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:vocly/core/types/entity_types.dart';
-import 'package:vocly/features/vocabulary/controller/word_controller.dart';
+import 'package:vocly/features/vocabulary/controller/word_crud_controller.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
 import 'package:vocly/shared/widgets/card_widget.dart';
 import 'package:vocly/shared/widgets/expansion_widget.dart';
 import 'package:vocly/shared/constants/const_colors.dart';
-import 'package:vocly/shared/constants/const_icons.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
 import 'package:vocly/core/types/enums.dart';
 import 'package:vocly/core/router/app_router.dart';
@@ -24,7 +23,7 @@ class ReadWordScreen extends StatefulWidget {
 }
 
 class _ReadWordScreenState extends State<ReadWordScreen> {
-  final _wordController = Get.find<WordController>();
+  final _wordController = Get.find<WordCrudController>();
   final _speechService = Get.find<SpeechService>();
   final _spellingController = Get.find<SpellingController>();
 
@@ -35,7 +34,7 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final currentWord = Get.arguments;
       if (currentWord != null) {
-        _wordController.updateCurrentWord(newWord: currentWord);
+        //  _wordController.updateCurrentWord(newWord: currentWord);
       }
     });
   }
@@ -86,9 +85,10 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
       final accuracy = _spellingController.accuracy;
 
       return ExpansionWidget(
-        onExpansionChanged: (value) {
-          _spellingController.startPractice(isClosed: value);
-        },
+        // onExpansionChanged: (value) {
+        //   _spellingController.startPractice(isClosed: value);
+        // },
+        //TODO write own expantion widget
         title: UIStrings.spellingPractice,
         children: [
           Wrap(
@@ -196,7 +196,7 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
       front: Stack(
         children: [
           CardWidget(
-            selectedBorderColor: ConstEntityColors.colors[currentWord.color],
+            selectedBorderColor: EntityColor.children[currentWord.color],
             height: 200,
             child: Center(
               child: Column(
@@ -223,7 +223,7 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
                   Text(
                     textAlign: TextAlign.center,
                     style: AppTextTheme.titleMedium,
-                    WordTypes.wordTypes[currentWord.type],
+                    WordTypes.children[currentWord.type],
                   ),
                 ],
               ),
@@ -232,14 +232,14 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
           Positioned(
             top: 20,
             right: 20,
-            child: Icon(ConstIcons.icons[currentWord.icon]),
+            child: Icon(EntityIcon.children[currentWord.icon]),
           ),
         ],
       ),
       back: Stack(
         children: [
           CardWidget(
-            selectedBorderColor: ConstEntityColors.colors[currentWord.color],
+            selectedBorderColor: EntityColor.children[currentWord.color],
             height: 200,
             child: Center(
               child: Column(
@@ -263,7 +263,7 @@ class _ReadWordScreenState extends State<ReadWordScreen> {
           Positioned(
             bottom: 20,
             right: 20,
-            child: Icon(ConstIcons.icons[currentWord.icon]),
+            child: Icon(EntityIcon.children[currentWord.icon]),
           ),
         ],
       ),

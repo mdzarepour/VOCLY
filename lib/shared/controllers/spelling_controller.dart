@@ -4,7 +4,7 @@ import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
 
 class SpellingController extends GetxController {
-  final Rxn<WordModel> currentWord;
+  final WordModel currentWord;
   SpellingController({required this.currentWord});
 
   final RxString _word = AppStrings.emptyChar.obs;
@@ -24,7 +24,7 @@ class SpellingController extends GetxController {
 
   void _prepareChars() {
     _updatePracticeMode(value: true);
-    _word.value = currentWord.value?.name.trim() ?? AppStrings.emptyChar;
+    _word.value = currentWord.name.trim() ;
 
     final List<String> splitWord = _word.split(AppStrings.emptyChar);
     splitWord.shuffle();

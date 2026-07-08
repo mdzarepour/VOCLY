@@ -1,4 +1,3 @@
-import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
 import 'package:flutter/material.dart';
 import 'package:vocly/core/types/enums.dart';
 import 'package:vocly/shared/constants/const_colors.dart';
@@ -8,9 +7,13 @@ import 'package:vocly/shared/widgets/card_widget.dart';
 
 class ExpansionWidget extends StatelessWidget {
   final String? title;
+  // for changing ui accordingly
   final int? selectedChildIndex;
+  // to know what kind of widget to show in wrapper
   final ExpantionWidgetType? type;
+  // the children widgets for wraooer
   final List<dynamic>? children;
+  // to change selectedIndex to i
   final void Function(int i)? onChildTap;
 
   const ExpansionWidget({
@@ -24,6 +27,7 @@ class ExpansionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // entire widget
     return CardWidget(
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -33,36 +37,24 @@ class ExpansionWidget extends StatelessWidget {
           showTrailingIcon: false,
           splashColor: Colors.transparent,
           childrenPadding: EdgeInsets.only(bottom: 30),
+          // title
           title: Center(
             child: Text(
               title ?? AppStrings.emptyChar,
               style: AppTextTheme.titleMedium,
             ),
           ),
+          // children list
           children: [
             Wrap(
               spacing: 15,
               runSpacing: 15,
               children: [
                 for (int i = 0; i < children!.length; i++)
+                  // get children widget according to type
                   InkWell(
-                    onTap: () => onChildTap.call(i),
-                    child: Container(
-                      height: 40,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: ConstUiColors.backgroundColor2,
-                        ),
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(15),
-                        ),
-                        color: i == selectedChildIndex
-                            ? ConstUiColors.backgroundColor2
-                            : ConstUiColors.forthColor,
-                      ),
-                      child: getDynamicChildWidget(i: i),
-                    ),
+                    onTap: () => onChildTap!.call(i),
+                    child: getDynamicChildWidget(i: i),
                   ),
               ],
             ),
@@ -73,6 +65,7 @@ class ExpansionWidget extends StatelessWidget {
   }
 
   Widget getDynamicChildWidget({required int i}) {
+    // if icon selection
     switch (type) {
       case ExpantionWidgetType.entityIcon:
         {
@@ -89,6 +82,7 @@ class ExpansionWidget extends StatelessWidget {
             child: Icon(children![i] as IconData?),
           );
         }
+      // if color selection
       case ExpantionWidgetType.entityColor:
         {
           return Container(
@@ -104,12 +98,24 @@ class ExpansionWidget extends StatelessWidget {
             child: CircleAvatar(backgroundColor: ConstUiColors.backgroundColor),
           );
         }
+      // if type or level selection
       default:
         {
-          return Center(
-            child: Text(
-              children![i] as String,
-              style: AppTextTheme.headlineSmall,
+          return Container(
+            width: 100,
+            height: 40,
+            decoration: BoxDecoration(
+              border: Border.all(color: ConstUiColors.backgroundColor2),
+              borderRadius: const BorderRadius.all(Radius.circular(15)),
+              color: i == selectedChildIndex
+                  ? ConstUiColors.backgroundColor2
+                  : ConstUiColors.forthColor,
+            ),
+            child: Center(
+              child: Text(
+                children![i] as String,
+                style: AppTextTheme.headlineSmall,
+              ),
             ),
           );
         }

@@ -50,7 +50,7 @@ class HomeScreen extends GetView<HomeController> {
                     icon: Icons.language_outlined,
                     title: UIStrings.words,
                     data: '$wordsLength Words',
-                    onTap: () => controller.goToManageWordsScreen(),
+                    onTap: () => controller.goToAddEditWordScreen(),
                   ),
                 );
               }),

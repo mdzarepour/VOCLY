@@ -7,6 +7,7 @@ part 'book_model.g.dart';
 @HiveType(typeId: 1)
 class BookModel extends VocabularyModel with EquatableMixin, HiveObjectMixin {
   @override
+  
   @HiveField(0)
   String id;
 

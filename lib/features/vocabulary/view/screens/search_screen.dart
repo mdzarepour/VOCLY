@@ -6,7 +6,6 @@ import 'package:vocly/features/vocabulary/controller/search_controller.dart';
 import 'package:vocly/shared/constants/const_colors.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
-import 'package:vocly/core/router/app_router.dart';
 import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
 
 class SearchScreen extends GetView<WordSearchController> {
@@ -49,9 +48,7 @@ class SearchScreen extends GetView<WordSearchController> {
           final query = controller.query;
           // listview child
           return InkWell(
-            onTap: () {
-              Get.toNamed(Routes.readWordScreen, arguments: currentWord);
-            },
+            onTap: () => controller.goToReadWordScreen(word: currentWord),
             child: _SearchWordTile(currentWord: currentWord, query: query),
           );
         },

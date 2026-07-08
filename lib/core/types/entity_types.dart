@@ -98,7 +98,7 @@ class EntityIcon {
 // ================ Entity Filtering Items For Books ===========================
 
 class BookFilteringItems {
-  static const List<Map> bookFilteringItems = [
+  static const List<Map> children = [
     {
       AppStrings.keyName: 'Color',
       AppStrings.keyType: FilterType.color,
@@ -125,7 +125,7 @@ class BookFilteringItems {
 // ================ Entity Filtering Items For Words ===========================
 
 class WordFilteringItems {
-  static const List<Map> wordFilteringItems = [
+  static const List<Map> children = [
     {
       AppStrings.keyName: 'Color',
       AppStrings.keyType: FilterType.color,

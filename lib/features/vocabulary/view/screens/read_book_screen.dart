@@ -2,13 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:vocly/features/vocabulary/controller/book_controller.dart';
+import 'package:vocly/core/types/entity_types.dart';
+import 'package:vocly/features/vocabulary/controller/book_crud_controller.dart';
 import 'package:vocly/features/vocabulary/view/widgets/word_tile.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
 import 'package:vocly/shared/widgets/card_widget.dart';
 import 'package:vocly/shared/constants/const_colors.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
-import 'package:vocly/shared/constants/const_icons.dart';
 import 'package:vocly/core/types/enums.dart';
 import 'package:vocly/core/router/app_router.dart';
 import 'package:vocly/features/vocabulary/model/entities/book_model.dart';
@@ -22,7 +22,7 @@ class ReadBookScreen extends StatefulWidget {
 }
 
 class _ReadBookScreenState extends State<ReadBookScreen> {
-  final _bookController = Get.find<BookController>();
+  final _bookController = Get.find<BookCrudController>();
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class _ReadBookScreenState extends State<ReadBookScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final currentWord = Get.arguments;
       if (currentWord != null) {
-        _bookController.updateCurrentBook(newBook: currentWord);
+        // _bookController.updateCurrentBook(newBook: currentWord);
       }
     });
   }
@@ -106,7 +106,7 @@ class _ReadBookScreenState extends State<ReadBookScreen> {
         children: [
           CardWidget(
             height: 130,
-            selectedBorderColor: ConstEntityColors.colors[currentBook.color],
+            selectedBorderColor: EntityColor.children[currentBook.color],
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -118,7 +118,7 @@ class _ReadBookScreenState extends State<ReadBookScreen> {
           Positioned(
             top: 20,
             right: 20,
-            child: Icon(ConstIcons.icons[currentBook.icon]),
+            child: Icon(EntityIcon.children[currentBook.icon]),
           ),
         ],
       ),
@@ -126,7 +126,7 @@ class _ReadBookScreenState extends State<ReadBookScreen> {
         children: [
           CardWidget(
             height: 130,
-            selectedBorderColor: ConstEntityColors.colors[currentBook.color],
+            selectedBorderColor: EntityColor.children[currentBook.color],
             child: Column(
               spacing: 10,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -143,7 +143,7 @@ class _ReadBookScreenState extends State<ReadBookScreen> {
           Positioned(
             bottom: 20,
             right: 20,
-            child: Icon(ConstIcons.icons[currentBook.icon]),
+            child: Icon(EntityIcon.children[currentBook.icon]),
           ),
         ],
       ),

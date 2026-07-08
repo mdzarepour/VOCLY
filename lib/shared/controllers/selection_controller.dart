@@ -65,19 +65,18 @@ abstract class SelectionController<T> extends GetxController {
         ..clear()
         ..addAll(currentSelectedItems);
     } else {
-      clearSelection();
+      _clearSelection();
     }
   }
 
-  void clearSelection() {
+  void _clearSelection() {
     _selectedItems.clear();
     updateSelectionMode(mode: false);
   }
 
   @override
   void onClose() {
-    _selectedItems.clear();
-    _isSelectionMode.value = false;
+    _clearSelection();
     super.onClose();
   }
 }

@@ -29,8 +29,8 @@ class WordSearchController extends GetxController {
 
   // ================ Navigation ===============================================
 
-  void goToReadWordScreen() {
-    Get.toNamed(Routes.readWordScreen, arguments: currentWord);
+  void goToReadWordScreen({required WordModel word}) {
+    Get.toNamed(Routes.readWordScreen, arguments: word);
   }
 
   // ================ Life Cycle ===============================================

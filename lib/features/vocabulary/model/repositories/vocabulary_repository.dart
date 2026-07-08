@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:vocly/features/vocabulary/model/entities/book_model.dart';
 import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
 
@@ -8,6 +10,7 @@ abstract class WordRepository {
   Future<void> deleteWords({required List<WordModel> selectedWords});
   bool isWordExist({required String name});
   List<WordModel> searchWords({required String query});
+  ValueListenable<Box<WordModel>> get wordValueListenable;
   int get getWordsCount;
 }
 
@@ -18,6 +21,7 @@ abstract class BookRepository {
   Future<void> updateBook({required BookModel book});
   Future<void> deleteBooks({required List<BookModel> selectedBooks});
   bool isBookExist({required String name});
+  ValueListenable<Box<BookModel>> get bookValueListenable;
   int get getBooksCount;
 }
 

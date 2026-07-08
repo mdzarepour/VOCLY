@@ -1,52 +1,29 @@
-﻿import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:get/get.dart';
+﻿import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:vocly/core/types/entity_types.dart';
 import 'package:vocly/shared/widgets/filter_button.dart';
 import 'package:vocly/shared/widgets/filter_sheet_widget.dart';
-import 'package:vocly/features/vocabulary/controller/book_controller.dart';
-import 'package:vocly/shared/controllers/filter_controller.dart';
-import 'package:vocly/shared/controllers/selection_controller.dart';
+import 'package:vocly/features/vocabulary/controller/book_manage_controller.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
 import 'package:vocly/shared/widgets/card_widget.dart';
 import 'package:vocly/shared/constants/const_colors.dart';
-import 'package:vocly/shared/constants/const_icons.dart';
-import 'package:vocly/core/router/app_router.dart';
-import 'package:vocly/core/services/dialog_service.dart';
 import 'package:vocly/features/vocabulary/model/entities/book_model.dart';
 
-class ManageBooksScreen extends StatefulWidget {
+class ManageBooksScreen extends GetView<BookManageController> {
   const ManageBooksScreen({super.key});
-
-  @override
-  State<ManageBooksScreen> createState() => _ManageBooksScreenState();
-}
-
-class _ManageBooksScreenState extends State<ManageBooksScreen> {
-  final _dialogService = Get.find<DialogService>();
-  final _bookController = Get.find<BookController>();
-  final _selectionController = Get.find<BookSelectionController>();
-  final _filterController = Get.find<FilterController<BookModel>>();
-
-  List<BookModel> _books = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appbarWidget(),
       body: Obx(() {
-        final isLoading = _bookController.isLoading;
-        _books =
-            // _filterController.getFilteredItems(
-            //  items:
-            _bookController.books;
-        //  );
+        final books = controller.books;
         return CustomScrollView(
           slivers: [
             SliverToBoxAdapter(child: _filterWidget()),
             SliverToBoxAdapter(child: SizedBox(height: 20)),
-            _getMainWidget(isLoading: isLoading, isEmpty: _books.isEmpty),
+            _booksListView(books: books),
           ],
         );
       }),
@@ -57,8 +34,7 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
     return AppBar(
       automaticallyImplyLeading: true,
       title: Obx(() {
-        final mode = _selectionController.isSelectionMode;
-        final selectedBooks = _selectionController.selectedItems;
+        final mode = controller.isSelectionMode;
         return Row(
           children: [
             // appbar title -->
@@ -67,9 +43,7 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
             if (mode)
               // delete icon -->
               InkWell(
-                onTap: () {
-                  _deleteBook(selectedBooks: selectedBooks.cast<BookModel>());
-                },
+                onTap: () => controller.deleteBooks(),
                 child: SizedBox(
                   height: 40,
                   width: 40,
@@ -79,10 +53,8 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
             SizedBox(width: 10),
             // select all icon -->
             InkWell(
-              onTap: () => _selectionController.selectAllItems(
-                currentSelectedItems: _books,
-              ),
-              child: Icon(_selectionController.selectButtonIcon),
+              onTap: () => controller.selectAllBooks(),
+              child: Icon(controller.selectionButtonIcon),
             ),
             SizedBox(width: 20),
           ],
@@ -92,7 +64,7 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
   }
 
   Widget _filterWidget() {
-    final filteringItems = BookTypes.bookFilteringItems;
+    final filteringItems = BookFilteringItems.children;
     return SizedBox(
       height: 35,
       child: ListView(
@@ -126,13 +98,13 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
                   backgroundColor: ConstUiColors.backgroundColor,
                   FilterSheetWidget(
                     onChanged: (indexOfSelectedFilterItem) {
-                      _filterController.selectFilter(
+                      controller.selectFilter(
                         type: filteringItems[index][AppStrings.keyType],
                         filterItem: indexOfSelectedFilterItem,
                       );
                     },
                     isSelected: (indexOfSelectedFilterItem) {
-                      return _filterController.isFilterSelected(
+                      return controller.isFilterSelected(
                         type: filteringItems[index][AppStrings.keyType],
                         filterItem: indexOfSelectedFilterItem,
                       );
@@ -150,19 +122,7 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
     );
   }
 
-  Widget _getMainWidget({required bool isLoading, required bool isEmpty}) {
-    if (isLoading) {
-      return _deletingLoading();
-    } else {
-      if (isEmpty) {
-        return _emptyStateWidget();
-      } else {
-        return _booksListView();
-      }
-    }
-  }
-
-  Widget _booksListView() {
+  Widget _booksListView({required List<BookModel> books}) {
     return SliverPadding(
       padding: EdgeInsets.symmetric(horizontal: 20),
       sliver: SliverGrid.builder(
@@ -172,9 +132,9 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
           crossAxisSpacing: 15,
           childAspectRatio: 1 / 1,
         ),
-        itemCount: _books.length,
+        itemCount: books.length,
         itemBuilder: (BuildContext context, int index) {
-          final book = _books[index];
+          final book = books[index];
           return _bookWidget(currentBook: book);
         },
       ),
@@ -183,17 +143,15 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
 
   Widget _bookWidget({required final BookModel currentBook}) {
     return Obx(() {
-      final mode = _selectionController.isSelectionMode;
-      final isSelected = _selectionController.isSelected(item: currentBook);
+      final mode = controller.isSelectionMode;
+      final isSelected = controller.isBookSelected(book: currentBook);
       return InkWell(
-        onLongPress: () {
-          _selectionController.changeSelectionMode(item: currentBook);
-        },
+        onLongPress: () => controller.startSelection(book: currentBook),
         onTap: () {
           if (mode) {
-            _selectionController.selectItem(item: currentBook);
+            controller.selectBook(book: currentBook);
           } else {
-            Get.toNamed(Routes.readBookScreen, arguments: currentBook);
+            controller.goToReakBookScreen(book: currentBook);
           }
         },
         child: Stack(
@@ -216,7 +174,7 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
             Positioned(
               top: 20,
               right: 20,
-              child: Icon(ConstIcons.icons[currentBook.icon]),
+              child: Icon(EntityIcon.children[currentBook.icon]),
             ),
           ],
         ),
@@ -224,43 +182,31 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
     });
   }
 
-  Widget _emptyStateWidget() {
-    return SliverFillRemaining(
-      fillOverscroll: false,
-      hasScrollBody: false,
-      child: Row(
-        spacing: 5,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.search_off_outlined, size: 25),
-          Text('Empty', style: AppTextTheme.titleMedium),
-        ],
-      ),
-    );
-  }
-
-  Widget _deletingLoading() {
-    return SliverFillRemaining(
-      fillOverscroll: false,
-      hasScrollBody: false,
-      child: SpinKitThreeInOut(size: 15, color: ConstUiColors.thirdColor),
-    );
-  }
-
   Color getBookWidgetColor({required bool isSelected, required int color}) {
-    return isSelected
-        ? ConstUiColors.thirdColor
-        : ConstEntityColors.colors[color];
-  }
-
-  Future<void> _deleteBook({required List<BookModel> selectedBooks}) async {
-    final bool? permission = await _dialogService.showDialog(
-      title: AppStrings.dialogConfirmDeleteTitle,
-      content: 'Are you sure about deleting these books?',
-      confirmTitle: AppStrings.dialogConfirmDeleteAction,
-    );
-
-    if (permission == null || permission == false) return;
-    _bookController.deleteBooks(selectedBooks: selectedBooks);
+    return isSelected ? ConstUiColors.thirdColor : EntityColor.children[color];
   }
 }
+
+
+  // Widget _emptyStateWidget() {
+  //   return SliverFillRemaining(
+  //     fillOverscroll: false,
+  //     hasScrollBody: false,
+  //     child: Row(
+  //       spacing: 5,
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [
+  //         Icon(Icons.search_off_outlined, size: 25),
+  //         Text('Empty', style: AppTextTheme.titleMedium),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  // Widget _deletingLoading() {
+  //   return SliverFillRemaining(
+  //     fillOverscroll: false,
+  //     hasScrollBody: false,
+  //     child: SpinKitThreeInOut(size: 15, color: ConstUiColors.thirdColor),
+  //   );
+  // }

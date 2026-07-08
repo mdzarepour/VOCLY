@@ -185,10 +185,7 @@ class HomeController extends GetxController {
   }
 
   void goToAddEditWordScreen() {
-    Get.toNamed(
-      Routes.addEditWordScreen,
-      arguments: [WordScreenType.addWord, null],
-    );
+    Get.toNamed(Routes.addEditWordScreen, arguments: WordScreenType.addWord);
   }
 
   // ================ Life Cycle ===============================================

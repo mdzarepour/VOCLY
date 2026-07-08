@@ -2,7 +2,7 @@
 import 'package:get/get.dart';
 import 'package:vocly/core/types/entity_types.dart';
 import 'package:vocly/features/vocabulary/controller/word_crud_controller.dart';
-import 'package:vocly/shared/widgets/card_widget.dart';
+import 'package:vocly/shared/widgets/action_button.dart';
 import 'package:vocly/shared/widgets/expansion_widget.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
 import 'package:vocly/shared/constants/const_colors.dart';
@@ -18,15 +18,7 @@ class AddEditWordScreen extends GetView<WordCrudController> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
       child: Scaffold(
-        appBar: AppBar(
-          centerTitle: false,
-          title: Text(
-            controller.wordScreenType == WordScreenType.editWord
-                ? 'Edit word'
-                : 'Add new word',
-            style: AppTextTheme.titleMedium,
-          ),
-        ),
+        appBar: appBarWidget(),
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -79,44 +71,64 @@ class AddEditWordScreen extends GetView<WordCrudController> {
     );
   }
 
-  Widget _iconSelection() {
-    return ExpansionWidget(
-      title: UIStrings.icon,
-      onChildTap: (i) => controller.updateSelectedIcon(value: i),
-      selectedChildIndex: controller.selectedIconIndex,
-      type: ExpantionWidgetType.entityIcon,
-      children: EntityIcon.children,
+  AppBar appBarWidget() {
+    return AppBar(
+      centerTitle: false,
+      title: Text(
+        controller.wordScreenType == WordScreenType.editWord
+            ? 'Edit word'
+            : 'Add new word',
+        style: AppTextTheme.titleMedium,
+      ),
     );
+  }
+
+  Widget _iconSelection() {
+    return Obx(() {
+      return ExpansionWidget(
+        title: UIStrings.icon,
+        onChildTap: (i) => controller.updateSelectedIcon(value: i),
+        selectedChildIndex: controller.selectedIconIndex,
+        type: ExpantionWidgetType.entityIcon,
+        children: EntityIcon.children,
+      );
+    });
   }
 
   Widget _typeSelection() {
-    return ExpansionWidget(
-      title: UIStrings.type,
-      onChildTap: (i) => controller.updateSelectedType(value: i),
-      selectedChildIndex: controller.selectedTypeIndex,
-      type: ExpantionWidgetType.entityType,
-      children: WordTypes.children,
-    );
+    return Obx(() {
+      return ExpansionWidget(
+        title: UIStrings.type,
+        onChildTap: (i) => controller.updateSelectedType(value: i),
+        selectedChildIndex: controller.selectedTypeIndex,
+        type: ExpantionWidgetType.entityType,
+        children: WordTypes.children,
+      );
+    });
   }
 
   Widget _levelSelection() {
-    return ExpansionWidget(
-      title: UIStrings.difficulty,
-      onChildTap: (i) => controller.updateSelectedLevel(value: i),
-      selectedChildIndex: controller.selectedLevelIndex,
-      type: ExpantionWidgetType.entityLevel,
-      children: EntityLevel.children,
-    );
+    return Obx(() {
+      return ExpansionWidget(
+        title: UIStrings.difficulty,
+        onChildTap: (i) => controller.updateSelectedLevel(value: i),
+        selectedChildIndex: controller.selectedLevelIndex,
+        type: ExpantionWidgetType.entityLevel,
+        children: EntityLevel.children,
+      );
+    });
   }
 
   Widget _colorSelection() {
-    return ExpansionWidget(
-      title: UIStrings.color,
-      onChildTap: (i) => controller.updateSelectedColor(value: i),
-      selectedChildIndex: controller.selectedColorIndex,
-      type: ExpantionWidgetType.entityColor,
-      children: EntityColor.children,
-    );
+    return Obx(() {
+      return ExpansionWidget(
+        title: UIStrings.color,
+        onChildTap: (i) => controller.updateSelectedColor(value: i),
+        selectedChildIndex: controller.selectedColorIndex,
+        type: ExpantionWidgetType.entityColor,
+        children: EntityColor.children,
+      );
+    });
   }
 
   Widget _actionButtons() {
@@ -124,48 +136,43 @@ class AddEditWordScreen extends GetView<WordCrudController> {
       spacing: 10,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Expanded(
-          child: InkWell(
-            onTap: () {
-              FocusManager.instance.primaryFocus!.unfocus();
-              controller.handleAction();
-            },
-            child: CardWidget(
-              selectedBorderColor: ConstUiColors.positiveColor,
-              height: 70,
-              child: Row(
-                spacing: 10,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    controller.wordScreenType == WordScreenType.editWord
-                        ? Icons.edit_outlined
-                        : Icons.done,
-                  ),
-                  Text(UIStrings.done, style: AppTextTheme.titleMedium),
-                ],
-              ),
+        // add - edit button
+        ActionButton(
+          borderColor: ConstUiColors.positiveColor,
+          onTap: () => _action(),
+          children: [
+            Icon(
+              controller.wordScreenType == WordScreenType.editWord
+                  ? Icons.edit_outlined
+                  : Icons.done,
             ),
-          ),
+            Text(UIStrings.done, style: AppTextTheme.titleMedium),
+          ],
         ),
-        Expanded(
-          child: InkWell(
-            onTap: () => Get.back(),
-            child: CardWidget(
-              selectedBorderColor: ConstUiColors.errorColor,
-              height: 70,
-              child: Row(
-                spacing: 10,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.cancel_outlined),
-                  Text(UIStrings.cancel, style: AppTextTheme.titleMedium),
-                ],
-              ),
-            ),
-          ),
+        // cancel button
+        ActionButton(
+          borderColor: ConstUiColors.errorColor,
+          onTap: () => controller.goToBack(),
+          children: [
+            Icon(Icons.cancel_outlined),
+            Text(UIStrings.cancel, style: AppTextTheme.titleMedium),
+          ],
         ),
       ],
+    );
+  }
+
+  Future<void> _action() async {
+    FocusManager.instance.primaryFocus!.unfocus();
+    final either = await controller.handleAction();
+    either.fold(
+      (appError) {
+        Get.snackbar('Oops!', appError.errorMessage);
+      },
+      (appSuccess) {
+        controller.goToBack();
+        Get.snackbar('Oops!', appSuccess.successMessage!);
+      },
     );
   }
 }

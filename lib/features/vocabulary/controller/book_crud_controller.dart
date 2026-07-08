@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:get/get.dart';
 import 'package:vocly/core/error/app_exception.dart';
+import 'package:vocly/core/router/app_router.dart';
 import 'package:vocly/core/services/dialog_service.dart';
 import 'package:vocly/core/types/enums.dart';
+import 'package:vocly/features/vocabulary/model/entities/book_model.dart';
 import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
 import 'package:vocly/features/vocabulary/model/repositories/vocabulary_repository.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
 
-class WordCrudController extends GetxController {
-  late final WordRepository _wordRepository;
+class BookCrudController extends GetxController {
+  late final BookRepository _bookRepository;
   late final DialogService _dialogService;
-  late final WordScreenType wordScreenType;
+  late final BookScreenType bookScreenType;
 
   // ================ Form Key =================================================
 
@@ -20,13 +22,15 @@ class WordCrudController extends GetxController {
   // ================ Text Editing Controllers =================================
 
   final nameController = TextEditingController();
-  final meaningController = TextEditingController();
-  final exampleController = TextEditingController();
+  final descriptionController = TextEditingController();
 
   // ================ Reactive Variables =======================================
 
-  final Rxn<WordModel> _currentWord = Rxn<WordModel>();
-  WordModel? get currentWord => _currentWord.value;
+  final Rxn<BookModel> _currentBook = Rxn<BookModel>();
+  BookModel? get currentBook => _currentBook.value;
+
+  final RxList<String> _selectedWords = <String>[].obs;
+  List<String> get selectedWords => _selectedWords;
 
   final RxInt _selectedIconIndex = 0.obs;
   int get selectedIconIndex => _selectedIconIndex.value;
@@ -58,51 +62,67 @@ class WordCrudController extends GetxController {
     _selectedLevelIndex.value = value;
   }
 
+  void updateSelectedWords({required List<String> words}) {
+    _selectedWords.value = words;
+  }
+
   // ================ Crud Functions ===========================================
 
-  Future<Either<AppError, AppSuccess>> _addWord() async {
+  Future<Either<AppError, AppSuccess>> _addBook() async {
     try {
       final map = _createMap();
-      final WordModel word = WordModel.fromMap(map: map);
-      final isWordExist = _isWordExist(name: word.name);
-      
-      if (isWordExist) {
-        final bool? permission = await _dialogService.showDialog(
-          title: AppStrings.dialogDuplicatedWordTitle,
-          content: AppStrings.dialogDuplicatedWordContent,
-          confirmTitle: AppStrings.dialogDuplicatedWordConfirm,
-        );
-        if (permission!) {
-          await _wordRepository.addWord(word: word);
-        } else {
-          return left(AppError(errorMessage: 'Permision Denied'));
-        }
+      final BookModel book = BookModel.fromMap(map: map);
+      final isWordExist = _isBookExist(name: book.name);
+
+      if (!isWordExist) {
+        await _bookRepository.addBook(book: book);
       }
-      await _wordRepository.addWord(word: word);
-      return right(AppSuccess(successMessage: '${word.name} added'));
+      final bool? permission = await _dialogService.showDialog(
+        title: AppStrings.dialogDuplicatedBookTitle,
+        content: AppStrings.dialogDuplicatedBookContent,
+        confirmTitle: AppStrings.dialogDuplicatedBookConfirm,
+      );
+      if (permission!) {
+        await _bookRepository.addBook(book: book);
+      } else {
+        return left(AppError(errorMessage: 'Permision Denied'));
+      }
+      return right(AppSuccess(successMessage: '${book.name} added'));
     } catch (error) {
       return left(AppError(errorMessage: error.toString()));
     }
   }
 
-  bool _isWordExist({required final String name}) {
+  bool _isBookExist({required final String name}) {
     try {
-      return _wordRepository.isWordExist(name: name);
+      return _bookRepository.isBookExist(name: name);
     } catch (error) {
       return false;
     }
   }
 
-  Future<Either<AppError, AppSuccess>> _updateWord() async {
+  Future<Either<AppError, AppSuccess>> _updateBook() async {
     try {
       final Map<String, dynamic> map = _createMap();
-      _currentWord.value!.updateWord(map: map);
-      await _wordRepository.updateWord(word: _currentWord.value!);
+      _currentBook.value!.updateBook(map: map);
+      await _bookRepository.updateBook(book: _currentBook.value!);
       return right(
-        AppSuccess(successMessage: '${_currentWord.value!.name} updated'),
+        AppSuccess(successMessage: '${_currentBook.value!.name} updated'),
       );
     } catch (error) {
       return left(AppError(errorMessage: error.toString()));
+    }
+  }
+
+  List<WordModel> getBookWords(BookModel book) {
+    try {
+      final List<WordModel> bookWords = _bookRepository.getBookWords(
+        book: book,
+      );
+      return bookWords;
+    } catch (error) {
+      //   Get.snackbar('Oops!', _errorMessage(error));
+      return [];
     }
   }
 
@@ -110,40 +130,40 @@ class WordCrudController extends GetxController {
 
   Map<String, dynamic> _createMap() {
     Map<String, dynamic> map = {};
-    map = {
-      AppStrings.keyName: nameController.text,
-      AppStrings.keyMeaning: meaningController.text,
-      AppStrings.keyExample: exampleController.text,
-      AppStrings.keyIcon: _selectedIconIndex.value,
-      AppStrings.keyType: _selectedTypeIndex.value,
-      AppStrings.keyColor: _selectedColorIndex.value,
-      AppStrings.keyLevel: _selectedLevelIndex.value,
-    };
+    if (formKey.currentState!.validate()) {
+      map = {
+        AppStrings.keyName: nameController.text,
+        AppStrings.keyIcon: _selectedIconIndex,
+        AppStrings.keyType: _selectedTypeIndex,
+        AppStrings.keyColor: _selectedColorIndex,
+        AppStrings.keyLevel: _selectedLevelIndex,
+        AppStrings.keyWords: _selectedWords,
+      };
+    }
     return map;
   }
 
   Future<Either<AppError, AppSuccess>> handleAction() async {
-    if (formKey.currentState!.validate()) {
-      if (wordScreenType == WordScreenType.addWord) {
-        return await _addWord();
-      } else {
-        return await _updateWord();
-      }
+    if (bookScreenType == BookScreenType.addBook) {
+      return await _addBook();
+    } else {
+      return await _updateBook();
     }
-    return left(AppError(errorMessage: 'Please Fill Inputs First'));
   }
 
   // ================ Navigation ===============================================
 
   void goToBack() => Get.back();
 
+  void goToMnageWordsScreen() => Get.toNamed(Routes.manageWordsScreen);
+
   // ================ Life Cycle ===============================================
 
   @override
   void onInit() {
     super.onInit();
-    wordScreenType = Get.arguments;
-    _wordRepository = Get.find();
+    bookScreenType = Get.arguments;
+    _bookRepository = Get.find();
     _dialogService = Get.find();
   }
 
@@ -151,7 +171,6 @@ class WordCrudController extends GetxController {
   void dispose() {
     super.dispose();
     nameController.dispose();
-    exampleController.dispose();
-    meaningController.dispose();
+    descriptionController.dispose();
   }
 }

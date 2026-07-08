@@ -3,7 +3,6 @@ import 'package:vocly/core/types/entity_types.dart';
 import 'package:vocly/shared/widgets/card_widget.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
 import 'package:vocly/shared/constants/const_colors.dart';
-import 'package:vocly/shared/constants/const_icons.dart';
 
 class WordTile extends StatelessWidget {
   final bool isSmallTile;
@@ -53,7 +52,7 @@ class WordTile extends StatelessWidget {
                           style: AppTextTheme.titleMedium,
                         ),
                         Text(
-                          WordTypes.wordTypes[type!],
+                          WordTypes.children[type!],
                           overflow: TextOverflow.ellipsis,
                           style: AppTextTheme.titleSmall,
                         ),
@@ -62,7 +61,7 @@ class WordTile extends StatelessWidget {
                   ),
                   CircleAvatar(
                     radius: 5,
-                    backgroundColor: ConstEntityColors.colors[color!],
+                    backgroundColor: EntityColor.children[color!],
                   ),
                 ],
               ),
@@ -73,7 +72,7 @@ class WordTile extends StatelessWidget {
               child: Row(
                 spacing: 15,
                 children: [
-                  Icon(ConstIcons.icons[icon!]),
+                  Icon(EntityIcon.children[icon!]),
                   Expanded(
                     flex: 8,
                     child: Column(
@@ -95,7 +94,7 @@ class WordTile extends StatelessWidget {
                     ),
                   ),
                   CircleAvatar(
-                    backgroundColor: ConstEntityColors.colors[color!],
+                    backgroundColor: EntityColor.children[color!],
                     radius: 5,
                   ),
                 ],
