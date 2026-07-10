@@ -85,7 +85,7 @@ class AddEditWordScreen extends GetView<WordCrudController> {
     return AppBar(
       centerTitle: false,
       title: Text(
-        controller.wordScreenType == WordScreenType.editWord
+        controller.type == WordScreenType.editWord
             ? 'Edit word'
             : 'Add new word',
         style: AppTextTheme.titleMedium,
@@ -152,7 +152,7 @@ class AddEditWordScreen extends GetView<WordCrudController> {
           onTap: () => _action(),
           children: [
             Icon(
-              controller.wordScreenType == WordScreenType.editWord
+              controller.type == WordScreenType.editWord
                   ? Icons.edit_outlined
                   : Icons.done,
             ),

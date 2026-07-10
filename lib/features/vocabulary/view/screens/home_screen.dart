@@ -42,7 +42,7 @@ class HomeScreen extends GetView<HomeController> {
                   ),
                 );
               }),
-              // add words button
+              // manage words button
               Obx(() {
                 final wordsLength = controller.wordsCount;
                 return Expanded(
@@ -50,7 +50,7 @@ class HomeScreen extends GetView<HomeController> {
                     icon: Icons.language_outlined,
                     title: UIStrings.words,
                     data: '$wordsLength Words',
-                    onTap: () => controller.goToAddEditWordScreen(),
+                    onTap: () => controller.goToManageWordsScreen(),
                   ),
                 );
               }),

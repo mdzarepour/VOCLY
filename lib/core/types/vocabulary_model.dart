@@ -1,11 +1,11 @@
 class VocabularyModel {
-  String id;
-  String name;
-  int color;
-  int icon;
-  int level;
-  int createAt;
-  int type;
+  final String id;
+  final String name;
+  final int color;
+  final int icon;
+  final int level;
+  final int createAt;
+  final int type;
 
   VocabularyModel({
     required this.level,

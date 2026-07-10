@@ -14,7 +14,6 @@ import 'package:vocly/shared/controllers/filter_controller.dart';
 import 'package:vocly/shared/controllers/selection_controller.dart';
 
 class BookManageController extends GetxController {
-  // ================ Dependencies =============================================
   late final BookRepository _bookRepository;
 
   late final BookSelectionController _selectionController;
@@ -86,7 +85,7 @@ class BookManageController extends GetxController {
   }
 
   void startSelection({required BookModel book}) {
-    _selectionController.changeSelectionMode(item: book);
+    _selectionController.startSelecting(item: book);
   }
 
   void selectBook({required BookModel book}) {

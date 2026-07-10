@@ -148,3 +148,15 @@ class WordFilteringItems {
     },
   ];
 }
+
+// ================ Entity Filtering Items For Words ===========================
+
+class SortItems {
+  SortItems._();
+  static const List<Map> children = [
+    {'name': 'Newest', 'type': SortType.newest},
+    {'name': 'Oldest', 'type': SortType.oldest},
+    {'name': 'From A to Z', 'type': SortType.aToZ},
+    {'name': 'From Z to A', 'type': SortType.zToA},
+  ];
+}

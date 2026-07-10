@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:vocly/core/types/entity_types.dart';
 import 'package:vocly/shared/widgets/card_widget.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
-import 'package:vocly/shared/constants/const_colors.dart';
 
 class WordTile extends StatelessWidget {
   final bool isSmallTile;

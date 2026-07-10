@@ -15,12 +15,6 @@ class VocabularyRepository
   VocabularyRepository({required this.booksBox, required this.wordsBox});
 
   @override
-  int get getBooksCount => booksBox.values.length;
-
-  @override
-  int get getWordsCount => wordsBox.values.length;
-
-  @override
   ValueListenable<Box<WordModel>> get wordValueListenable {
     return wordsBox.listenable();
   }
@@ -35,7 +29,7 @@ class VocabularyRepository
     try {
       await booksBox.add(book);
     } on HiveError catch (error) {
-      throw AppError(errorMessage: error.toString(), cause: error);
+      throw AppError(errorMessage: error.message, cause: error);
     }
   }
 
@@ -44,7 +38,7 @@ class VocabularyRepository
     try {
       await wordsBox.add(word);
     } on HiveError catch (error) {
-      throw AppError(errorMessage: error.toString(), cause: error);
+      throw AppError(errorMessage: error.message, cause: error);
     }
   }
 
@@ -57,7 +51,7 @@ class VocabularyRepository
         }
       }
     } on HiveError catch (error) {
-      throw AppError(errorMessage: error.toString(), cause: error);
+      throw AppError(errorMessage: error.message, cause: error);
     }
   }
 
@@ -70,7 +64,7 @@ class VocabularyRepository
         }
       }
     } on HiveError catch (error) {
-      throw AppError(errorMessage: error.toString(), cause: error);
+      throw AppError(errorMessage: error.message, cause: error);
     }
   }
 
@@ -79,8 +73,8 @@ class VocabularyRepository
     try {
       final List<BookModel> books = booksBox.values.toList();
       return books;
-    } catch (error) {
-      throw AppError(errorMessage: error.toString(), cause: error);
+    } on HiveError catch (error) {
+      throw AppError(errorMessage: error.message, cause: error);
     }
   }
 
@@ -89,8 +83,8 @@ class VocabularyRepository
     try {
       final List<WordModel> words = wordsBox.values.toList();
       return words.reversed.toList();
-    } catch (error) {
-      throw AppError(errorMessage: error.toString(), cause: error);
+    } on HiveError catch (error) {
+      throw AppError(errorMessage: error.message, cause: error);
     }
   }
 
@@ -100,8 +94,8 @@ class VocabularyRepository
       return booksBox.values.any(
         (element) => element.name.toLowerCase().contains(name.toLowerCase()),
       );
-    } catch (error) {
-      throw AppError(errorMessage: error.toString(), cause: error);
+    } on HiveError catch (error) {
+      throw AppError(errorMessage: error.message, cause: error);
     }
   }
 
@@ -111,8 +105,8 @@ class VocabularyRepository
       return wordsBox.values.any(
         (element) => element.name.toLowerCase().contains(name.toLowerCase()),
       );
-    } catch (error) {
-      throw AppError(errorMessage: error.toString(), cause: error);
+    } on HiveError catch (error) {
+      throw AppError(errorMessage: error.message, cause: error);
     }
   }
 
@@ -135,16 +129,16 @@ class VocabularyRepository
     try {
       await book.save();
     } on HiveError catch (error) {
-      throw AppError(errorMessage: error.toString(), cause: error);
+      throw AppError(errorMessage: error.message, cause: error);
     }
   }
 
   @override
-  Future<void> updateWord({required WordModel word}) async {
+  Future<void> updateWord({required int key, required WordModel word}) async {
     try {
-      await word.save();
+      await wordsBox.put(key, word);
     } on HiveError catch (error) {
-      throw AppError(errorMessage: error.toString(), cause: error);
+      throw AppError(errorMessage: error.message, cause: error);
     }
   }
 
@@ -156,6 +150,8 @@ class VocabularyRepository
           .whereType<WordModel>()
           .toList();
     } on HiveError catch (error) {
+      throw AppError(errorMessage: error.message, cause: error);
+    } catch (error) {
       throw AppError(errorMessage: error.toString(), cause: error);
     }
   }
@@ -171,6 +167,8 @@ class VocabularyRepository
       });
       return encodedData;
     } on HiveError catch (error) {
+      throw AppError(errorMessage: error.message, cause: error);
+    } catch (error) {
       throw AppError(errorMessage: error.toString(), cause: error);
     }
   }
@@ -180,7 +178,7 @@ class VocabularyRepository
     final decoded = await Isolate.run(
       () => jsonDecode(content) as List<dynamic>,
     );
-    if (wordsBox.length + decoded.length > 50000) {
+    if (wordsBox.length + decoded.length > 30000) {
       throw AppError(errorMessage: 'Capacity exceeded');
     }
     final existing = wordsBox.values.map((e) => e.id).toSet();

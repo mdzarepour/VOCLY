@@ -41,5 +41,8 @@ class Application extends StatelessWidget {
     );
   }
 }
-
-// search about value listnable
+//TODO use stream instead of valulistenable
+//TODO fix deleting on filtered items
+//TODO add deleting loading
+//TODO change deleting approach
+//TODO use controller as generic classes

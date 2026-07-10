@@ -1,25 +1,30 @@
 import 'dart:convert';
 import 'dart:isolate';
-import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:vocly/core/router/app_router.dart';
 import 'package:vocly/core/services/link_service.dart';
 import 'package:vocly/core/services/platform_service.dart';
 import 'package:vocly/core/types/enums.dart';
 import 'package:vocly/core/error/app_exception.dart';
+import 'package:vocly/features/vocabulary/model/entities/book_model.dart';
 import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
 import 'package:vocly/features/vocabulary/model/repositories/vocabulary_repository.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
 
 class HomeController extends GetxController {
-  late final LinkService _linkService;
-  late final PlatformService _platformService;
+  late LinkService _linkService;
+  late PlatformService _platformService;
 
-  late final BackupRepository _backupRepository;
-  late final BookRepository _bookRepository;
-  late final WordRepository _wordRepository;
+  late WordRepository _wordRepository;
+  late BookRepository _bookRepository;
+  late BackupRepository _backupRepository;
+
+  late ValueListenable<Box<WordModel>> _wordListenable;
+  late ValueListenable<Box<BookModel>> _bookListenable;
 
   // ================ Reactive Variables =======================================
 
@@ -44,20 +49,22 @@ class HomeController extends GetxController {
 
   // ================ Ui Functions =============================================
 
-  void updateBooksCount() {
-    _booksCount.value = _bookRepository.getBooksCount.toString();
-  }
-
-  void updateWordsCount() {
-    _wordsCount.value = _wordRepository.getWordsCount.toString();
-  }
-
   void _updateFileName({required String name}) {
     _fileName.value = name;
   }
 
   void clearBackupSession() {
     _fileName.value = AppStrings.emptyChar;
+  }
+
+  void _initWordsCount() {
+    final box = _wordListenable.value;
+    _wordsCount.value = box.values.length.toString();
+  }
+
+  void _initBooksCount() {
+    final box = _bookListenable.value;
+    _booksCount.value = box.values.length.toString();
   }
 
   // ================ Url Luncher Function =====================================
@@ -87,8 +94,8 @@ class HomeController extends GetxController {
           AppSuccess(successMessage: 'Backup Exported Successfully!'),
         );
       }
-    } catch (error) {
-      return left(AppError(errorMessage: error.toString()));
+    } on AppError catch (error) {
+      return left(AppError(errorMessage: error.errorMessage));
     } finally {
       _exportLoading.value = ExportStatus.none;
     }
@@ -104,8 +111,8 @@ class HomeController extends GetxController {
         await _platformService.setContentToClipBoard(content: content);
         return right(AppSuccess(successMessage: 'Backup Copied To Clipboard!'));
       }
-    } catch (error) {
-      return left(AppError(errorMessage: 'Content Is Too Large For ClipBoard'));
+    } on AppError catch (error) {
+      return left(AppError(errorMessage: error.errorMessage));
     } finally {
       _exportLoading.value = ExportStatus.none;
     }
@@ -124,8 +131,8 @@ class HomeController extends GetxController {
         );
         return right(AppSuccess(successMessage: 'Data Imported From File!'));
       }
-    } catch (error) {
-      return left(AppError(errorMessage: error.toString()));
+    } on AppError catch (error) {
+      return left(AppError(errorMessage: error.errorMessage));
     } finally {
       _importLoading.value = false;
     }
@@ -136,8 +143,8 @@ class HomeController extends GetxController {
       final content = inputController.text.trim();
       await _backupRepository.importHiveContent(content: content);
       return right(AppSuccess(successMessage: 'Data Imported From Clipboard!'));
-    } catch (error) {
-      return left(AppError(errorMessage: error.toString()));
+    } on AppError catch (error) {
+      return left(AppError(errorMessage: error.errorMessage));
     } finally {
       inputController.clear();
     }
@@ -152,8 +159,8 @@ class HomeController extends GetxController {
       _updateFileName(name: selectedFile.fileName);
       _selectedFileContent = selectedFile.fileContent;
       return right(AppSuccess(successMessage: '$_fileName Selected'));
-    } catch (error) {
-      return left(AppError(errorMessage: error.toString()));
+    } on AppError catch (error) {
+      return left(AppError(errorMessage: error.errorMessage));
     }
   }
 
@@ -174,7 +181,7 @@ class HomeController extends GetxController {
   void goToManageWordsScreen() {
     Get.toNamed(
       Routes.manageWordsScreen,
-      arguments: [ManageWordsScreenType.manageWords, null],
+      arguments: {'type': ManageWordsScreenType.manageWords},
     );
   }
 
@@ -199,8 +206,19 @@ class HomeController extends GetxController {
     _backupRepository = Get.find();
     _wordRepository = Get.find();
     _bookRepository = Get.find();
+
     _platformService = Get.find();
     _linkService = Get.find();
+
+    _wordListenable = _wordRepository.wordValueListenable;
+    _bookListenable = _bookRepository.bookValueListenable;
+
+    _wordListenable.addListener(_initWordsCount);
+    _bookListenable.addListener(_initBooksCount);
+    
+    _initWordsCount();
+    _initBooksCount();
+    
     super.onInit();
   }
 
@@ -208,5 +226,7 @@ class HomeController extends GetxController {
   void onClose() {
     super.onClose();
     inputController.dispose();
+    _wordListenable.removeListener(_initWordsCount);
+    _bookListenable.removeListener(_initBooksCount);
   }
 }

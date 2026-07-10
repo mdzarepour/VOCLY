@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:vocly/core/error/app_exception.dart';
+import 'package:vocly/core/router/app_router.dart';
 import 'package:vocly/core/services/dialog_service.dart';
 import 'package:vocly/core/types/enums.dart';
 import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
@@ -13,17 +13,15 @@ import 'package:vocly/shared/controllers/filter_controller.dart';
 import 'package:vocly/shared/controllers/selection_controller.dart';
 
 class WordManageController extends GetxController {
-  // ================ Dependencies =============================================
+  late WordRepository _wordRepository;
 
-  late final WordRepository _wordRepository;
+  late WordSelectionController selectionController;
+  late FilterController<WordModel> filterController;
 
-  late final WordSelectionController _selectionController;
-  late final FilterController _filterController;
+  late DialogService _dialogService;
 
-  late final DialogService _dialogService;
-
-  late final ValueListenable<Box<WordModel>> _hiveListenable;
-  late final ManageWordsScreenType type;
+  late ManageWordsScreenType? type;
+  late ValueListenable<Box<WordModel>> _wordListenable;
 
   // ================ Reactive Variables =======================================
 
@@ -49,7 +47,7 @@ class WordManageController extends GetxController {
   // ================ Main Functions ===========================================
 
   void _initWordsList() {
-    final wordsBox = _hiveListenable.value;
+    final wordsBox = _wordListenable.value;
     final List<WordModel> freshList = wordsBox.values.toList();
     _words.assignAll(freshList);
   }
@@ -65,143 +63,58 @@ class WordManageController extends GetxController {
         return left(AppError(errorMessage: 'Permision Denied'));
       }
       _updateLoadingState(value: true);
-      await _wordRepository.deleteWords(selectedWords: getSelectedWords());
+      await _wordRepository.deleteWords(selectedWords: _getSelectedWords());
       return right(AppSuccess(successMessage: 'Words Deleted!'));
-    } catch (error) {
-      return left(AppError(errorMessage: error.toString()));
+    } on AppError catch (error) {
+      return left(AppError(errorMessage: error.errorMessage));
     } finally {
-      _updateSelectionMode(mode: false);
       _updateLoadingState(value: false);
+      selectionController.updateSelectionMode(mode: false);
     }
   }
 
-  // ================ Selection Controller Functions ===========================
+  // ================ Helper Functions =========================================
 
-  IconData get selectionButtonIcon {
-    return _selectionController.selectButtonIcon;
+  void _initControllerEssentials() {
+    type = Get.arguments['type'];
   }
 
-  bool get isSelectionMode {
-    return _selectionController.isSelectionMode;
-  }
-
-  List<WordModel> getSelectedWords() {
-    return _selectionController.selectedItems.cast<WordModel>();
-  }
-
-  bool isWordSelected({required WordModel word}) {
-    return _selectionController.isSelected(item: word);
-  }
-
-  void startSelection({required WordModel word}) {
-    _selectionController.changeSelectionMode(item: word);
-  }
-
-  void selectWord({required WordModel word}) {
-    _selectionController.selectItem(item: word);
-  }
-
-  void selectAllWords() {
-    _selectionController.selectAllItems(currentSelectedItems: _words);
-  }
-
-  void _updateSelectionMode({required bool mode}) {
-    _selectionController.updateSelectionMode(mode: mode);
-  }
-
-  // ================ Filter Controller Functions ==============================
-
-  void selectFilter({required FilterType type, required int filterItem}) {
-    _filterController.selectFilter(type: type, filterItem: filterItem);
-  }
-
-  bool isFilterSelected({required FilterType type, required int filterItem}) {
-    return _filterController.isFilterSelected(
-      type: type,
-      filterItem: filterItem,
-    );
+  List<WordModel> _getSelectedWords() {
+    return selectionController.selectedItems.cast<WordModel>();
   }
 
   // ================ Navigation ===============================================
 
-  void goToBackWithResult() => Get.back(result: getSelectedWords());
+  void goToBackWithResult() {
+    Get.back(result: _getSelectedWords());
+  }
+
+  void goToReadWordScreen({required int key}) {
+    Get.toNamed(Routes.readWordScreen, arguments: {'word_key': key});
+  }
 
   // ================ Life Cycle ===============================================
 
   @override
   void onInit() {
     super.onInit();
-    type = Get.arguments;
+    
     _wordRepository = Get.find();
     _dialogService = Get.find();
-    _filterController = Get.find();
-    _selectionController = Get.find();
 
-    _hiveListenable = _wordRepository.wordValueListenable;
-    _hiveListenable.addListener(_initWordsList);
+    filterController = Get.find();
+    selectionController = Get.find();
+
+    _wordListenable = _wordRepository.wordValueListenable;
+    _wordListenable.addListener(_initWordsList);
     _initWordsList();
+    _initControllerEssentials();
   }
 
   @override
   void onClose() {
     super.onClose();
-    _hiveListenable.removeListener(_initWordsList);
+    filterController.deleteFilters();
+    _wordListenable.removeListener(_initWordsList);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // final filteredWords = _words.where(_matchesFilters).toList();
-  // filteredWords.sort(_compareBySortType);
-
-  // used by selection controller -->
-  // filtering operations -->
-  // bool _matchesFilters(WordModel word) {
-  //   if (_colorFilters.isNotEmpty && !_colorFilters.contains(word.color)) {
-  //     return false;
-  //   }
-  //   if (_iconFilters.isNotEmpty && !_iconFilters.contains(word.icon)) {
-  //     return false;
-  //   }
-  //   if (_typeFilters.isNotEmpty && !_typeFilters.contains(word.type)) {
-  //     return false;
-  //   }
-  //   if (_levelFilters.isNotEmpty && !_levelFilters.contains(word.level)) {
-  //     return false;
-  //   }
-
-  //   return true;
-  // }

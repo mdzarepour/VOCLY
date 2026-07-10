@@ -13,33 +13,33 @@ class WordModel extends VocabularyModel with EquatableMixin, HiveObjectMixin {
 
   @override
   @HiveField(1)
-  String name;
+  final String name;
 
   @HiveField(2)
-  String meaning;
+  final String meaning;
 
   @HiveField(3)
-  String example;
+  final String example;
 
   @override
   @HiveField(4)
-  int icon;
+  final int icon;
 
   @override
   @HiveField(5)
-  int type;
+  final int type;
 
   @override
   @HiveField(6)
-  int color;
+  final int color;
 
   @override
   @HiveField(7)
-  int level;
+  final int level;
 
   @override
   @HiveField(8)
-  int createAt;
+  final int createAt;
 
   WordModel({
     required this.id,
@@ -60,6 +60,27 @@ class WordModel extends VocabularyModel with EquatableMixin, HiveObjectMixin {
          createAt: createAt,
          type: type,
        );
+  WordModel copyWith({
+    String? name,
+    String? meaning,
+    String? example,
+    int? icon,
+    int? type,
+    int? color,
+    int? level,
+  }) {
+    return WordModel(
+      id: id,
+      createAt: createAt,
+      name: name ?? this.name,
+      meaning: meaning ?? this.meaning,
+      example: example ?? this.example,
+      icon: icon ?? this.icon,
+      type: type ?? this.type,
+      color: color ?? this.color,
+      level: level ?? this.level,
+    );
+  }
 
   factory WordModel.fromMap({required Map<String, dynamic> map}) {
     return WordModel(
@@ -73,16 +94,6 @@ class WordModel extends VocabularyModel with EquatableMixin, HiveObjectMixin {
       color: map['color'],
       level: map['level'],
     );
-  }
-
-  void updateWord({required Map<String, dynamic> map}) {
-    name = map['name'] ?? name;
-    meaning = map['meaning'] ?? meaning;
-    example = map['example'] ?? example;
-    icon = map['icon'] ?? icon;
-    type = map['type'] ?? type;
-    color = map['color'] ?? color;
-    level = map['level'] ?? level;
   }
 
   Map<String, dynamic> toMap() {
@@ -100,5 +111,15 @@ class WordModel extends VocabularyModel with EquatableMixin, HiveObjectMixin {
   }
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [
+    id,
+    name,
+    meaning,
+    example,
+    icon,
+    type,
+    color,
+    level,
+    createAt,
+  ];
 }

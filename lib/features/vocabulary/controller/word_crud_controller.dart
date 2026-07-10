@@ -9,11 +9,11 @@ import 'package:vocly/features/vocabulary/model/repositories/vocabulary_reposito
 import 'package:vocly/shared/constants/const_strings.dart';
 
 class WordCrudController extends GetxController {
-  late final WordRepository _wordRepository;
-  late final DialogService _dialogService;
+  late WordRepository _wordRepository;
+  late DialogService _dialogService;
 
-  late WordScreenType? wordScreenType;
-  late WordModel? currentWord;
+  late WordScreenType? type;
+  late WordModel? editingWord;
 
   // ================ Form Key =================================================
 
@@ -64,7 +64,7 @@ class WordCrudController extends GetxController {
       final word = WordModel.fromMap(map: _createMap());
       final isExist = _isWordExist(name: word.name);
 
-      if (!isExist) {
+      if (isExist) {
         final bool? permission = await _dialogService.showDialog(
           title: AppStrings.dialogDuplicatedWordTitle,
           content: AppStrings.dialogDuplicatedWordContent,
@@ -75,9 +75,11 @@ class WordCrudController extends GetxController {
         }
       }
       await _wordRepository.addWord(word: word);
-      return right(AppSuccess(successMessage: '${word.name} added'));
-    } catch (error) {
-      return left(AppError(errorMessage: error.toString()));
+      return right(
+        AppSuccess(successMessage: '${word.name.capitalizeFirst} Added'),
+      );
+    } on AppError catch (error) {
+      return left(AppError(errorMessage: error.errorMessage));
     }
   }
 
@@ -92,11 +94,22 @@ class WordCrudController extends GetxController {
   Future<Either<AppError, AppSuccess>> _updateWord() async {
     try {
       final Map<String, dynamic> map = _createMap();
-      currentWord!.updateWord(map: map);
-      await _wordRepository.updateWord(word: currentWord!);
-      return right(AppSuccess(successMessage: '${currentWord!.name} updated'));
-    } catch (error) {
-      return left(AppError(errorMessage: error.toString()));
+      final updatedWord = editingWord!.copyWith(
+        name: map['name'],
+        meaning: map['meaning'],
+        example: map['example'],
+        icon: map['icon'],
+        type: map['type'],
+        color: map['color'],
+        level: map['level'],
+      );
+      await _wordRepository.updateWord(
+        key: editingWord!.key as int,
+        word: updatedWord,
+      );
+      return right(AppSuccess(successMessage: '${editingWord!.name} updated'));
+    } on AppError catch (error) {
+      return left(AppError(errorMessage: error.errorMessage));
     }
   }
 
@@ -117,25 +130,28 @@ class WordCrudController extends GetxController {
   }
 
   void _initControllerEssentials() {
-    wordScreenType = Get.arguments['type'];
-    if (wordScreenType == WordScreenType.addWord) {
-      return;
+    type = Get.arguments['type'];
+    if (type == WordScreenType.addWord) return;
+
+    final int wordKey = Get.arguments['word_key'];
+    final box = _wordRepository.wordValueListenable.value;
+    editingWord = box.get(wordKey);
+
+    if (editingWord != null) {
+      nameController.text = editingWord!.name;
+      meaningController.text = editingWord!.meaning;
+      exampleController.text = editingWord!.example;
+
+      _selectedIconIndex.value = editingWord!.icon;
+      _selectedTypeIndex.value = editingWord!.type;
+      _selectedColorIndex.value = editingWord!.color;
+      _selectedLevelIndex.value = editingWord!.level;
     }
-    currentWord = Get.arguments['word'];
-
-    nameController.text = currentWord!.name;
-    meaningController.text = currentWord!.meaning;
-    exampleController.text = currentWord!.example;
-
-    _selectedIconIndex.value = currentWord!.icon;
-    _selectedTypeIndex.value = currentWord!.type;
-    _selectedColorIndex.value = currentWord!.color;
-    _selectedLevelIndex.value = currentWord!.level;
   }
 
   Future<Either<AppError, AppSuccess>> handleAction() async {
     if (formKey.currentState!.validate()) {
-      if (wordScreenType == WordScreenType.addWord) {
+      if (type == WordScreenType.addWord) {
         return await _addWord();
       } else {
         return await _updateWord();
