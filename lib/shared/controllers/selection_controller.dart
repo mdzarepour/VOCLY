@@ -15,7 +15,6 @@ abstract class SelectionController<T> extends GetxController {
   final RxBool _isSelectionMode = false.obs;
   bool get isSelectionMode => _isSelectionMode.value;
 
-  /// [UI - AppBar] Dynamic action icon based on selection count
   IconData get selectButtonIcon {
     if (_selectedItems.isEmpty) {
       return Icons.done_all_outlined;
@@ -28,7 +27,6 @@ abstract class SelectionController<T> extends GetxController {
 
   // ================ Main Functions ===========================================
 
-  /// [UI - Item LongPress] Entry point to activate selection mode
   void startSelecting({required T item}) {
     if (_selectedItems.isEmpty) {
       updateSelectionMode(mode: true);
@@ -38,15 +36,14 @@ abstract class SelectionController<T> extends GetxController {
     }
   }
 
-  /// [UI - Delete Button Visibility] Toggles global selection state
   void updateSelectionMode({required bool mode}) {
     _isSelectionMode.value = mode;
   }
 
-  /// [UI - Item Border/Background] Checks if an item is selected
-  bool isSelected({required T item}) => _selectedItems.contains(item);
+  bool isSelected({required T item}) {
+    return _selectedItems.contains(item);
+  }
 
-  /// [UI - Item Tap] Toggles item inside selection list
   void selectItem({required T item}) {
     if (_selectedItems.contains(item)) {
       _selectedItems.remove(item);
@@ -59,22 +56,20 @@ abstract class SelectionController<T> extends GetxController {
     }
   }
 
-  /// [UI - AppBar Checkbox] Selects or clears all visible items
-  void selectAllItems({required List<T> currentSelectedItems}) {
-    if (items.isEmpty) {
-      Get.snackbar("Can't select", "There is no items to select.");
-      return;
-    }
+  void selectAllItems({required List<T> allDisplayedItems}) {
+    if (items.isEmpty) return;
     if (_selectedItems.isEmpty ||
-        _selectedItems.length < currentSelectedItems.length) {
+        _selectedItems.length < allDisplayedItems.length) {
       updateSelectionMode(mode: true);
       _selectedItems
         ..clear()
-        ..addAll(currentSelectedItems);
+        ..addAll(allDisplayedItems);
     } else {
       _clearSelection();
     }
   }
+
+  // ================ Helper Functions =========================================
 
   void _clearSelection() {
     updateSelectionMode(mode: false);
@@ -86,7 +81,6 @@ abstract class SelectionController<T> extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // [Internal Logic] Auto-clears list when selection mode turns off
     ever(_isSelectionMode, (bool mode) {
       if (!mode) {
         _selectedItems.clear();
@@ -107,16 +101,6 @@ class WordSelectionController extends SelectionController<WordModel> {
 
   @override
   List<WordModel> get items => wordRepository.getAllWords();
-
-  /// [Feature - Book Sync] Pre-fills selected words for a specific book
-  void initPreviouslySelectedWords({required List<String> selectedWordIds}) {
-    _selectedItems.clear();
-    final previouslySelectedWords = items
-        .where((word) => selectedWordIds.contains(word.id))
-        .toList();
-    _selectedItems.addAll(previouslySelectedWords);
-    if (_selectedItems.isNotEmpty) updateSelectionMode(mode: true);
-  }
 }
 
 class BookSelectionController extends SelectionController<BookModel> {

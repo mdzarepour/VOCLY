@@ -23,12 +23,10 @@ class SpellingController extends GetxController {
 
   // ================ Main Functions ===========================================
 
-  /// [Logic - Details Controller] Get the target word to be spelled
   void loadCurrentWord({required WordModel word}) {
     _wordName.value = word.name.trim();
   }
 
-  /// [Internal Logic] Prepares, shuffles, and indexes characters for spelling
   void _startPractice() {
     _updatePracticeMode(value: true);
     final tempChars =
@@ -43,14 +41,12 @@ class SpellingController extends GetxController {
     _chars.assignAll(tempChars);
   }
 
-  /// [Internal Logic] Compares user's answer with the target word
   void _checkAccuracy() {
     _updatePracticeMode(value: false);
     final answer = _selectedChars.map((e) => e.char).join();
     _updateAccuracy(value: answer == _wordName.value);
   }
 
-  /// [UI - Character Tap] Removes a character from pool and restores it
   void unselectChar({
     required SpellCharModel char,
     required int selectedIndex,
@@ -63,7 +59,6 @@ class SpellingController extends GetxController {
     }
   }
 
-  /// [UI - Character Tap] Moves a character from the pool to the input selections
   void selectChar({required SpellCharModel char}) {
     if (char.char.isEmpty) return;
     _selectedChars.add(char);
@@ -74,7 +69,6 @@ class SpellingController extends GetxController {
     if (_selectedChars.length == _wordName.value.length) _checkAccuracy();
   }
 
-  /// [Internal Logic] Resets practice state and clears all selected chars
   void _endPractice() {
     _isPracticeMode.value = false;
     _updateAccuracy(value: null);
@@ -91,8 +85,6 @@ class SpellingController extends GetxController {
     _accuracy.value = value;
   }
 
-  /// [UI - Action Button] Toggles practice state based on active mode
-  /// isPractice will be true if ExpansionTile is expanded
   void handleAction({required bool isPractice}) {
     if (isPractice) {
       _startPractice();

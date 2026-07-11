@@ -60,6 +60,7 @@ class WordModel extends VocabularyModel with EquatableMixin, HiveObjectMixin {
          createAt: createAt,
          type: type,
        );
+
   WordModel copyWith({
     String? name,
     String? meaning,

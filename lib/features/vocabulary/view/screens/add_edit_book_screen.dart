@@ -143,23 +143,27 @@ class AddEditBookScreen extends GetView<BookCrudController> {
         ActionButton(
           borderColor: ConstUiColors.positiveColor,
           onTap: () => _action(),
-          children: [
-            Icon(
-              controller.bookScreenType == BookScreenType.editBook
-                  ? Icons.edit_outlined
-                  : Icons.done,
-            ),
-            Text(UIStrings.done, style: AppTextTheme.titleMedium),
-          ],
+          child: Row(
+            children: [
+              Icon(
+                controller.bookScreenType == BookScreenType.editBook
+                    ? Icons.edit_outlined
+                    : Icons.done,
+              ),
+              Text(UIStrings.done, style: AppTextTheme.titleMedium),
+            ],
+          ),
         ),
         // cancel button
         ActionButton(
           borderColor: ConstUiColors.errorColor,
           onTap: () => controller.goToBack(),
-          children: [
-            Icon(Icons.cancel_outlined),
-            Text(UIStrings.cancel, style: AppTextTheme.titleMedium),
-          ],
+          child: Row(
+            children: [
+              Icon(Icons.cancel_outlined),
+              Text(UIStrings.cancel, style: AppTextTheme.titleMedium),
+            ],
+          ),
         ),
       ],
     );
@@ -180,10 +184,3 @@ class AddEditBookScreen extends GetView<BookCrudController> {
     );
   }
 }
-        // List<WordModel> list = await Get.toNamed(
-        //   Routes.manageWordsScreen,
-        //   arguments: [ManageWordsScreenType.addWordToBook, _selectedWords],
-        // );
-        // setState(() {
-        //   _selectedWords = list.map((e) => e.id).toList();
-        // });

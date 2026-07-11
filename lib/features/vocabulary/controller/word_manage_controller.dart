@@ -14,19 +14,19 @@ import 'package:vocly/shared/controllers/selection_controller.dart';
 
 class WordManageController extends GetxController {
   late WordRepository _wordRepository;
-
   late WordSelectionController selectionController;
   late FilterController<WordModel> filterController;
-
   late DialogService _dialogService;
 
   late ManageWordsScreenType? type;
   late ValueListenable<Box<WordModel>> _wordListenable;
 
+  final RxList<WordModel> _rawWords = <WordModel>[].obs;
+
   // ================ Reactive Variables =======================================
 
-  final RxList<WordModel> _words = <WordModel>[].obs;
-  List<WordModel> get words => _words;
+  final RxList<WordModel> _displayedWords = <WordModel>[].obs;
+  List<WordModel> get displayedWords => _displayedWords;
 
   final RxBool _isLoading = false.obs;
   bool get isLoading => _isLoading.value;
@@ -48,8 +48,14 @@ class WordManageController extends GetxController {
 
   void _initWordsList() {
     final wordsBox = _wordListenable.value;
-    final List<WordModel> freshList = wordsBox.values.toList();
-    _words.assignAll(freshList);
+    _rawWords.assignAll(wordsBox.values.toList());
+    _applyFiltersAndSort();
+  }
+
+  void _applyFiltersAndSort() {
+    List<WordModel> result = filterController.applyFilter(items: _rawWords);
+    result.sort((a, b) => filterController.applySort(a, b));
+    _displayedWords.assignAll(result);
   }
 
   Future<Either<AppError, AppSuccess>> deleteWords() async {
@@ -60,7 +66,7 @@ class WordManageController extends GetxController {
         confirmTitle: AppStrings.dialogConfirmDeleteAction,
       );
       if (permission == null || permission == false) {
-        return left(AppError(errorMessage: 'Permision Denied'));
+        return left(AppError(errorMessage: 'Permission Denied'));
       }
       _updateLoadingState(value: true);
       await _wordRepository.deleteWords(selectedWords: _getSelectedWords());
@@ -98,10 +104,9 @@ class WordManageController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    
+
     _wordRepository = Get.find();
     _dialogService = Get.find();
-
     filterController = Get.find();
     selectionController = Get.find();
 
@@ -109,12 +114,14 @@ class WordManageController extends GetxController {
     _wordListenable.addListener(_initWordsList);
     _initWordsList();
     _initControllerEssentials();
+
+    ever(filterController.activeFilters, (_) => _applyFiltersAndSort());
+    ever(filterController.sortType, (_) => _applyFiltersAndSort());
   }
 
   @override
   void onClose() {
-    super.onClose();
-    filterController.deleteFilters();
     _wordListenable.removeListener(_initWordsList);
+    super.onClose();
   }
 }

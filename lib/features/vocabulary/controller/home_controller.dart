@@ -199,6 +199,10 @@ class HomeController extends GetxController {
     );
   }
 
+  void goToBack() {
+    Get.back();
+  }
+
   // ================ Life Cycle ===============================================
 
   @override
@@ -215,10 +219,10 @@ class HomeController extends GetxController {
 
     _wordListenable.addListener(_initWordsCount);
     _bookListenable.addListener(_initBooksCount);
-    
+
     _initWordsCount();
     _initBooksCount();
-    
+
     super.onInit();
   }
 

@@ -3,9 +3,16 @@ import 'package:vocly/core/types/enums.dart';
 import 'package:vocly/core/types/vocabulary_model.dart';
 
 class FilterController<T extends VocabularyModel> extends GetxController {
+  // ================ Reactive Variables =======================================
+
   final RxMap<FilterType, Set> _activeFilters = <FilterType, Set>{}.obs;
 
+  RxMap<FilterType, Set> get activeFilters => _activeFilters;
+
   final Rx<SortType> _sortType = SortType.newest.obs;
+  Rx<SortType> get sortType => _sortType;
+
+  // ================ Filtering Functions ======================================
 
   void selectFilter({required FilterType type, required int filterItem}) {
     if (!_activeFilters.containsKey(type)) {
@@ -28,7 +35,7 @@ class FilterController<T extends VocabularyModel> extends GetxController {
     return _activeFilters[type]?.contains(filterItem) ?? false;
   }
 
-  void deleteFilters() {
+  void _clearFilters() {
     _activeFilters.clear();
   }
 
@@ -57,6 +64,8 @@ class FilterController<T extends VocabularyModel> extends GetxController {
     return result;
   }
 
+  // ================ Sorting Functions ========================================
+
   void selectSort({required SortType sortType}) {
     _sortType.value = sortType;
   }
@@ -75,5 +84,13 @@ class FilterController<T extends VocabularyModel> extends GetxController {
       SortType.aToZ => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
       SortType.zToA => b.name.toLowerCase().compareTo(a.name.toLowerCase()),
     };
+  }
+
+  // ================ Life Cycle ===============================================
+
+  @override
+  void onClose() {
+    super.onClose();
+    _clearFilters();
   }
 }

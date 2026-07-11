@@ -93,7 +93,7 @@ class BookManageController extends GetxController {
   }
 
   void selectAllBooks() {
-    _selectionController.selectAllItems(currentSelectedItems: _books);
+    _selectionController.selectAllItems(allDisplayedItems: _books);
   }
 
   void _updateSelectionMode({required bool mode}) {

@@ -21,7 +21,7 @@ class ManageWordsScreen extends GetView<WordManageController> {
     return Scaffold(
       appBar: _appbarWidget(),
       body: Obx(() {
-        final words = controller.words;
+        final words = controller.displayedWords;
         return CustomScrollView(
           slivers: [
             SliverToBoxAdapter(child: SizedBox(height: 20)),
@@ -76,7 +76,7 @@ class ManageWordsScreen extends GetView<WordManageController> {
             InkWell(
               onTap: () {
                 controller.selectionController.selectAllItems(
-                  currentSelectedItems: controller.words,
+                  allDisplayedItems: controller.displayedWords,
                 );
               },
               child: Icon(controller.selectionController.selectButtonIcon),

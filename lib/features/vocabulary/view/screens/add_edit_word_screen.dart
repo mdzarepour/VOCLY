@@ -150,23 +150,27 @@ class AddEditWordScreen extends GetView<WordCrudController> {
         ActionButton(
           borderColor: ConstUiColors.positiveColor,
           onTap: () => _action(),
-          children: [
-            Icon(
-              controller.type == WordScreenType.editWord
-                  ? Icons.edit_outlined
-                  : Icons.done,
-            ),
-            Text(UIStrings.done, style: AppTextTheme.titleMedium),
-          ],
+          child: Row(
+            children: [
+              Icon(
+                controller.type == WordScreenType.editWord
+                    ? Icons.edit_outlined
+                    : Icons.done,
+              ),
+              Text(UIStrings.done, style: AppTextTheme.titleMedium),
+            ],
+          ),
         ),
         // cancel button
         ActionButton(
           borderColor: ConstUiColors.errorColor,
           onTap: () => controller.goToBack(),
-          children: [
-            Icon(Icons.cancel_outlined),
-            Text(UIStrings.cancel, style: AppTextTheme.titleMedium),
-          ],
+          child: Row(
+            children: [
+              Icon(Icons.cancel_outlined),
+              Text(UIStrings.cancel, style: AppTextTheme.titleMedium),
+            ],
+          ),
         ),
       ],
     );

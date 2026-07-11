@@ -1,6 +1,6 @@
-﻿import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:get/get.dart';
+﻿import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:vocly/shared/widgets/action_button.dart';
 import 'package:vocly/shared/widgets/input_widget.dart';
 import 'package:vocly/features/vocabulary/controller/home_controller.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
@@ -9,6 +9,7 @@ import 'package:vocly/shared/widgets/card_widget.dart';
 import 'package:vocly/shared/constants/const_colors.dart';
 import 'package:vocly/core/types/enums.dart';
 import 'package:vocly/core/router/app_router.dart';
+import 'package:vocly/shared/widgets/loading_widget.dart';
 
 class HomeScreen extends GetView<HomeController> {
   final void Function()? onTap;
@@ -87,9 +88,7 @@ class HomeScreen extends GetView<HomeController> {
             icon: Icons.coffee_outlined,
             title: 'Use vocabulary',
             data: 'We are prepared some vocabulary for you',
-            onTap: () {
-              controller.openBookLibrary();
-            },
+            onTap: () => controller.openBookLibrary(),
           ),
           const SizedBox(height: 30),
           // title
@@ -100,12 +99,7 @@ class HomeScreen extends GetView<HomeController> {
             icon: Icons.folder_outlined,
             title: UIStrings.exportYour,
             data: UIStrings.exportYourDataDescription,
-            onTap: () {
-              Get.bottomSheet(
-                backgroundColor: ConstUiColors.backgroundColor,
-                _exportWidget(),
-              );
-            },
+            onTap: () => Get.bottomSheet(_exportBottomSheet()),
           ),
           const SizedBox(height: 10),
           // import bottom sheet
@@ -113,12 +107,7 @@ class HomeScreen extends GetView<HomeController> {
             icon: Icons.import_export,
             title: UIStrings.importYourData,
             data: UIStrings.importPreviouslySavedVocabulary,
-            onTap: () {
-              Get.bottomSheet(
-                backgroundColor: ConstUiColors.backgroundColor,
-                _importWidget(),
-              );
-            },
+            onTap: () => Get.bottomSheet(_importWidget()),
           ),
         ],
       ),
@@ -152,92 +141,48 @@ class HomeScreen extends GetView<HomeController> {
             ),
             SizedBox(height: 20),
             // select file button
-            InkWell(
-              onTap: () async {
-                final either = await controller.selectFile();
-                either.fold(
-                  (appError) {
-                    Get.snackbar('Oops!', appError.errorMessage);
-                  },
-                  (appSuccess) {
-                    Get.snackbar('Success', appSuccess.successMessage!);
-                  },
-                );
-              },
-              child: CardWidget(
-                height: 70,
-                child: Center(
-                  child: Obx(() {
-                    final fileName = controller.fileName;
-                    return Row(
-                      spacing: 5,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.insert_drive_file_outlined),
-                        Text(
-                          style: AppTextTheme.titleMedium,
-                          fileName.isEmpty ? 'Choose json file' : fileName,
-                        ),
-                      ],
-                    );
-                  }),
+            Obx(() {
+              final fileName = controller.fileName;
+              return ActionButton(
+                borderColor: ConstUiColors.positiveColor,
+                onTap: () => _handleOntap(controller.selectFile),
+                child: Row(
+                  spacing: 5,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.insert_drive_file_outlined),
+                    Text(
+                      style: AppTextTheme.titleMedium,
+                      fileName.isEmpty ? 'Choose json file' : fileName,
+                    ),
+                  ],
                 ),
-              ),
-            ),
+              );
+            }),
             SizedBox(height: 15),
-            // action buttons
             Row(
               spacing: 10,
               children: [
                 // confirm button
-                Expanded(
-                  child: InkWell(
-                    onTap: () async {
-                      final either = await controller.handleImport();
-                      either.fold(
-                        (appError) {
-                          Get.snackbar('Oops!', appError.errorMessage);
-                        },
-                        (appSuccess) {
-                          Get.back();
-                          Get.snackbar('Success', appSuccess.successMessage!);
-                        },
-                      );
-                    },
-                    child: Obx(() {
-                      final isLoading = controller.importLoading;
-                      return CardWidget(
-                        selectedBorderColor: ConstUiColors.positiveColor,
-                        height: 70,
-                        child: Center(
-                          child: isLoading
-                              ? SpinKitThreeInOut(
-                                  size: 15,
-                                  color: ConstUiColors.thirdColor,
-                                )
-                              : Text(
-                                  style: AppTextTheme.titleMedium,
-                                  'Confirm',
-                                ),
-                        ),
-                      );
-                    }),
-                  ),
-                ),
+                Obx(() {
+                  final isLoading = controller.importLoading;
+                  return ActionButton(
+                    borderColor: ConstUiColors.positiveColor,
+                    onTap: () => _handleOntap(controller.handleImport),
+                    child: isLoading
+                        ? LoadingWidget()
+                        : Text('Confirm', style: AppTextTheme.titleMedium),
+                  );
+                }),
                 // cancel button
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      Get.back();
-                      controller.clearBackupSession();
-                    },
-                    child: CardWidget(
-                      selectedBorderColor: ConstUiColors.errorColor,
-                      height: 70,
-                      child: Center(
-                        child: Text(style: AppTextTheme.titleMedium, 'Cancel'),
-                      ),
-                    ),
+                ActionButton(
+                  borderColor: ConstUiColors.errorColor,
+                  onTap: () {
+                    controller.goToBack();
+                    controller.clearBackupSession();
+                  },
+                  child: Center(
+                    child: Text(style: AppTextTheme.titleMedium, 'Cancel'),
                   ),
                 ),
               ],
@@ -248,7 +193,7 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
-  Widget _exportWidget() {
+  Widget _exportBottomSheet() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Obx(() {
@@ -268,88 +213,45 @@ class HomeScreen extends GetView<HomeController> {
             Text(style: AppTextTheme.titleMedium, 'Export data'),
             SizedBox(height: 20),
             // export to file button
-            InkWell(
-              onTap: () async {
-                final either = await controller.exportToFile();
-                either.fold(
-                  (appError) {
-                    Get.snackbar('Oops!', appError.errorMessage);
-                  },
-                  (appSuccess) {
-                    Get.back();
-                    Get.snackbar('Success', appSuccess.successMessage!);
-                  },
-                );
-              },
-              child: CardWidget(
-                height: 70,
-                child: Center(
-                  child: isLoading == ExportStatus.file
-                      ? SpinKitThreeInOut(
-                          size: 15,
-                          color: ConstUiColors.thirdColor,
-                        )
-                      : Row(
-                          spacing: 5,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.insert_drive_file_outlined),
-                            Text(
-                              style: AppTextTheme.titleMedium,
-                              'Export as file',
-                            ),
-                          ],
+            ActionButton(
+              borderColor: ConstUiColors.backgroundColor2,
+              onTap: () => _handleOntap(controller.exportToFile),
+              child: isLoading == ExportStatus.file
+                  ? LoadingWidget()
+                  : Row(
+                      children: [
+                        Icon(Icons.insert_drive_file_outlined),
+                        Text(
+                          style: AppTextTheme.titleMedium,
+                          'Export as file',
                         ),
-                ),
-              ),
+                      ],
+                    ),
             ),
             SizedBox(height: 15),
             // export to clip board button
-            InkWell(
-              onTap: () async {
-                final either = await controller.exportToClipboard();
-                either.fold(
-                  (appError) {
-                    Get.snackbar('Oops!', appError.errorMessage);
-                  },
-                  (appSuccess) {
-                    Get.back();
-                    Get.snackbar('Success!', appSuccess.successMessage!);
-                  },
-                );
-              },
-              child: CardWidget(
-                height: 70,
-                child: isLoading == ExportStatus.clipboard
-                    ? SpinKitThreeInOut(
-                        size: 15,
-                        color: ConstUiColors.thirdColor,
-                      )
-                    : Center(
-                        child: Row(
-                          spacing: 5,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.paste),
-                            Text(
-                              style: AppTextTheme.titleMedium,
-                              'Export to clipboard',
-                            ),
-                          ],
+            ActionButton(
+              borderColor: ConstUiColors.backgroundColor2,
+              onTap: () => _handleOntap(controller.exportToClipboard),
+              child: isLoading == ExportStatus.clipboard
+                  ? LoadingWidget()
+                  : Row(
+                      children: [
+                        Icon(Icons.insert_drive_file_outlined),
+                        Text(
+                          style: AppTextTheme.titleMedium,
+                          'Export to clipboard',
                         ),
-                      ),
-              ),
+                      ],
+                    ),
             ),
             SizedBox(height: 15),
             // cancel button
-            InkWell(
-              onTap: () => Get.back(),
-              child: CardWidget(
-                selectedBorderColor: ConstUiColors.errorColor,
-                height: 70,
-                child: Center(
-                  child: Text(style: AppTextTheme.titleMedium, 'Cancel'),
-                ),
+            ActionButton(
+              borderColor: ConstUiColors.errorColor,
+              onTap: () => controller.goToBack(),
+              child: Center(
+                child: Text(style: AppTextTheme.titleMedium, 'Cancel'),
               ),
             ),
             SizedBox(height: 15),
@@ -393,6 +295,19 @@ class HomeScreen extends GetView<HomeController> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _handleOntap(Function() function) async {
+    final either = await function();
+    either.fold(
+      (appError) {
+        Get.snackbar('Oops!', appError.errorMessage);
+      },
+      (appSuccess) {
+        Get.back();
+        Get.snackbar('Success!', appSuccess.successMessage!);
+      },
     );
   }
 }

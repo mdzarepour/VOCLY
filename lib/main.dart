@@ -15,12 +15,8 @@ void main(List<String> args) async {
 
   await Hive.initFlutter();
 
-  if (!Hive.isAdapterRegistered(0)) {
-    Hive.registerAdapter(WordModelAdapter());
-  }
-  if (!Hive.isAdapterRegistered(1)) {
-    Hive.registerAdapter(BookModelAdapter());
-  }
+  if (!Hive.isAdapterRegistered(0)) Hive.registerAdapter(WordModelAdapter());
+  if (!Hive.isAdapterRegistered(1)) Hive.registerAdapter(BookModelAdapter());
 
   await Hive.openBox<WordModel>(AppStrings.wordBox);
   await Hive.openBox<BookModel>(AppStrings.bookBox);
@@ -41,8 +37,18 @@ class Application extends StatelessWidget {
     );
   }
 }
+
+///[better code todos]==========================================================
 //TODO use stream instead of valulistenable
-//TODO fix deleting on filtered items
-//TODO add deleting loading
-//TODO change deleting approach
 //TODO use controller as generic classes
+//TODO move hive initing to bindings
+//TODO revise documentation
+//clean home screen [done]
+
+
+
+///[bugs and experience todos]==================================================
+//TODO increase the size of appbar  icons
+//TODO fix handelling long to clipboard error on export
+//TODO clear Backup session is not clearing file
+

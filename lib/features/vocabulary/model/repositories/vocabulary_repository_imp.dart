@@ -58,11 +58,8 @@ class VocabularyRepository
   @override
   Future<void> deleteWords({required List<WordModel> selectedWords}) async {
     try {
-      for (var currentWord in selectedWords) {
-        if (currentWord.isInBox) {
-          await currentWord.delete();
-        }
-      }
+      final keysToDelete = selectedWords.map((word) => word.key).toList();
+      await wordsBox.deleteAll(keysToDelete);
     } on HiveError catch (error) {
       throw AppError(errorMessage: error.message, cause: error);
     }
@@ -175,17 +172,22 @@ class VocabularyRepository
 
   @override
   Future<void> importHiveContent({required String content}) async {
-    final decoded = await Isolate.run(
-      () => jsonDecode(content) as List<dynamic>,
-    );
-    if (wordsBox.length + decoded.length > 30000) {
-      throw AppError(errorMessage: 'Capacity exceeded');
+    try {
+      final decoded = jsonDecode(content) as List<dynamic>;
+      if (wordsBox.length + decoded.length > 30000) {
+        throw AppError(errorMessage: 'Capacity exceeded');
+      }
+      final items = decoded.map((e) {
+        return WordModel.fromMap(map: Map<String, dynamic>.from(e));
+      }).toList();
+
+      for (int i = 0; i < items.length; i++) {
+        await wordsBox.add(items[i]);
+      }
+    } on HiveError catch (error) {
+      throw AppError(errorMessage: error.message);
+    } catch (error) {
+      throw AppError(errorMessage: error.toString());
     }
-    final existing = wordsBox.values.map((e) => e.id).toSet();
-    final items = decoded
-        .map((e) => WordModel.fromMap(map: Map<String, dynamic>.from(e)))
-        .where((w) => !existing.contains(w.id))
-        .toList();
-    await wordsBox.addAll(items);
   }
 }

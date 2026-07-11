@@ -3,13 +3,13 @@ import 'package:vocly/shared/widgets/card_widget.dart';
 
 class ActionButton extends StatelessWidget {
   final void Function()? onTap;
-  final List<Widget> children;
+  final Widget child;
   final Color borderColor;
   const ActionButton({
     super.key,
     required this.borderColor,
     required this.onTap,
-    required this.children,
+    required this.child,
   });
 
   @override
@@ -20,11 +20,7 @@ class ActionButton extends StatelessWidget {
         child: CardWidget(
           selectedBorderColor: borderColor,
           height: 70,
-          child: Row(
-            spacing: 10,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: children,
-          ),
+          child: child,
         ),
       ),
     );
