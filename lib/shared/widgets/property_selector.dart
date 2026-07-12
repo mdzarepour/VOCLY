@@ -5,18 +5,14 @@ import 'package:vocly/shared/constants/const_strings.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
 import 'package:vocly/shared/widgets/card_widget.dart';
 
-class ExpansionWidget extends StatelessWidget {
+class PropertySelector extends StatelessWidget {
   final String? title;
-  // for changing ui accordingly
   final int? selectedChildIndex;
-  // to know what kind of widget to show in wrapper
   final ExpantionWidgetType? type;
-  // the children widgets for wraooer
   final List<dynamic>? children;
-  // to change selectedIndex to i
   final void Function(int i)? onChildTap;
 
-  const ExpansionWidget({
+  const PropertySelector({
     super.key,
     required this.onChildTap,
     required this.selectedChildIndex,
@@ -51,9 +47,8 @@ class ExpansionWidget extends StatelessWidget {
               runSpacing: 15,
               children: [
                 for (int i = 0; i < children!.length; i++)
-                  // get children widget according to type
                   InkWell(
-                    // send i to ui for changing reactive variable
+                    /// send i to ui for changing reactive variable
                     onTap: () => onChildTap!.call(i),
                     child: getDynamicChildWidget(i: i),
                   ),

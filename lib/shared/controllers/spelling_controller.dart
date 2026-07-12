@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:vocly/features/vocabulary/model/entities/spell_char_model.dart';
 import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
 
@@ -92,4 +91,11 @@ class SpellingController extends GetxController {
       _endPractice();
     }
   }
+}
+
+class SpellCharModel {
+  int originalIndex;
+  String char;
+
+  SpellCharModel({required this.char, required this.originalIndex});
 }

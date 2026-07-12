@@ -5,13 +5,13 @@ import 'package:vocly/core/types/entity_types.dart';
 import 'package:vocly/features/vocabulary/view/widgets/word_tile.dart';
 import 'package:vocly/features/vocabulary/controller/word_manage_controller.dart';
 import 'package:vocly/shared/widgets/filter_button.dart';
-import 'package:vocly/shared/widgets/filter_sheet_widget.dart';
+import 'package:vocly/shared/widgets/filter_bottom_sheet.dart';
 import 'package:vocly/core/types/enums.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
 import 'package:vocly/shared/constants/const_colors.dart';
 import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
-import 'package:vocly/shared/widgets/sort_sheet_widget.dart';
+import 'package:vocly/shared/widgets/sort_bottom_sheet.dart';
 
 class ManageWordsScreen extends GetView<WordManageController> {
   const ManageWordsScreen({super.key});
@@ -101,7 +101,7 @@ class ManageWordsScreen extends GetView<WordManageController> {
             onTap: () {
               Get.bottomSheet(
                 backgroundColor: ConstUiColors.backgroundColor,
-                SortSheetWidget(
+                SortBottomSheet(
                   onChanged: (selectedSortType) {
                     controller.filterController.selectSort(
                       sortType: selectedSortType,
@@ -123,7 +123,7 @@ class ManageWordsScreen extends GetView<WordManageController> {
               onTap: () {
                 Get.bottomSheet(
                   backgroundColor: ConstUiColors.backgroundColor,
-                  FilterSheetWidget(
+                  FilterBottomSheet(
                     onChanged: (indexOfSelectedFilterItem) {
                       controller.filterController.selectFilter(
                         type: wordFilteringItems[index][AppStrings.keyType],
@@ -186,7 +186,6 @@ class ManageWordsScreen extends GetView<WordManageController> {
         itemBuilder: (context, index) {
           final currentWord = words[index];
           return Obx(() {
-            final mode = controller.selectionController.isSelectionMode;
             final isSelected = controller.selectionController.isSelected(
               item: currentWord,
             );
@@ -206,7 +205,7 @@ class ManageWordsScreen extends GetView<WordManageController> {
                 );
               },
               onTap: () {
-                if (mode) {
+                if (controller.selectionController.isSelectionMode) {
                   controller.selectionController.selectItem(item: currentWord);
                 } else {
                   controller.goToReadWordScreen(key: currentWord.key);

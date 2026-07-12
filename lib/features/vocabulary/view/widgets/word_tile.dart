@@ -33,6 +33,7 @@ class WordTile extends StatelessWidget {
       onLongPress: onLongPress,
       onTap: onTap,
       child: isSmallTile
+          // small word tile
           ? CardWidget(
               height: 68,
               selectedBorderColor: selectedBorderColor,
@@ -45,11 +46,13 @@ class WordTile extends StatelessWidget {
                       spacing: 5,
                       children: [
                         SizedBox(width: double.infinity),
+                        // word name text
                         Text(
                           name!,
                           overflow: TextOverflow.ellipsis,
                           style: AppTextTheme.titleMedium,
                         ),
+                        // word type as text
                         Text(
                           WordTypes.children[type!],
                           overflow: TextOverflow.ellipsis,
@@ -58,6 +61,7 @@ class WordTile extends StatelessWidget {
                       ],
                     ),
                   ),
+                  // right hand word color
                   CircleAvatar(
                     radius: 5,
                     backgroundColor: EntityColor.children[color!],
@@ -65,12 +69,14 @@ class WordTile extends StatelessWidget {
                 ],
               ),
             )
+          // big word tile
           : CardWidget(
               height: 68,
               selectedBorderColor: selectedBorderColor,
               child: Row(
                 spacing: 15,
                 children: [
+                  // left hand word icon
                   Icon(EntityIcon.children[icon!]),
                   Expanded(
                     flex: 8,
@@ -79,11 +85,13 @@ class WordTile extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        // word name text
                         Text(
                           overflow: TextOverflow.ellipsis,
                           style: AppTextTheme.titleMedium,
                           name!,
                         ),
+                        // word meaning text
                         Text(
                           overflow: TextOverflow.ellipsis,
                           style: AppTextTheme.titleSmall,
@@ -92,6 +100,7 @@ class WordTile extends StatelessWidget {
                       ],
                     ),
                   ),
+                  // right hand word color
                   CircleAvatar(
                     backgroundColor: EntityColor.children[color!],
                     radius: 5,

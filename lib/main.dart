@@ -43,12 +43,10 @@ class Application extends StatelessWidget {
 //TODO use controller as generic classes
 //TODO move hive initing to bindings
 //TODO revise documentation
-//clean home screen [done]
+
 
 
 
 ///[bugs and experience todos]==================================================
 //TODO increase the size of appbar  icons
-//TODO fix handelling long to clipboard error on export
-//TODO clear Backup session is not clearing file
 

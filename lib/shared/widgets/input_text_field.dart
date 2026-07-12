@@ -3,12 +3,12 @@ import 'package:vocly/shared/constants/const_colors.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
 
-class InputWidget extends StatelessWidget {
+class InputTextField extends StatelessWidget {
   final String hint;
   final IconData icon;
   final TextEditingController controller;
 
-  const InputWidget({
+  const InputTextField({
     super.key,
     required this.hint,
     required this.controller,

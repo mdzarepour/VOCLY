@@ -55,6 +55,7 @@ class HomeController extends GetxController {
 
   void clearBackupSession() {
     _fileName.value = AppStrings.emptyChar;
+    _selectedFileContent = null;
   }
 
   void _initWordsCount() {
@@ -125,12 +126,9 @@ class HomeController extends GetxController {
       _importLoading.value = true;
       if (_selectedFileContent == null) {
         return left(AppError(errorMessage: 'Please Select File First'));
-      } else {
-        await _backupRepository.importHiveContent(
-          content: _selectedFileContent!,
-        );
-        return right(AppSuccess(successMessage: 'Data Imported From File!'));
       }
+      await _backupRepository.importHiveContent(content: _selectedFileContent!);
+      return right(AppSuccess(successMessage: 'Data Imported From File!'));
     } on AppError catch (error) {
       return left(AppError(errorMessage: error.errorMessage));
     } finally {
@@ -168,7 +166,7 @@ class HomeController extends GetxController {
     if (inputController.text.isEmpty) {
       return await _importFromFile();
     } else {
-      return _importFromClipBoard();
+      return await _importFromClipBoard();
     }
   }
 

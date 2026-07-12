@@ -40,6 +40,14 @@ class PlatformService {
   // ================ ClipBoard Functions ======================================
 
   Future<void> setContentToClipBoard({required String content}) async {
-    await Clipboard.setData(ClipboardData(text: content.toString().trim()));
+    try {
+      await Clipboard.setData(ClipboardData(text: content.toString().trim()));
+    } on PlatformException catch (error) {
+      if (error.message!.contains('TooLarge')) {
+        throw AppError(errorMessage: 'Data is too long for clipboard');
+      }
+    } catch (error) {
+      throw AppError(errorMessage: error.toString());
+    }
   }
 }

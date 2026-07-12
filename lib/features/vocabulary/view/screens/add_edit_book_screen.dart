@@ -4,8 +4,8 @@ import 'package:vocly/core/types/entity_types.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
 import 'package:vocly/shared/widgets/action_button.dart';
 import 'package:vocly/shared/widgets/card_widget.dart';
-import 'package:vocly/shared/widgets/expansion_widget.dart';
-import 'package:vocly/shared/widgets/input_widget.dart';
+import 'package:vocly/shared/widgets/property_selector.dart';
+import 'package:vocly/shared/widgets/input_text_field.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
 import 'package:vocly/shared/constants/const_colors.dart';
 import 'package:vocly/core/types/enums.dart';
@@ -32,13 +32,13 @@ class AddEditBookScreen extends GetView<BookCrudController> {
                     const SizedBox(height: 20),
                     Text(UIStrings.details, style: AppTextTheme.titleMedium),
                     SizedBox(height: 10),
-                    InputWidget(
+                    InputTextField(
                       icon: Icons.chrome_reader_mode_outlined,
                       controller: controller.nameController,
                       hint: UIStrings.name,
                     ),
                     SizedBox(height: 10),
-                    InputWidget(
+                    InputTextField(
                       icon: Icons.description_outlined,
                       controller: controller.descriptionController,
                       hint: UIStrings.description,
@@ -83,7 +83,7 @@ class AddEditBookScreen extends GetView<BookCrudController> {
   }
 
   Widget _iconSelection() {
-    return ExpansionWidget(
+    return PropertySelector(
       title: UIStrings.icon,
       onChildTap: (i) => controller.updateSelectedIcon(value: i),
       selectedChildIndex: controller.selectedIconIndex,
@@ -93,7 +93,7 @@ class AddEditBookScreen extends GetView<BookCrudController> {
   }
 
   Widget _typeSelection() {
-    return ExpansionWidget(
+    return PropertySelector(
       title: UIStrings.type,
       onChildTap: (i) => controller.updateSelectedType(value: i),
       selectedChildIndex: controller.selectedTypeIndex,
@@ -103,7 +103,7 @@ class AddEditBookScreen extends GetView<BookCrudController> {
   }
 
   Widget _levelSelection() {
-    return ExpansionWidget(
+    return PropertySelector(
       title: UIStrings.difficulty,
       onChildTap: (i) => controller.updateSelectedLevel(value: i),
       selectedChildIndex: controller.selectedLevelIndex,
@@ -113,7 +113,7 @@ class AddEditBookScreen extends GetView<BookCrudController> {
   }
 
   Widget _colorSelection() {
-    return ExpansionWidget(
+    return PropertySelector(
       title: UIStrings.color,
       onChildTap: (i) => controller.updateSelectedColor(value: i),
       selectedChildIndex: controller.selectedColorIndex,
@@ -143,27 +143,23 @@ class AddEditBookScreen extends GetView<BookCrudController> {
         ActionButton(
           borderColor: ConstUiColors.positiveColor,
           onTap: () => _action(),
-          child: Row(
-            children: [
-              Icon(
-                controller.bookScreenType == BookScreenType.editBook
-                    ? Icons.edit_outlined
-                    : Icons.done,
-              ),
-              Text(UIStrings.done, style: AppTextTheme.titleMedium),
-            ],
-          ),
+          children: [
+            Icon(
+              controller.bookScreenType == BookScreenType.editBook
+                  ? Icons.edit_outlined
+                  : Icons.done,
+            ),
+            Text(UIStrings.done, style: AppTextTheme.titleMedium),
+          ],
         ),
         // cancel button
         ActionButton(
           borderColor: ConstUiColors.errorColor,
           onTap: () => controller.goToBack(),
-          child: Row(
-            children: [
-              Icon(Icons.cancel_outlined),
-              Text(UIStrings.cancel, style: AppTextTheme.titleMedium),
-            ],
-          ),
+          children: [
+            Icon(Icons.cancel_outlined),
+            Text(UIStrings.cancel, style: AppTextTheme.titleMedium),
+          ],
         ),
       ],
     );

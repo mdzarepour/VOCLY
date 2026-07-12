@@ -1,7 +1,7 @@
 ﻿import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:vocly/shared/widgets/action_button.dart';
-import 'package:vocly/shared/widgets/input_widget.dart';
+import 'package:vocly/shared/widgets/input_text_field.dart';
 import 'package:vocly/features/vocabulary/controller/home_controller.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
@@ -9,7 +9,6 @@ import 'package:vocly/shared/widgets/card_widget.dart';
 import 'package:vocly/shared/constants/const_colors.dart';
 import 'package:vocly/core/types/enums.dart';
 import 'package:vocly/core/router/app_router.dart';
-import 'package:vocly/shared/widgets/loading_widget.dart';
 
 class HomeScreen extends GetView<HomeController> {
   final void Function()? onTap;
@@ -99,7 +98,12 @@ class HomeScreen extends GetView<HomeController> {
             icon: Icons.folder_outlined,
             title: UIStrings.exportYour,
             data: UIStrings.exportYourDataDescription,
-            onTap: () => Get.bottomSheet(_exportBottomSheet()),
+            onTap: () {
+              Get.bottomSheet(
+                backgroundColor: ConstUiColors.backgroundColor,
+                _exportBottomSheet(),
+              );
+            },
           ),
           const SizedBox(height: 10),
           // import bottom sheet
@@ -107,7 +111,12 @@ class HomeScreen extends GetView<HomeController> {
             icon: Icons.import_export,
             title: UIStrings.importYourData,
             data: UIStrings.importPreviouslySavedVocabulary,
-            onTap: () => Get.bottomSheet(_importWidget()),
+            onTap: () {
+              Get.bottomSheet(
+                backgroundColor: ConstUiColors.backgroundColor,
+                _importWidget(),
+              );
+            },
           ),
         ],
       ),
@@ -134,7 +143,7 @@ class HomeScreen extends GetView<HomeController> {
             Text(style: AppTextTheme.titleMedium, 'Import data'),
             SizedBox(height: 15),
             // content text field
-            InputWidget(
+            InputTextField(
               hint: 'Data',
               controller: controller.inputController,
               icon: Icons.import_export_outlined,
@@ -144,19 +153,14 @@ class HomeScreen extends GetView<HomeController> {
             Obx(() {
               final fileName = controller.fileName;
               return ActionButton(
-                borderColor: ConstUiColors.positiveColor,
-                onTap: () => _handleOntap(controller.selectFile),
-                child: Row(
-                  spacing: 5,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.insert_drive_file_outlined),
-                    Text(
-                      style: AppTextTheme.titleMedium,
-                      fileName.isEmpty ? 'Choose json file' : fileName,
-                    ),
-                  ],
-                ),
+                onTap: () => _selectFile(),
+                children: [
+                  Icon(Icons.insert_drive_file_outlined),
+                  Text(
+                    style: AppTextTheme.titleMedium,
+                    fileName.isEmpty ? 'Choose json file' : fileName,
+                  ),
+                ],
               );
             }),
             SizedBox(height: 15),
@@ -165,24 +169,30 @@ class HomeScreen extends GetView<HomeController> {
               children: [
                 // confirm button
                 Obx(() {
-                  final isLoading = controller.importLoading;
-                  return ActionButton(
-                    borderColor: ConstUiColors.positiveColor,
-                    onTap: () => _handleOntap(controller.handleImport),
-                    child: isLoading
-                        ? LoadingWidget()
-                        : Text('Confirm', style: AppTextTheme.titleMedium),
+                  return Expanded(
+                    child: ActionButton(
+                      borderColor: ConstUiColors.positiveColor,
+                      onTap: () => _handleOntap(controller.handleImport),
+                      isLoading: controller.importLoading,
+                      children: [
+                        Icon(Icons.done),
+                        Text('Confirm', style: AppTextTheme.titleMedium),
+                      ],
+                    ),
                   );
                 }),
                 // cancel button
-                ActionButton(
-                  borderColor: ConstUiColors.errorColor,
-                  onTap: () {
-                    controller.goToBack();
-                    controller.clearBackupSession();
-                  },
-                  child: Center(
-                    child: Text(style: AppTextTheme.titleMedium, 'Cancel'),
+                Expanded(
+                  child: ActionButton(
+                    borderColor: ConstUiColors.errorColor,
+                    onTap: () {
+                      controller.goToBack();
+                      controller.clearBackupSession();
+                    },
+                    children: [
+                      Icon(Icons.cancel_outlined),
+                      Text(style: AppTextTheme.titleMedium, 'Cancel'),
+                    ],
                   ),
                 ),
               ],
@@ -214,45 +224,32 @@ class HomeScreen extends GetView<HomeController> {
             SizedBox(height: 20),
             // export to file button
             ActionButton(
-              borderColor: ConstUiColors.backgroundColor2,
               onTap: () => _handleOntap(controller.exportToFile),
-              child: isLoading == ExportStatus.file
-                  ? LoadingWidget()
-                  : Row(
-                      children: [
-                        Icon(Icons.insert_drive_file_outlined),
-                        Text(
-                          style: AppTextTheme.titleMedium,
-                          'Export as file',
-                        ),
-                      ],
-                    ),
+              isLoading: isLoading == ExportStatus.file,
+              children: [
+                Icon(Icons.insert_drive_file_outlined),
+                Text(style: AppTextTheme.titleMedium, 'Export as file'),
+              ],
             ),
             SizedBox(height: 15),
             // export to clip board button
             ActionButton(
-              borderColor: ConstUiColors.backgroundColor2,
               onTap: () => _handleOntap(controller.exportToClipboard),
-              child: isLoading == ExportStatus.clipboard
-                  ? LoadingWidget()
-                  : Row(
-                      children: [
-                        Icon(Icons.insert_drive_file_outlined),
-                        Text(
-                          style: AppTextTheme.titleMedium,
-                          'Export to clipboard',
-                        ),
-                      ],
-                    ),
+              isLoading: isLoading == ExportStatus.clipboard,
+              children: [
+                Icon(Icons.insert_drive_file_outlined),
+                Text(style: AppTextTheme.titleMedium, 'Export to clipboard'),
+              ],
             ),
             SizedBox(height: 15),
             // cancel button
             ActionButton(
               borderColor: ConstUiColors.errorColor,
               onTap: () => controller.goToBack(),
-              child: Center(
-                child: Text(style: AppTextTheme.titleMedium, 'Cancel'),
-              ),
+              children: [
+                Icon(Icons.cancel_outlined),
+                Text(style: AppTextTheme.titleMedium, 'Cancel'),
+              ],
             ),
             SizedBox(height: 15),
           ],
@@ -295,6 +292,18 @@ class HomeScreen extends GetView<HomeController> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _selectFile() async {
+    final either = await controller.selectFile();
+    either.fold(
+      (appError) {
+        Get.snackbar('Oops!', appError.errorMessage);
+      },
+      (appSuccess) {
+        Get.snackbar('Success!', appSuccess.successMessage!);
+      },
     );
   }
 

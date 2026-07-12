@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/state_manager.dart';
+import 'package:vocly/core/types/entity_types.dart';
 import 'package:vocly/core/types/enums.dart';
 import 'package:vocly/shared/constants/const_colors.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
 
-class FilterSheetWidget extends StatelessWidget {
-  final void Function(int) onChanged;
-  final bool Function(int) isSelected;
-  final List filterItems;
-  final FilterType type;
+class SortBottomSheet extends StatelessWidget {
+  final void Function(SortType) onChanged;
+  final bool Function(SortType) isSelected;
 
-  const FilterSheetWidget({
+  const SortBottomSheet({
     super.key,
     required this.onChanged,
     required this.isSelected,
-    required this.filterItems,
-    required this.type,
   });
 
   @override
@@ -23,6 +20,7 @@ class FilterSheetWidget extends StatelessWidget {
     return Column(
       children: [
         SizedBox(height: 15),
+        // drag effect widget
         Container(
           width: 50,
           height: 3,
@@ -32,15 +30,18 @@ class FilterSheetWidget extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
             children: [
-              for (int i = 0; i < filterItems.length; i++)
+              for (int i = 0; i < SortItems.children.length; i++)
+                // sort selecting widget
                 Padding(
                   padding: const EdgeInsets.only(bottom: 25),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // dynamic left child -->
-                      getFilterItemWidget(filterContent: filterItems[i]),
-                      // check box -->
+                      // sort name
+                      Text(
+                        style: AppTextTheme.titleMedium,
+                        SortItems.children[i]['name'],
+                      ),
                       Obx(() {
                         return SizedBox(
                           height: 20,
@@ -51,8 +52,17 @@ class FilterSheetWidget extends StatelessWidget {
                             ),
                             checkColor: ConstUiColors.thirdColor,
                             activeColor: ConstUiColors.backgroundColor,
-                            value: isSelected(i),
-                            onChanged: (value) => onChanged.call(i),
+                            shape: const CircleBorder(),
+
+                            /// Sending sort item to ui to update checkbox state
+                            value: isSelected.call(
+                              SortItems.children[i]['type'],
+                            ),
+
+                            /// Sending sort item to ui to select it
+                            onChanged: (value) {
+                              onChanged.call(SortItems.children[i]['type']);
+                            },
                           ),
                         );
                       }),
@@ -64,26 +74,5 @@ class FilterSheetWidget extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  Widget getFilterItemWidget({required final dynamic filterContent}) {
-    switch (type) {
-      case FilterType.color:
-        {
-          return CircleAvatar(backgroundColor: filterContent, radius: 10);
-        }
-      case FilterType.type:
-        {
-          return Text(style: AppTextTheme.titleMedium, filterContent as String);
-        }
-      case FilterType.icon:
-        {
-          return Icon(filterContent as IconData);
-        }
-      case FilterType.level:
-        {
-          return Text(style: AppTextTheme.titleMedium, filterContent as String);
-        }
-    }
   }
 }

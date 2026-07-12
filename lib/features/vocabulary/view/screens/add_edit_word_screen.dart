@@ -3,11 +3,11 @@ import 'package:get/get.dart';
 import 'package:vocly/core/types/entity_types.dart';
 import 'package:vocly/features/vocabulary/controller/word_crud_controller.dart';
 import 'package:vocly/shared/widgets/action_button.dart';
-import 'package:vocly/shared/widgets/expansion_widget.dart';
+import 'package:vocly/shared/widgets/property_selector.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
 import 'package:vocly/shared/constants/const_colors.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
-import 'package:vocly/shared/widgets/input_widget.dart';
+import 'package:vocly/shared/widgets/input_text_field.dart';
 import 'package:vocly/core/types/enums.dart';
 
 class AddEditWordScreen extends GetView<WordCrudController> {
@@ -33,21 +33,21 @@ class AddEditWordScreen extends GetView<WordCrudController> {
                     Text(UIStrings.details, style: AppTextTheme.titleMedium),
                     SizedBox(height: 10),
                     // word name text field
-                    InputWidget(
+                    InputTextField(
                       icon: Icons.language,
                       controller: controller.nameController,
                       hint: UIStrings.name,
                     ),
                     const SizedBox(height: 15),
                     // word meaning text field
-                    InputWidget(
+                    InputTextField(
                       icon: Icons.lightbulb_outline,
                       controller: controller.meaningController,
                       hint: UIStrings.meaning,
                     ),
                     const SizedBox(height: 15),
                     // word example text field
-                    InputWidget(
+                    InputTextField(
                       icon: Icons.newspaper_outlined,
                       controller: controller.exampleController,
                       hint: UIStrings.example,
@@ -95,7 +95,7 @@ class AddEditWordScreen extends GetView<WordCrudController> {
 
   Widget _iconSelection() {
     return Obx(() {
-      return ExpansionWidget(
+      return PropertySelector(
         title: UIStrings.icon,
         onChildTap: (i) => controller.updateSelectedIcon(value: i),
         selectedChildIndex: controller.selectedIconIndex,
@@ -107,7 +107,7 @@ class AddEditWordScreen extends GetView<WordCrudController> {
 
   Widget _typeSelection() {
     return Obx(() {
-      return ExpansionWidget(
+      return PropertySelector(
         title: UIStrings.type,
         onChildTap: (i) => controller.updateSelectedType(value: i),
         selectedChildIndex: controller.selectedTypeIndex,
@@ -119,7 +119,7 @@ class AddEditWordScreen extends GetView<WordCrudController> {
 
   Widget _levelSelection() {
     return Obx(() {
-      return ExpansionWidget(
+      return PropertySelector(
         title: UIStrings.difficulty,
         onChildTap: (i) => controller.updateSelectedLevel(value: i),
         selectedChildIndex: controller.selectedLevelIndex,
@@ -131,7 +131,7 @@ class AddEditWordScreen extends GetView<WordCrudController> {
 
   Widget _colorSelection() {
     return Obx(() {
-      return ExpansionWidget(
+      return PropertySelector(
         title: UIStrings.color,
         onChildTap: (i) => controller.updateSelectedColor(value: i),
         selectedChildIndex: controller.selectedColorIndex,
@@ -147,10 +147,10 @@ class AddEditWordScreen extends GetView<WordCrudController> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // add - edit button
-        ActionButton(
-          borderColor: ConstUiColors.positiveColor,
-          onTap: () => _action(),
-          child: Row(
+        Expanded(
+          child: ActionButton(
+            borderColor: ConstUiColors.positiveColor,
+            onTap: () => _action(),
             children: [
               Icon(
                 controller.type == WordScreenType.editWord
@@ -162,10 +162,10 @@ class AddEditWordScreen extends GetView<WordCrudController> {
           ),
         ),
         // cancel button
-        ActionButton(
-          borderColor: ConstUiColors.errorColor,
-          onTap: () => controller.goToBack(),
-          child: Row(
+        Expanded(
+          child: ActionButton(
+            borderColor: ConstUiColors.errorColor,
+            onTap: () => controller.goToBack(),
             children: [
               Icon(Icons.cancel_outlined),
               Text(UIStrings.cancel, style: AppTextTheme.titleMedium),

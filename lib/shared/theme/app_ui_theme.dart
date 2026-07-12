@@ -9,9 +9,9 @@ class AppUiTheme {
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
     scaffoldBackgroundColor: ConstUiColors.backgroundColor,
-    dividerTheme: DividerThemeData(
-      radius: BorderRadius.all(Radius.circular(100)),
-      color: ConstUiColors.backgroundColor2,
+    dividerTheme: _dividerTheme(),
+    expansionTileTheme: ExpansionTileThemeData(
+      childrenPadding: EdgeInsets.only(bottom: 30),
     ),
     appBarTheme: appbarTheme(),
     inputDecorationTheme: inputTheme(),
@@ -22,6 +22,13 @@ class AppUiTheme {
       color: ConstUiColors.thirdColor,
     ),
   );
+
+  static DividerThemeData _dividerTheme() {
+    return DividerThemeData(
+      radius: BorderRadius.all(Radius.circular(100)),
+      color: ConstUiColors.backgroundColor2,
+    );
+  }
 
   static PopupMenuThemeData popupMenuTheme() {
     return PopupMenuThemeData(

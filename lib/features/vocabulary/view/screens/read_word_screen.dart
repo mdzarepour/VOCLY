@@ -5,9 +5,9 @@ import 'package:vocly/core/types/entity_types.dart';
 import 'package:vocly/features/vocabulary/controller/word_details_controller.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
 import 'package:vocly/shared/widgets/card_widget.dart';
-import 'package:vocly/shared/constants/const_colors.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
 import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
+import 'package:vocly/shared/widgets/spell_char_widget.dart';
 
 class ReadWordScreen extends GetView<WordDetailsController> {
   const ReadWordScreen({super.key});
@@ -33,8 +33,7 @@ class ReadWordScreen extends GetView<WordDetailsController> {
                 SliverToBoxAdapter(child: SizedBox(height: 20)),
                 SliverToBoxAdapter(child: _listenButton()),
                 SliverToBoxAdapter(child: SizedBox(height: 20)),
-                //TODO remove context passing
-                SliverToBoxAdapter(child: _spellWidget(context: context)),
+                SliverToBoxAdapter(child: _spellWidget()),
                 SliverToBoxAdapter(child: SizedBox(height: 20)),
                 SliverToBoxAdapter(child: _editButton()),
               ],
@@ -45,25 +44,112 @@ class ReadWordScreen extends GetView<WordDetailsController> {
     );
   }
 
-  Widget _spellWidget({required BuildContext context}) {
-    return Obx(() {
-      final selectedChars = controller.spellingController.selectedChars;
-      final word = controller.spellingController.wordName;
-      final chars = controller.spellingController.chars;
-      final accuracy = controller.spellingController.accuracy;
+  Widget _cardWidget({required WordModel currentWord}) {
+    // word card widget
+    return FlipCard(
+      direction: FlipDirection.VERTICAL,
+      speed: 250,
+      // card front
+      front: Stack(
+        children: [
+          CardWidget(
+            selectedBorderColor: EntityColor.children[currentWord.color],
+            height: 200,
+            child: Center(
+              child: Column(
+                spacing: 20,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Obx(() {
+                    if (!controller.spellingController.isPracticeMode) {
+                      // visible word name text
+                      return Text(
+                        textAlign: TextAlign.center,
+                        style: AppTextTheme.displayLarge,
+                        '${currentWord.name.capitalizeFirst}',
+                      );
+                    } else {
+                      // hided word name text
+                      return Text(
+                        textAlign: TextAlign.center,
+                        style: AppTextTheme.displayLarge,
+                        '${currentWord.name.capitalizeFirst?.replaceAll(RegExp(r'.'), '*')}',
+                      );
+                    }
+                  }),
+                  // word type as text
+                  Text(
+                    textAlign: TextAlign.center,
+                    style: AppTextTheme.titleMedium,
+                    WordTypes.children[currentWord.type],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // right hand word icon
+          Positioned(
+            top: 20,
+            right: 20,
+            child: Icon(EntityIcon.children[currentWord.icon]),
+          ),
+        ],
+      ),
+      // crad back
+      back: Stack(
+        children: [
+          CardWidget(
+            selectedBorderColor: EntityColor.children[currentWord.color],
+            height: 200,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 20,
+                children: [
+                  // word meaning
+                  Text(
+                    textAlign: TextAlign.center,
+                    style: AppTextTheme.displayMedium,
+                    currentWord.meaning,
+                  ),
+                  // word example sentence
+                  Text(
+                    textAlign: TextAlign.center,
+                    style: AppTextTheme.titleMedium,
+                    currentWord.example,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // right hand icon
+          Positioned(
+            bottom: 20,
+            right: 20,
+            child: Icon(EntityIcon.children[currentWord.icon]),
+          ),
+        ],
+      ),
+    );
+  }
 
+  Widget _spellWidget() {
+    return Obx(() {
+      final chars = controller.spellingController.chars;
+      final selectedChars = controller.spellingController.selectedChars;
+      final accuracy = controller.spellingController.accuracy;
+      
+      // entire widget as card
       return CardWidget(
         child: Theme(
-          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          data: Get.theme.copyWith(dividerColor: Colors.transparent),
           child: ExpansionTile(
             onExpansionChanged: (value) {
               controller.spellingController.handleAction(isPractice: value);
             },
-            dense: true,
             minTileHeight: 50,
             showTrailingIcon: false,
             splashColor: Colors.transparent,
-            childrenPadding: EdgeInsets.only(bottom: 30),
             title: Center(
               child: Text(
                 UIStrings.spellingPractice,
@@ -71,66 +157,52 @@ class ReadWordScreen extends GetView<WordDetailsController> {
               ),
             ),
             children: [
+              // selected chars view
               Wrap(
                 spacing: 10,
                 runSpacing: 10,
+                alignment: WrapAlignment.center,
                 children: [
                   SizedBox(width: double.infinity),
-                  for (int i = 0; i < word.length; i++)
-                    InkWell(
-                      onTap: i > selectedChars.length
-                          ? null
-                          : () => controller.spellingController.unselectChar(
-                              char: selectedChars[i],
-                              selectedIndex: i,
-                            ),
-                      child: CardWidget(
-                        height: 45,
-                        width: 45,
-                        isHavePadding: false,
-                        selectedBorderColor: _getSpellCharColor(
-                          accuracy: accuracy,
-                        ),
-                        child: Center(
-                          child: Text(
-                            i >= selectedChars.length
-                                ? AppStrings.emptyChar
-                                : selectedChars[i].char.toUpperCase(),
-                            style: AppTextTheme.titleMedium,
-                          ),
-                        ),
-                      ),
+                  for (int i = 0; i < chars.length; i++)
+                    // char widget
+                    SpellCharWidget(
+                      accuracy: accuracy,
+                      char: i >= selectedChars.length
+                          ? AppStrings.emptyChar
+                          : selectedChars[i].char.toUpperCase(),
+                      onTap: () {
+                        if (i > selectedChars.length) {
+                          null;
+                        } else {
+                          controller.spellingController.unselectChar(
+                            char: selectedChars[i],
+                            selectedIndex: i,
+                          );
+                        }
+                      },
                     ),
                 ],
               ),
               SizedBox(height: 15),
               Divider(),
+              // chars keyboard
               Wrap(
                 spacing: 10,
                 runSpacing: 10,
+                alignment: WrapAlignment.center,
                 children: [
                   SizedBox(width: double.infinity),
                   for (int i = 0; i < chars.length; i++)
-                    InkWell(
+                    // char widget
+                    SpellCharWidget(
+                      accuracy: accuracy,
+                      char: chars[i].char.toUpperCase(),
                       onTap: () {
                         controller.spellingController.selectChar(
                           char: chars[i],
                         );
                       },
-                      child: CardWidget(
-                        selectedBorderColor: _getSpellCharColor(
-                          accuracy: accuracy,
-                        ),
-                        isHavePadding: false,
-                        height: 45,
-                        width: 45,
-                        child: Center(
-                          child: Text(
-                            chars[i].char.toUpperCase(),
-                            style: AppTextTheme.titleMedium,
-                          ),
-                        ),
-                      ),
                     ),
                 ],
               ),
@@ -167,103 +239,5 @@ class ReadWordScreen extends GetView<WordDetailsController> {
         ),
       ),
     );
-  }
-
-  Widget _cardWidget({required WordModel currentWord}) {
-    return FlipCard(
-      direction: FlipDirection.VERTICAL,
-      speed: 250,
-      front: Stack(
-        children: [
-          CardWidget(
-            selectedBorderColor: EntityColor.children[currentWord.color],
-            height: 200,
-            child: Center(
-              child: Column(
-                spacing: 20,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Obx(() {
-                    final isPracticeMode =
-                        controller.spellingController.isPracticeMode;
-                    if (!isPracticeMode) {
-                      return Text(
-                        textAlign: TextAlign.center,
-                        style: AppTextTheme.displayLarge,
-                        '${currentWord.name.capitalizeFirst}',
-                      );
-                    } else {
-                      return Text(
-                        textAlign: TextAlign.center,
-                        style: AppTextTheme.displayLarge,
-                        '${currentWord.name.capitalizeFirst?.replaceAll(RegExp(r'.'), '*')}',
-                      );
-                    }
-                  }),
-                  Text(
-                    textAlign: TextAlign.center,
-                    style: AppTextTheme.titleMedium,
-                    WordTypes.children[currentWord.type],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            top: 20,
-            right: 20,
-            child: Icon(EntityIcon.children[currentWord.icon]),
-          ),
-        ],
-      ),
-      back: Stack(
-        children: [
-          CardWidget(
-            selectedBorderColor: EntityColor.children[currentWord.color],
-            height: 200,
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 20,
-                children: [
-                  Text(
-                    textAlign: TextAlign.center,
-                    style: AppTextTheme.displayMedium,
-                    currentWord.meaning,
-                  ),
-                  Text(
-                    textAlign: TextAlign.center,
-                    style: AppTextTheme.titleMedium,
-                    currentWord.example,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 20,
-            right: 20,
-            child: Icon(EntityIcon.children[currentWord.icon]),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Color _getSpellCharColor({required final bool? accuracy}) {
-    switch (accuracy) {
-      case false:
-        {
-          return ConstUiColors.errorColor;
-        }
-      case true:
-        {
-          return ConstUiColors.positiveColor;
-        }
-      default:
-        {
-          return ConstUiColors.thirdColor;
-        }
-    }
   }
 }

@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:vocly/core/types/entity_types.dart';
 import 'package:vocly/shared/widgets/filter_button.dart';
-import 'package:vocly/shared/widgets/filter_sheet_widget.dart';
+import 'package:vocly/shared/widgets/filter_bottom_sheet.dart';
 import 'package:vocly/features/vocabulary/controller/book_manage_controller.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
@@ -96,7 +96,7 @@ class ManageBooksScreen extends GetView<BookManageController> {
               onTap: () {
                 Get.bottomSheet(
                   backgroundColor: ConstUiColors.backgroundColor,
-                  FilterSheetWidget(
+                  FilterBottomSheet(
                     onChanged: (indexOfSelectedFilterItem) {
                       controller.selectFilter(
                         type: filteringItems[index][AppStrings.keyType],
