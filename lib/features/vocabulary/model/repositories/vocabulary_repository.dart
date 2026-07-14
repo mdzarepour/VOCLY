@@ -17,7 +17,7 @@ abstract class BookRepository {
   List<BookModel> getAllBooks();
   List<WordModel> getBookWords({required BookModel book});
   Future<void> addBook({required BookModel book});
-  Future<void> updateBook({required BookModel book});
+  Future<void> updateBook({required int key, required BookModel book});
   Future<void> deleteBooks({required List<BookModel> selectedBooks});
   bool isBookExist({required String name});
   ValueListenable<Box<BookModel>> get bookValueListenable;

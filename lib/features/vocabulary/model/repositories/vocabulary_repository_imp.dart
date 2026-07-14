@@ -122,9 +122,9 @@ class VocabularyRepository
   }
 
   @override
-  Future<void> updateBook({required BookModel book}) async {
+  Future<void> updateBook({required int key, required BookModel book}) async {
     try {
-      await book.save();
+      await booksBox.put(key, book);
     } on HiveError catch (error) {
       throw AppError(errorMessage: error.message, cause: error);
     }
@@ -143,7 +143,7 @@ class VocabularyRepository
   List<WordModel> getBookWords({required BookModel book}) {
     try {
       return book.words
-          .map((id) => wordsBox.get(id))
+          .map((key) => wordsBox.get(key))
           .whereType<WordModel>()
           .toList();
     } on HiveError catch (error) {
@@ -175,7 +175,7 @@ class VocabularyRepository
     try {
       final decoded = jsonDecode(content) as List<dynamic>;
       if (wordsBox.length + decoded.length > 30000) {
-        throw AppError(errorMessage: 'Capacity exceeded');
+        throw const AppError(errorMessage: 'Capacity exceeded');
       }
       final items = decoded.map((e) {
         return WordModel.fromMap(map: Map<String, dynamic>.from(e));

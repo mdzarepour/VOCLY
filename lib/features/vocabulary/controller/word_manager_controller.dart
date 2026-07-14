@@ -12,18 +12,18 @@ import 'package:vocly/shared/constants/const_strings.dart';
 import 'package:vocly/shared/controllers/filter_controller.dart';
 import 'package:vocly/shared/controllers/selection_controller.dart';
 
-class WordManageController extends GetxController {
+class WordManagerController extends GetxController {
   late WordRepository _wordRepository;
   late WordSelectionController selectionController;
   late FilterController<WordModel> filterController;
   late DialogService _dialogService;
 
-  late ManageWordsScreenType? type;
+  late WordManagerScreenType? type;
   late ValueListenable<Box<WordModel>> _wordListenable;
 
-  final RxList<WordModel> _rawWords = <WordModel>[].obs;
-
   // ================ Reactive Variables =======================================
+
+  final RxList<WordModel> _rawWords = <WordModel>[].obs;
 
   final RxList<WordModel> _displayedWords = <WordModel>[].obs;
   List<WordModel> get displayedWords => _displayedWords;
@@ -66,11 +66,11 @@ class WordManageController extends GetxController {
         confirmTitle: AppStrings.dialogConfirmDeleteAction,
       );
       if (permission == null || permission == false) {
-        return left(AppError(errorMessage: 'Permission Denied'));
+        return left(const AppError(errorMessage: 'Permission Denied'));
       }
       _updateLoadingState(value: true);
       await _wordRepository.deleteWords(selectedWords: _getSelectedWords());
-      return right(AppSuccess(successMessage: 'Words Deleted!'));
+      return right(const AppSuccess(successMessage: 'Words Deleted!'));
     } on AppError catch (error) {
       return left(AppError(errorMessage: error.errorMessage));
     } finally {
@@ -83,6 +83,15 @@ class WordManageController extends GetxController {
 
   void _initControllerEssentials() {
     type = Get.arguments['type'];
+
+    if (type == WordManagerScreenType.manageWords) return;
+    final List<int> preSelectedKeys = Get.arguments['words'];
+
+    final selectedWords = _rawWords.where((word) {
+      return preSelectedKeys.contains(word.key);
+    }).toList();
+
+    selectionController.selectAllItems(allDisplayedItems: selectedWords);
   }
 
   List<WordModel> _getSelectedWords() {
@@ -92,11 +101,11 @@ class WordManageController extends GetxController {
   // ================ Navigation ===============================================
 
   void goToBackWithResult() {
-    Get.back(result: _getSelectedWords());
+    Get.back(result: _getSelectedWords().map((e) => e.key as int).toList());
   }
 
-  void goToReadWordScreen({required int key}) {
-    Get.toNamed(Routes.readWordScreen, arguments: {'word_key': key});
+  void goToWordDetailsScreen({required int key}) {
+    Get.toNamed(Routes.wordDetailsScreen, arguments: {'book_key': key});
   }
 
   // ================ Life Cycle ===============================================

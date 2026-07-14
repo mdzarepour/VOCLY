@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vocly/core/types/vocabulary_model.dart';
+import 'package:vocly/shared/constants/const_strings.dart';
 part 'word_model.g.dart';
 
 @HiveType(typeId: 0)
@@ -87,27 +88,27 @@ class WordModel extends VocabularyModel with EquatableMixin, HiveObjectMixin {
     return WordModel(
       id: Uuid().v4(),
       createAt: DateTime.now().microsecondsSinceEpoch,
-      name: map['name'],
-      meaning: map['meaning'],
-      example: map['example'],
-      icon: map['icon'],
-      type: map['type'],
-      color: map['color'],
-      level: map['level'],
+      name: map[AppStrings.keyName],
+      meaning: map[AppStrings.keyMeaning],
+      example: map[AppStrings.keyExample],
+      icon: map[AppStrings.keyIcon],
+      type: map[AppStrings.keyType],
+      color: map[AppStrings.keyColor],
+      level: map[AppStrings.keyLevel],
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
-      'name': name,
-      'meaning': meaning,
-      'example': example,
-      'icon': icon,
-      'type': type,
-      'color': color,
-      'level': level,
-      'createAt': createAt,
+      AppStrings.keyId: id,
+      AppStrings.keyName: name,
+      AppStrings.keyMeaning: meaning,
+      AppStrings.keyExample: example,
+      AppStrings.keyIcon: icon,
+      AppStrings.keyType: type,
+      AppStrings.keyColor: color,
+      AppStrings.keyLevel: level,
+      AppStrings.keyCreateAt: createAt,
     };
   }
 

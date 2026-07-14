@@ -8,7 +8,6 @@ import 'package:vocly/shared/constants/const_strings.dart';
 import 'package:vocly/shared/widgets/card_widget.dart';
 import 'package:vocly/shared/constants/const_colors.dart';
 import 'package:vocly/core/types/enums.dart';
-import 'package:vocly/core/router/app_router.dart';
 
 class HomeScreen extends GetView<HomeController> {
   final void Function()? onTap;
@@ -21,7 +20,7 @@ class HomeScreen extends GetView<HomeController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           _searchWidget(),
           const SizedBox(height: 30),
           // title
@@ -38,7 +37,7 @@ class HomeScreen extends GetView<HomeController> {
                     icon: Icons.chrome_reader_mode_outlined,
                     title: UIStrings.books,
                     data: '$booksLength Books',
-                    onTap: () => controller.goToManageBooksScreen(),
+                    onTap: () => controller.goToBookManagerScreen(),
                   ),
                 );
               }),
@@ -50,13 +49,13 @@ class HomeScreen extends GetView<HomeController> {
                     icon: Icons.language_outlined,
                     title: UIStrings.words,
                     data: '$wordsLength Words',
-                    onTap: () => controller.goToManageWordsScreen(),
+                    onTap: () => controller.goToWordManagerScreen(),
                   ),
                 );
               }),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Row(
             spacing: 10,
             children: [
@@ -65,7 +64,7 @@ class HomeScreen extends GetView<HomeController> {
                 child: _HomeButton(
                   icon: Icons.add_outlined,
                   title: UIStrings.newBook,
-                  onTap: () => controller.goToAddEditBookScreen(),
+                  onTap: () => controller.goToBookCrudScreen(),
                 ),
               ),
               // add word button
@@ -73,7 +72,7 @@ class HomeScreen extends GetView<HomeController> {
                 child: _HomeButton(
                   icon: Icons.add_outlined,
                   title: UIStrings.newWord,
-                  onTap: () => controller.goToAddEditWordScreen(),
+                  onTap: () => controller.goToWordCrudScreen(),
                 ),
               ),
             ],
@@ -131,31 +130,31 @@ class HomeScreen extends GetView<HomeController> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(width: double.infinity, height: 15),
+            const SizedBox(width: double.infinity, height: 15),
             // drag effect widget
             Container(
               width: 50,
               height: 3,
-              decoration: BoxDecoration(color: ConstUiColors.thirdColor),
+              decoration: const BoxDecoration(color: ConstUiColors.thirdColor),
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             // title
             Text(style: AppTextTheme.titleMedium, 'Import data'),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             // content text field
             InputTextField(
               hint: 'Data',
               controller: controller.inputController,
               icon: Icons.import_export_outlined,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // select file button
             Obx(() {
               final fileName = controller.fileName;
               return ActionButton(
                 onTap: () => _selectFile(),
                 children: [
-                  Icon(Icons.insert_drive_file_outlined),
+                  const Icon(Icons.insert_drive_file_outlined),
                   Text(
                     style: AppTextTheme.titleMedium,
                     fileName.isEmpty ? 'Choose json file' : fileName,
@@ -163,7 +162,7 @@ class HomeScreen extends GetView<HomeController> {
                 ],
               );
             }),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             Row(
               spacing: 10,
               children: [
@@ -175,7 +174,7 @@ class HomeScreen extends GetView<HomeController> {
                       onTap: () => _handleOntap(controller.handleImport),
                       isLoading: controller.importLoading,
                       children: [
-                        Icon(Icons.done),
+                        const Icon(Icons.done),
                         Text('Confirm', style: AppTextTheme.titleMedium),
                       ],
                     ),
@@ -190,7 +189,7 @@ class HomeScreen extends GetView<HomeController> {
                       controller.clearBackupSession();
                     },
                     children: [
-                      Icon(Icons.cancel_outlined),
+                      const Icon(Icons.cancel_outlined),
                       Text(style: AppTextTheme.titleMedium, 'Cancel'),
                     ],
                   ),
@@ -211,47 +210,47 @@ class HomeScreen extends GetView<HomeController> {
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(width: double.infinity, height: 15),
+            const SizedBox(width: double.infinity, height: 15),
             // drag effect widget
             Container(
               width: 50,
               height: 3,
-              decoration: BoxDecoration(color: ConstUiColors.thirdColor),
+              decoration: const BoxDecoration(color: ConstUiColors.thirdColor),
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             // title
             Text(style: AppTextTheme.titleMedium, 'Export data'),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // export to file button
             ActionButton(
               onTap: () => _handleOntap(controller.exportToFile),
               isLoading: isLoading == ExportStatus.file,
               children: [
-                Icon(Icons.insert_drive_file_outlined),
+                const Icon(Icons.insert_drive_file_outlined),
                 Text(style: AppTextTheme.titleMedium, 'Export as file'),
               ],
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             // export to clip board button
             ActionButton(
               onTap: () => _handleOntap(controller.exportToClipboard),
               isLoading: isLoading == ExportStatus.clipboard,
               children: [
-                Icon(Icons.insert_drive_file_outlined),
+                const Icon(Icons.insert_drive_file_outlined),
                 Text(style: AppTextTheme.titleMedium, 'Export to clipboard'),
               ],
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             // cancel button
             ActionButton(
               borderColor: ConstUiColors.errorColor,
               onTap: () => controller.goToBack(),
               children: [
-                Icon(Icons.cancel_outlined),
+                const Icon(Icons.cancel_outlined),
                 Text(style: AppTextTheme.titleMedium, 'Cancel'),
               ],
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
           ],
         );
       }),
@@ -260,7 +259,7 @@ class HomeScreen extends GetView<HomeController> {
 
   Widget _searchWidget() {
     return GestureDetector(
-      onTap: () => Get.toNamed(Routes.searchScreen),
+      onTap: () => controller.gotoSearchScreen(),
       child: Container(
         height: 50,
         padding: const EdgeInsets.only(right: 20),
@@ -275,8 +274,8 @@ class HomeScreen extends GetView<HomeController> {
             // drawer menu open button
             InkWell(
               onTap: onTap,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 20),
+              child: const Padding(
+                padding: EdgeInsets.only(left: 20),
                 child: Icon(Icons.menu, size: 25),
               ),
             ),

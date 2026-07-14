@@ -26,7 +26,7 @@ class PlatformService {
       allowedExtensions: ['json'],
       type: FileType.custom,
     );
-    if (result == null) throw AppError(errorMessage: 'File Not Selected');
+    if (result == null) throw const AppError(errorMessage: 'File Not Selected');
     String fileContent;
     String fileName;
 
@@ -44,7 +44,7 @@ class PlatformService {
       await Clipboard.setData(ClipboardData(text: content.toString().trim()));
     } on PlatformException catch (error) {
       if (error.message!.contains('TooLarge')) {
-        throw AppError(errorMessage: 'Data is too long for clipboard');
+        throw const AppError(errorMessage: 'Data is too long for clipboard');
       }
     } catch (error) {
       throw AppError(errorMessage: error.toString());

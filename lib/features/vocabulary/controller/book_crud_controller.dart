@@ -6,14 +6,15 @@ import 'package:vocly/core/router/app_router.dart';
 import 'package:vocly/core/services/dialog_service.dart';
 import 'package:vocly/core/types/enums.dart';
 import 'package:vocly/features/vocabulary/model/entities/book_model.dart';
-import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
 import 'package:vocly/features/vocabulary/model/repositories/vocabulary_repository.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
 
 class BookCrudController extends GetxController {
-  late final BookRepository _bookRepository;
-  late final DialogService _dialogService;
-  late final BookScreenType bookScreenType;
+  late BookRepository _bookRepository;
+  late DialogService _dialogService;
+
+  late BookModel? _editingBook;
+  late BookScreenType type;
 
   // ================ Form Key =================================================
 
@@ -29,8 +30,8 @@ class BookCrudController extends GetxController {
   final Rxn<BookModel> _currentBook = Rxn<BookModel>();
   BookModel? get currentBook => _currentBook.value;
 
-  final RxList<String> _selectedWords = <String>[].obs;
-  List<String> get selectedWords => _selectedWords;
+  final RxList<int> _selectedWords = <int>[].obs;
+  List<int> get selectedWords => _selectedWords;
 
   final RxInt _selectedIconIndex = 0.obs;
   int get selectedIconIndex => _selectedIconIndex.value;
@@ -62,7 +63,7 @@ class BookCrudController extends GetxController {
     _selectedLevelIndex.value = value;
   }
 
-  void updateSelectedWords({required List<String> words}) {
+  void updateSelectedWords({required List<int> words}) {
     _selectedWords.value = words;
   }
 
@@ -70,26 +71,25 @@ class BookCrudController extends GetxController {
 
   Future<Either<AppError, AppSuccess>> _addBook() async {
     try {
-      final map = _createMap();
-      final BookModel book = BookModel.fromMap(map: map);
-      final isWordExist = _isBookExist(name: book.name);
+      final book = BookModel.fromMap(map: _createMap());
+      final isExist = _isBookExist(name: book.name);
 
-      if (!isWordExist) {
-        await _bookRepository.addBook(book: book);
+      if (isExist) {
+        final bool? permission = await _dialogService.showDialog(
+          title: AppStrings.dialogDuplicatedBookTitle,
+          content: AppStrings.dialogDuplicatedBookContent,
+          confirmTitle: AppStrings.dialogDuplicatedBookConfirm,
+        );
+        if (permission == null || !permission) {
+          return left(const AppError(errorMessage: 'Permission Denied'));
+        }
       }
-      final bool? permission = await _dialogService.showDialog(
-        title: AppStrings.dialogDuplicatedBookTitle,
-        content: AppStrings.dialogDuplicatedBookContent,
-        confirmTitle: AppStrings.dialogDuplicatedBookConfirm,
+      await _bookRepository.addBook(book: book);
+      return right(
+        AppSuccess(successMessage: '${book.name.capitalizeFirst} Added'),
       );
-      if (permission!) {
-        await _bookRepository.addBook(book: book);
-      } else {
-        return left(AppError(errorMessage: 'Permision Denied'));
-      }
-      return right(AppSuccess(successMessage: '${book.name} added'));
-    } catch (error) {
-      return left(AppError(errorMessage: error.toString()));
+    } on AppError catch (error) {
+      return left(AppError(errorMessage: error.errorMessage));
     }
   }
 
@@ -104,67 +104,91 @@ class BookCrudController extends GetxController {
   Future<Either<AppError, AppSuccess>> _updateBook() async {
     try {
       final Map<String, dynamic> map = _createMap();
-      _currentBook.value!.updateBook(map: map);
-      await _bookRepository.updateBook(book: _currentBook.value!);
-      return right(
-        AppSuccess(successMessage: '${_currentBook.value!.name} updated'),
+      final updatedBook = _editingBook!.copyWith(
+        name: map[AppStrings.keyName],
+        description: map[AppStrings.keyDescription],
+        words: map[AppStrings.keyWords],
+        icon: map[AppStrings.keyIcon],
+        type: map[AppStrings.keyType],
+        color: map[AppStrings.keyColor],
+        level: map[AppStrings.keyLevel],
       );
-    } catch (error) {
-      return left(AppError(errorMessage: error.toString()));
-    }
-  }
-
-  List<WordModel> getBookWords(BookModel book) {
-    try {
-      final List<WordModel> bookWords = _bookRepository.getBookWords(
-        book: book,
+      await _bookRepository.updateBook(
+        key: _editingBook!.key,
+        book: updatedBook,
       );
-      return bookWords;
-    } catch (error) {
-      //   Get.snackbar('Oops!', _errorMessage(error));
-      return [];
+      return right(AppSuccess(successMessage: '${_editingBook!.name} updated'));
+    } on AppError catch (error) {
+      return left(AppError(errorMessage: error.errorMessage));
     }
   }
 
   // ================ Helper Functions =========================================
 
   Map<String, dynamic> _createMap() {
-    Map<String, dynamic> map = {};
-    if (formKey.currentState!.validate()) {
-      map = {
-        AppStrings.keyName: nameController.text,
-        AppStrings.keyIcon: _selectedIconIndex,
-        AppStrings.keyType: _selectedTypeIndex,
-        AppStrings.keyColor: _selectedColorIndex,
-        AppStrings.keyLevel: _selectedLevelIndex,
-        AppStrings.keyWords: _selectedWords,
-      };
+    return {
+      AppStrings.keyName: nameController.text,
+      AppStrings.keyDescription: descriptionController.text,
+      AppStrings.keyIcon: _selectedIconIndex.value,
+      AppStrings.keyType: _selectedTypeIndex.value,
+      AppStrings.keyColor: _selectedColorIndex.value,
+      AppStrings.keyLevel: _selectedLevelIndex.value,
+      AppStrings.keyWords: _selectedWords,
+    };
+  }
+
+  void _initControllerEssentials() {
+    type = Get.arguments['type'];
+    if (type == BookScreenType.addBook) return;
+
+    final int bookKey = Get.arguments['book_key'];
+    final box = _bookRepository.bookValueListenable.value;
+    _editingBook = box.get(bookKey);
+
+    if (_editingBook != null) {
+      nameController.text = _editingBook!.name;
+      descriptionController.text = _editingBook!.description;
+      _selectedIconIndex.value = _editingBook!.icon;
+      _selectedTypeIndex.value = _editingBook!.type;
+      _selectedColorIndex.value = _editingBook!.color;
+      _selectedLevelIndex.value = _editingBook!.level;
+      _selectedWords.value = _editingBook!.words;
     }
-    return map;
   }
 
   Future<Either<AppError, AppSuccess>> handleAction() async {
-    if (bookScreenType == BookScreenType.addBook) {
-      return await _addBook();
-    } else {
-      return await _updateBook();
+    if (formKey.currentState!.validate()) {
+      if (type == BookScreenType.addBook) {
+        return await _addBook();
+      } else {
+        return await _updateBook();
+      }
     }
+    return left(const AppError(errorMessage: 'Please Fill Inputs First'));
   }
 
   // ================ Navigation ===============================================
 
   void goToBack() => Get.back();
 
-  void goToMnageWordsScreen() => Get.toNamed(Routes.manageWordsScreen);
+  void goToWordManagerScreen() async {
+    _selectedWords.value = await Get.toNamed(
+      Routes.wordManagerScreen,
+      arguments: {
+        'type': WordManagerScreenType.addWordToBook,
+        'words': selectedWords,
+      },
+    );
+  }
 
   // ================ Life Cycle ===============================================
 
   @override
   void onInit() {
     super.onInit();
-    bookScreenType = Get.arguments;
     _bookRepository = Get.find();
     _dialogService = Get.find();
+    _initControllerEssentials();
   }
 
   @override

@@ -2,44 +2,44 @@ import 'package:equatable/equatable.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vocly/core/types/vocabulary_model.dart';
+import 'package:vocly/shared/constants/const_strings.dart';
 part 'book_model.g.dart';
 
 @HiveType(typeId: 1)
 class BookModel extends VocabularyModel with EquatableMixin, HiveObjectMixin {
   @override
-  
   @HiveField(0)
-  String id;
+  final String id;
 
   @override
   @HiveField(1)
-  String name;
+  final String name;
 
   @HiveField(2)
-  String description;
+  final String description;
 
   @override
   @HiveField(3)
-  int color;
+  final int color;
 
   @override
   @HiveField(4)
-  int icon;
+  final int icon;
 
   @HiveField(5)
-  List<String> words;
+  final List<int> words;
 
   @override
   @HiveField(6)
-  int level;
+  final int level;
 
   @override
   @HiveField(7)
-  int createAt;
+  final int createAt;
 
   @override
   @HiveField(8)
-  int type;
+  final int type;
 
   BookModel({
     required this.id,
@@ -63,27 +63,50 @@ class BookModel extends VocabularyModel with EquatableMixin, HiveObjectMixin {
 
   factory BookModel.fromMap({required final Map<String, dynamic> map}) {
     return BookModel(
-      id: Uuid().v4(),
+      id: const Uuid().v4(),
       createAt: DateTime.now().microsecondsSinceEpoch,
-      name: map['name'],
-      icon: map['banner'],
-      color: map['color'],
-      level: map['level'],
-      words: map['words'],
-      description: map['description'],
-      type: map['type'],
+      name: map[AppStrings.keyName],
+      icon: map[AppStrings.keyIcon],
+      color: map[AppStrings.keyColor],
+      level: map[AppStrings.keyLevel],
+      words: map[AppStrings.keyWords],
+      description: map[AppStrings.keyDescription],
+      type: map[AppStrings.keyType],
     );
   }
 
-  void updateBook({required final Map<String, dynamic> map}) {
-    name = map['name'] ?? name;
-    icon = map['banner'] ?? icon;
-    color = map['color'] ?? color;
-    words = map['words'] ?? words;
-    level = map['level'] ?? level;
-    type = map['type'] ?? type;
+  BookModel copyWith({
+    String? name,
+    String? description,
+    List<int>? words,
+    int? icon,
+    int? type,
+    int? color,
+    int? level,
+  }) {
+    return BookModel(
+      id: id,
+      createAt: createAt,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      icon: icon ?? this.icon,
+      type: type ?? this.type,
+      color: color ?? this.color,
+      level: level ?? this.level,
+      words: words ?? this.words,
+    );
   }
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [
+    id,
+    createAt,
+    name,
+    icon,
+    color,
+    level,
+    words,
+    description,
+    type,
+  ];
 }

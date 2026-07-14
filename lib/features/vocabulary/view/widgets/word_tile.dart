@@ -45,7 +45,7 @@ class WordTile extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       spacing: 5,
                       children: [
-                        SizedBox(width: double.infinity),
+                        const SizedBox(width: double.infinity),
                         // word name text
                         Text(
                           name!,

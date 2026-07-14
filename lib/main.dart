@@ -20,7 +20,8 @@ void main(List<String> args) async {
 
   await Hive.openBox<WordModel>(AppStrings.wordBox);
   await Hive.openBox<BookModel>(AppStrings.bookBox);
-  runApp(Application());
+
+  runApp(const Application());
 }
 
 class Application extends StatelessWidget {
@@ -43,10 +44,8 @@ class Application extends StatelessWidget {
 //TODO use controller as generic classes
 //TODO move hive initing to bindings
 //TODO revise documentation
-
-
-
+//TODO put all reactive varibale of controllers in one map variable
 
 ///[bugs and experience todos]==================================================
 //TODO increase the size of appbar  icons
-
+//TODO add canceling feature for events

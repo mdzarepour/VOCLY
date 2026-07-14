@@ -1,24 +1,26 @@
-﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 import 'package:vocly/core/types/entity_types.dart';
-import 'package:vocly/features/vocabulary/controller/word_crud_controller.dart';
+import 'package:vocly/shared/theme/app_text_theme.dart';
 import 'package:vocly/shared/widgets/action_button.dart';
+import 'package:vocly/shared/widgets/card_widget.dart';
 import 'package:vocly/shared/widgets/property_selector.dart';
+import 'package:vocly/shared/widgets/input_text_field.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
 import 'package:vocly/shared/constants/const_colors.dart';
-import 'package:vocly/shared/theme/app_text_theme.dart';
-import 'package:vocly/shared/widgets/input_text_field.dart';
 import 'package:vocly/core/types/enums.dart';
+import 'package:vocly/features/vocabulary/controller/book_crud_controller.dart';
 
-class AddEditWordScreen extends GetView<WordCrudController> {
-  const AddEditWordScreen({super.key});
+class BookCrudScreen extends GetView<BookCrudController> {
+  const BookCrudScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
       child: Scaffold(
-        appBar: appBarWidget(),
+        // appbar
+        appBar: appbarWidget(),
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -31,46 +33,45 @@ class AddEditWordScreen extends GetView<WordCrudController> {
                     const SizedBox(height: 20),
                     // title
                     Text(UIStrings.details, style: AppTextTheme.titleMedium),
-                    SizedBox(height: 10),
-                    // word name text field
+                    const SizedBox(height: 10),
+                    // name text field
                     InputTextField(
-                      icon: Icons.language,
+                      icon: Icons.chrome_reader_mode_outlined,
                       controller: controller.nameController,
                       hint: UIStrings.name,
                     ),
-                    const SizedBox(height: 15),
-                    // word meaning text field
+                    const SizedBox(height: 10),
+                    // description text field
                     InputTextField(
-                      icon: Icons.lightbulb_outline,
-                      controller: controller.meaningController,
-                      hint: UIStrings.meaning,
+                      icon: Icons.description_outlined,
+                      controller: controller.descriptionController,
+                      hint: UIStrings.description,
                     ),
-                    const SizedBox(height: 15),
-                    // word example text field
-                    InputTextField(
-                      icon: Icons.newspaper_outlined,
-                      controller: controller.exampleController,
-                      hint: UIStrings.example,
-                    ),
-                    SizedBox(height: 15),
-                    // expantion widget for type
+                    const SizedBox(height: 10),
+                    // book type selector
                     _typeSelection(),
-                    SizedBox(height: 15),
-                    // expantion widget for level
+                    const SizedBox(height: 10),
+                    // book level selector
                     _levelSelection(),
                     const SizedBox(height: 30),
                     // title
                     Text(UIStrings.visual, style: AppTextTheme.titleMedium),
-                    SizedBox(height: 10),
-                    // expantion widget for icon
-                    _iconSelection(),
-                    const SizedBox(height: 15),
-                    // expantion widget for color
+                    const SizedBox(height: 10),
+                    // book color selection
                     _colorSelection(),
-                    SizedBox(height: 30),
-                    // action buttons row
+                    const SizedBox(height: 10),
+                    // book icon selection
+                    _iconSelection(),
+                    const SizedBox(height: 30),
+                    // title
+                    Text(UIStrings.words, style: AppTextTheme.titleMedium),
+                    const SizedBox(height: 10),
+                    // book words selection
+                    _wordSelection(),
+                    const SizedBox(height: 30),
+                    // cancel - done buttons
                     _actionButtons(),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                   ],
                 ),
               ),
@@ -81,28 +82,14 @@ class AddEditWordScreen extends GetView<WordCrudController> {
     );
   }
 
-  AppBar appBarWidget() {
+  AppBar appbarWidget() {
     return AppBar(
       centerTitle: false,
       title: Text(
-        controller.type == WordScreenType.editWord
-            ? 'Edit word'
-            : 'Add new word',
+        controller.type == BookScreenType.editBook ? 'Edit book' : 'Add Book',
         style: AppTextTheme.titleMedium,
       ),
     );
-  }
-
-  Widget _iconSelection() {
-    return Obx(() {
-      return PropertySelector(
-        title: UIStrings.icon,
-        onChildTap: (i) => controller.updateSelectedIcon(value: i),
-        selectedChildIndex: controller.selectedIconIndex,
-        type: ExpantionWidgetType.entityIcon,
-        children: EntityIcon.children,
-      );
-    });
   }
 
   Widget _typeSelection() {
@@ -141,6 +128,30 @@ class AddEditWordScreen extends GetView<WordCrudController> {
     });
   }
 
+  Widget _iconSelection() {
+    return Obx(() {
+      return PropertySelector(
+        title: UIStrings.icon,
+        onChildTap: (i) => controller.updateSelectedIcon(value: i),
+        selectedChildIndex: controller.selectedIconIndex,
+        type: ExpantionWidgetType.entityIcon,
+        children: EntityIcon.children,
+      );
+    });
+  }
+
+  Widget _wordSelection() {
+    return InkWell(
+      onTap: () => controller.goToWordManagerScreen(),
+      child: CardWidget(
+        height: 50,
+        child: Center(
+          child: Text(style: AppTextTheme.titleMedium, 'Select words'),
+        ),
+      ),
+    );
+  }
+
   Widget _actionButtons() {
     return Row(
       spacing: 10,
@@ -153,7 +164,7 @@ class AddEditWordScreen extends GetView<WordCrudController> {
             onTap: () => _action(),
             children: [
               Icon(
-                controller.type == WordScreenType.editWord
+                controller.type == BookScreenType.editBook
                     ? Icons.edit_outlined
                     : Icons.done,
               ),
@@ -167,7 +178,7 @@ class AddEditWordScreen extends GetView<WordCrudController> {
             borderColor: ConstUiColors.errorColor,
             onTap: () => controller.goToBack(),
             children: [
-              Icon(Icons.cancel_outlined),
+              const Icon(Icons.cancel_outlined),
               Text(UIStrings.cancel, style: AppTextTheme.titleMedium),
             ],
           ),
@@ -181,6 +192,7 @@ class AddEditWordScreen extends GetView<WordCrudController> {
     final either = await controller.handleAction();
     either.fold(
       (appError) {
+        controller.goToBack();
         Get.snackbar('Oops!', appError.errorMessage);
       },
       (appSuccess) {

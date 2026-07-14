@@ -9,8 +9,8 @@ import 'package:vocly/shared/constants/const_strings.dart';
 import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
 import 'package:vocly/shared/widgets/spell_char_widget.dart';
 
-class ReadWordScreen extends GetView<WordDetailsController> {
-  const ReadWordScreen({super.key});
+class WordDetailsScreen extends GetView<WordDetailsController> {
+  const WordDetailsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,15 +26,15 @@ class ReadWordScreen extends GetView<WordDetailsController> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: CustomScrollView(
               slivers: [
-                SliverToBoxAdapter(child: SizedBox(height: 20)),
+                const SliverToBoxAdapter(child: SizedBox(height: 20)),
                 SliverToBoxAdapter(
                   child: _cardWidget(currentWord: currentWord!),
                 ),
-                SliverToBoxAdapter(child: SizedBox(height: 20)),
+                const SliverToBoxAdapter(child: SizedBox(height: 20)),
                 SliverToBoxAdapter(child: _listenButton()),
-                SliverToBoxAdapter(child: SizedBox(height: 20)),
+                const SliverToBoxAdapter(child: SizedBox(height: 20)),
                 SliverToBoxAdapter(child: _spellWidget()),
-                SliverToBoxAdapter(child: SizedBox(height: 20)),
+                const SliverToBoxAdapter(child: SizedBox(height: 20)),
                 SliverToBoxAdapter(child: _editButton()),
               ],
             ),
@@ -138,7 +138,7 @@ class ReadWordScreen extends GetView<WordDetailsController> {
       final chars = controller.spellingController.chars;
       final selectedChars = controller.spellingController.selectedChars;
       final accuracy = controller.spellingController.accuracy;
-      
+
       // entire widget as card
       return CardWidget(
         child: Theme(
@@ -163,7 +163,7 @@ class ReadWordScreen extends GetView<WordDetailsController> {
                 runSpacing: 10,
                 alignment: WrapAlignment.center,
                 children: [
-                  SizedBox(width: double.infinity),
+                  const SizedBox(width: double.infinity),
                   for (int i = 0; i < chars.length; i++)
                     // char widget
                     SpellCharWidget(
@@ -184,15 +184,15 @@ class ReadWordScreen extends GetView<WordDetailsController> {
                     ),
                 ],
               ),
-              SizedBox(height: 15),
-              Divider(),
+              const SizedBox(height: 15),
+              const Divider(),
               // chars keyboard
               Wrap(
                 spacing: 10,
                 runSpacing: 10,
                 alignment: WrapAlignment.center,
                 children: [
-                  SizedBox(width: double.infinity),
+                  const SizedBox(width: double.infinity),
                   for (int i = 0; i < chars.length; i++)
                     // char widget
                     SpellCharWidget(
@@ -233,7 +233,7 @@ class ReadWordScreen extends GetView<WordDetailsController> {
         child: Row(
           spacing: 15,
           children: [
-            Icon(Icons.mic_none_rounded),
+            const Icon(Icons.mic_none_rounded),
             Text(style: AppTextTheme.titleMedium, UIStrings.listen),
           ],
         ),

@@ -20,7 +20,7 @@ class WordSearchController extends GetxController {
 
   final queryController = TextEditingController();
 
-  // ================ Handle Query Chenges =====================================
+  // ================ Query Functions ==========================================
 
   void updateQuery({required String value}) {
     _query.value = value;
@@ -30,7 +30,7 @@ class WordSearchController extends GetxController {
   // ================ Navigation ===============================================
 
   void goToReadWordScreen({required WordModel word}) {
-    Get.toNamed(Routes.readWordScreen, arguments: word);
+    Get.toNamed(Routes.wordDetailsScreen, arguments: word);
   }
 
   // ================ Life Cycle ===============================================

@@ -30,8 +30,8 @@ class _WrapperScreenState extends State<WrapperScreen> {
           index: _selectedScreenIndex,
           children: [
             HomeScreen(onTap: () => _key.currentState!.openDrawer()),
-            Container(color: Colors.red, child: Text(UIStrings.data)),
-            Container(color: Colors.blue, child: Text(UIStrings.data)),
+            Container(color: Colors.red, child: const Text(UIStrings.data)),
+            Container(color: Colors.blue, child: const Text(UIStrings.data)),
           ],
         ),
       ),
@@ -93,7 +93,7 @@ class _WrapperScreenState extends State<WrapperScreen> {
   Widget _bottomNavigation() {
     return Container(
       height: 90,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         border: Border(
           top: BorderSide(color: ConstUiColors.backgroundColor2, width: 1),
         ),

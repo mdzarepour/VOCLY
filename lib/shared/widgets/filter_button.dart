@@ -17,7 +17,7 @@ class FilterButton extends StatelessWidget {
           child: Row(
             children: [
               Text(style: AppTextTheme.bodySmall, title),
-              Icon(Icons.arrow_drop_down),
+              const Icon(Icons.arrow_drop_down),
             ],
           ),
         ),

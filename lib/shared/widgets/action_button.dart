@@ -37,7 +37,7 @@ class ActionButton extends StatelessWidget {
         children: children,
       );
     } else {
-      return LoadingWidget();
+      return const LoadingWidget();
     }
   }
 }

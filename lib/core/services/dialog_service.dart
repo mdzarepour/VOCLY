@@ -16,7 +16,7 @@ class DialogService extends GetxService {
     final bool result = await Get.dialog(
       barrierColor: ConstUiColors.backgroundColor,
       transitionCurve: Curves.easeIn,
-      transitionDuration: Duration(milliseconds: 100),
+      transitionDuration: const Duration(milliseconds: 100),
       useSafeArea: true,
       _DialogWidget(title: title, content: content, confirmTitle: confirmTitle),
     );
@@ -38,7 +38,7 @@ class _DialogWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(15)),
         side: BorderSide(color: ConstUiColors.backgroundColor2),
       ),
@@ -63,7 +63,7 @@ class _DialogWidget extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             Expanded(
               child: InkWell(
                 onTap: () => Get.back(result: true),

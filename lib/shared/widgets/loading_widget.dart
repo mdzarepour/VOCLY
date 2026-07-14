@@ -7,6 +7,6 @@ class LoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SpinKitThreeInOut(color: ConstUiColors.thirdColor, size: 15);
+    return const SpinKitThreeInOut(color: ConstUiColors.thirdColor, size: 15);
   }
 }

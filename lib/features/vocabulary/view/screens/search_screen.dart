@@ -21,7 +21,7 @@ class SearchScreen extends GetView<WordSearchController> {
         final words = controller.words;
         return CustomScrollView(
           slivers: [
-            SliverToBoxAdapter(child: SizedBox(height: 20)),
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
             // empty state - listview
             _getMaiWidget(words: words),
           ],
@@ -73,7 +73,7 @@ class SearchScreen extends GetView<WordSearchController> {
         cursorColor: ConstUiColors.thirdColor,
         controller: controller.queryController,
         style: AppTextTheme.titleMedium,
-        decoration: InputDecoration(hintText: UIStrings.search),
+        decoration: const InputDecoration(hintText: UIStrings.search),
         onChanged: (value) => controller.updateQuery(value: value),
       ),
     );
@@ -87,7 +87,7 @@ class SearchScreen extends GetView<WordSearchController> {
         spacing: 5,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.search_off_outlined, size: 30),
+          const Icon(Icons.search_off_outlined, size: 30),
           Text('Empty', style: AppTextTheme.titleMedium),
         ],
       ),
@@ -104,11 +104,11 @@ class _SearchWordTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 70,
-      margin: EdgeInsets.only(bottom: 10),
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
         border: Border.all(color: ConstUiColors.backgroundColor2),
-        borderRadius: BorderRadius.all(Radius.circular(15)),
+        borderRadius: const BorderRadius.all(Radius.circular(15)),
       ),
       child: Row(
         children: [

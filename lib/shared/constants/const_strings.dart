@@ -62,10 +62,11 @@ class AppStrings {
   static const emptyChar = '';
 
   // MAP KEYS -->
+  static const keyId = 'id';
+  static const keyCreateAt = 'create_at';
   static const keyName = 'name';
   static const keyDescription = 'description';
   static const keyColor = 'color';
-  static const keyBanner = 'banner';
   static const keyWords = 'words';
   static const keyMeaning = 'meaning';
   static const keyExample = 'example';

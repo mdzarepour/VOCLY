@@ -1,9 +1,8 @@
 ﻿import 'package:flutter/material.dart';
-import 'package:get/route_manager.dart';
-import 'package:get/state_manager.dart';
+import 'package:get/get.dart';
 import 'package:vocly/core/types/entity_types.dart';
 import 'package:vocly/features/vocabulary/view/widgets/word_tile.dart';
-import 'package:vocly/features/vocabulary/controller/word_manage_controller.dart';
+import 'package:vocly/features/vocabulary/controller/word_manager_controller.dart';
 import 'package:vocly/shared/widgets/filter_button.dart';
 import 'package:vocly/shared/widgets/filter_bottom_sheet.dart';
 import 'package:vocly/core/types/enums.dart';
@@ -13,8 +12,8 @@ import 'package:vocly/shared/constants/const_colors.dart';
 import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
 import 'package:vocly/shared/widgets/sort_bottom_sheet.dart';
 
-class ManageWordsScreen extends GetView<WordManageController> {
-  const ManageWordsScreen({super.key});
+class WordManagerScreen extends GetView<WordManagerController> {
+  const WordManagerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,19 +23,16 @@ class ManageWordsScreen extends GetView<WordManageController> {
         final words = controller.displayedWords;
         return CustomScrollView(
           slivers: [
-            SliverToBoxAdapter(child: SizedBox(height: 20)),
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
             // horizontal listview of filter widgets
             SliverToBoxAdapter(child: _filterWidget()),
-            SliverToBoxAdapter(child: SizedBox(height: 20)),
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
             // main widget as listview or empty state
             _getMainWidget(words: words),
           ],
         );
       }),
-      bottomNavigationBar:
-          controller.type == ManageWordsScreenType.addWordToBook
-          ? _wordSelectingButton()
-          : null,
+      bottomNavigationBar: _getAddWordsButton(),
     );
   }
 
@@ -45,23 +41,25 @@ class ManageWordsScreen extends GetView<WordManageController> {
       automaticallyImplyLeading: true,
       title: Obx(() {
         final mode = controller.selectionController.isSelectionMode;
+        final type = controller.type == WordManagerScreenType.manageWords;
         return Row(
           children: [
+            // title
             Text(UIStrings.manageWords, style: AppTextTheme.titleMedium),
             const Spacer(),
-            if (mode)
+            if (mode && type)
               // delete icon
               InkWell(
                 onTap: () {
                   controller.deleteWords();
                 },
-                child: SizedBox(
+                child: const SizedBox(
                   height: 40,
                   width: 40,
                   child: Icon(Icons.delete_outline),
                 ),
               ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             // layout icon
             InkWell(
               onTap: () => controller.changeScreenLayout(),
@@ -71,7 +69,7 @@ class ManageWordsScreen extends GetView<WordManageController> {
                     : Icons.view_agenda_outlined,
               ),
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             // select all icon
             InkWell(
               onTap: () {
@@ -81,7 +79,7 @@ class ManageWordsScreen extends GetView<WordManageController> {
               },
               child: Icon(controller.selectionController.selectButtonIcon),
             ),
-            SizedBox(width: 20),
+            const SizedBox(width: 20),
           ],
         );
       }),
@@ -89,11 +87,11 @@ class ManageWordsScreen extends GetView<WordManageController> {
   }
 
   Widget _filterWidget() {
-    final wordFilteringItems = WordFilteringItems.children;
+    const wordFilteringItems = WordFilteringItems.children;
     return SizedBox(
       height: 35,
       child: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         scrollDirection: Axis.horizontal,
         children: [
           // sort button
@@ -149,32 +147,10 @@ class ManageWordsScreen extends GetView<WordManageController> {
     );
   }
 
-  Widget _getMainWidget({required List<WordModel> words}) {
-    if (words.isEmpty) {
-      return _emptyStateWidget();
-    } else {
-      return _wordsListWidget(words: words);
-    }
-  }
-
-  Widget _emptyStateWidget() {
-    return SliverFillRemaining(
-      fillOverscroll: false,
-      hasScrollBody: false,
-      child: Row(
-        spacing: 5,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.search_off_outlined, size: 25),
-          Text('Empty', style: AppTextTheme.titleMedium),
-        ],
-      ),
-    );
-  }
-
   Widget _wordsListWidget({required List<WordModel> words}) {
     return SliverPadding(
-      padding: EdgeInsets.only(left: 20, right: 20, bottom: 30),
+      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 30),
+      // sliver gridview
       sliver: SliverGrid.builder(
         itemCount: words.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -184,6 +160,7 @@ class ManageWordsScreen extends GetView<WordManageController> {
           crossAxisSpacing: 10,
         ),
         itemBuilder: (context, index) {
+          // word tile
           final currentWord = words[index];
           return Obx(() {
             final isSelected = controller.selectionController.isSelected(
@@ -208,7 +185,7 @@ class ManageWordsScreen extends GetView<WordManageController> {
                 if (controller.selectionController.isSelectionMode) {
                   controller.selectionController.selectItem(item: currentWord);
                 } else {
-                  controller.goToReadWordScreen(key: currentWord.key);
+                  controller.goToWordDetailsScreen(key: currentWord.key);
                 }
               },
             );
@@ -223,25 +200,49 @@ class ManageWordsScreen extends GetView<WordManageController> {
       return InkWell(
         onTap: () => controller.goToBackWithResult(),
         child: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             border: BorderDirectional(
               top: BorderSide(color: ConstUiColors.backgroundColor2),
             ),
           ),
           height: 70,
-          child: Row(
-            spacing: 20,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(style: AppTextTheme.titleMedium, UIStrings.addBooks),
-              Text(
-                style: AppTextTheme.titleMedium,
-                '${controller.selectionController.selectedItems.length}',
-              ),
-            ],
+          child: Text(
+            style: AppTextTheme.titleMedium,
+            'Add ${controller.selectionController.selectedItems.length} words',
           ),
         ),
       );
     });
+  }
+
+  Widget _emptyStateWidget() {
+    return SliverFillRemaining(
+      fillOverscroll: false,
+      hasScrollBody: false,
+      child: Row(
+        spacing: 5,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.search_off_outlined, size: 25),
+          Text('Empty', style: AppTextTheme.titleMedium),
+        ],
+      ),
+    );
+  }
+
+  Widget? _getAddWordsButton() {
+    if (controller.type == WordManagerScreenType.addWordToBook) {
+      return _wordSelectingButton();
+    } else {
+      return null;
+    }
+  }
+
+  Widget _getMainWidget({required List<WordModel> words}) {
+    if (words.isEmpty) {
+      return _emptyStateWidget();
+    } else {
+      return _wordsListWidget(words: words);
+    }
   }
 }

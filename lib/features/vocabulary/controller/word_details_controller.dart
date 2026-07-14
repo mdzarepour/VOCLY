@@ -21,37 +21,36 @@ class WordDetailsController extends GetxController {
   final Rxn<WordModel> _word = Rxn<WordModel>();
   WordModel? get word => _word.value;
 
+  // ================ Speech Service Functions =================================
+
   void listenToWord() {
     _speechService.speak(text: _word.value!.name.toLowerCase());
   }
 
-  // ================ Helper Functions =========================================
+  // ================ Main Functions ===========================================
 
   void _initWord() {
-    final int key = Get.arguments['word_key'];
+    final key = Get.arguments['word_key'];
     final box = _wordListenable.value;
-
     final updatedData = box.get(key);
+
     if (updatedData != null) {
-      _word.refresh();
-      _word.value = null;
       _word.value = updatedData;
-      _word.refresh();
       spellingController.loadCurrentWord(word: updatedData);
     }
   }
 
   // ================ Navigation ===============================================
 
-void goToAddEditWordScreen() {
-  Get.toNamed(
-    Routes.addEditWordScreen,
-    arguments: {
-      'type': WordScreenType.editWord, 
-      'word_key': Get.arguments['word_key'], 
-    },
-  );
-}
+  void goToAddEditWordScreen() {
+    Get.toNamed(
+      Routes.wordCrudScreen,
+      arguments: {
+        'type': WordScreenType.editWord,
+        'word_key': Get.arguments['word_key'],
+      },
+    );
+  }
 
   // ================ Life Cycle ===============================================
 
@@ -64,9 +63,7 @@ void goToAddEditWordScreen() {
 
     _wordListenable = _wordRepository.wordValueListenable;
     _wordListenable.addListener(_initWord);
-
     _initWord();
-    spellingController.loadCurrentWord(word: _word.value!);
   }
 
   @override

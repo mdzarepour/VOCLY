@@ -33,22 +33,22 @@ class InputTextField extends StatelessWidget {
         fillColor: ConstUiColors.forthColor,
         hintText: hint,
         suffixIcon: Icon(icon, color: ConstUiColors.thirdColor),
-        enabledBorder: OutlineInputBorder(
+        enabledBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(15)),
           borderSide: BorderSide(
             color: ConstUiColors.backgroundColor2,
             width: 1,
           ),
         ),
-        errorBorder: OutlineInputBorder(
+        errorBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(15)),
           borderSide: BorderSide(color: ConstUiColors.errorColor, width: 1),
         ),
-        focusedBorder: OutlineInputBorder(
+        focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: ConstUiColors.thirdColor, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(15)),
         ),
-        focusedErrorBorder: OutlineInputBorder(
+        focusedErrorBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: ConstUiColors.thirdColor, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(15)),
         ),

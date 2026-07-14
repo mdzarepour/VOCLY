@@ -89,10 +89,10 @@ class HomeController extends GetxController {
       });
       final path = await _platformService.saveSelectFile(bytes: bytes);
       if (path == null) {
-        return left(AppError(errorMessage: 'File Not Save!'));
+        return left(const AppError(errorMessage: 'File Not Save!'));
       } else {
         return right(
-          AppSuccess(successMessage: 'Backup Exported Successfully!'),
+          const AppSuccess(successMessage: 'Backup Exported Successfully!'),
         );
       }
     } on AppError catch (error) {
@@ -107,10 +107,14 @@ class HomeController extends GetxController {
       _exportLoading.value = ExportStatus.clipboard;
       final content = await _backupRepository.exportHiveContent();
       if (content.isEmpty) {
-        return left(AppError(errorMessage: 'There Is Nothing To Export!'));
+        return left(
+          const AppError(errorMessage: 'There Is Nothing To Export!'),
+        );
       } else {
         await _platformService.setContentToClipBoard(content: content);
-        return right(AppSuccess(successMessage: 'Backup Copied To Clipboard!'));
+        return right(
+          const AppSuccess(successMessage: 'Backup Copied To Clipboard!'),
+        );
       }
     } on AppError catch (error) {
       return left(AppError(errorMessage: error.errorMessage));
@@ -125,10 +129,12 @@ class HomeController extends GetxController {
     try {
       _importLoading.value = true;
       if (_selectedFileContent == null) {
-        return left(AppError(errorMessage: 'Please Select File First'));
+        return left(const AppError(errorMessage: 'Please Select File First'));
       }
       await _backupRepository.importHiveContent(content: _selectedFileContent!);
-      return right(AppSuccess(successMessage: 'Data Imported From File!'));
+      return right(
+        const AppSuccess(successMessage: 'Data Imported From File!'),
+      );
     } on AppError catch (error) {
       return left(AppError(errorMessage: error.errorMessage));
     } finally {
@@ -140,7 +146,9 @@ class HomeController extends GetxController {
     try {
       final content = inputController.text.trim();
       await _backupRepository.importHiveContent(content: content);
-      return right(AppSuccess(successMessage: 'Data Imported From Clipboard!'));
+      return right(
+        const AppSuccess(successMessage: 'Data Imported From Clipboard!'),
+      );
     } on AppError catch (error) {
       return left(AppError(errorMessage: error.errorMessage));
     } finally {
@@ -172,29 +180,36 @@ class HomeController extends GetxController {
 
   // ================ Navigations ==============================================
 
-  void goToManageBooksScreen() {
-    Get.toNamed(Routes.manageBooksScreen);
-  }
-
-  void goToManageWordsScreen() {
+  void goToBookManagerScreen() {
     Get.toNamed(
-      Routes.manageWordsScreen,
-      arguments: {'type': ManageWordsScreenType.manageWords},
+      Routes.bookManagerScreen,
+      arguments: {'type': WordManagerScreenType.addWordToBook},
     );
   }
 
-  void goToAddEditBookScreen() {
+  void goToWordManagerScreen() {
     Get.toNamed(
-      Routes.addEditBookScreen,
-      arguments: [BookScreenType.addBook, null],
+      Routes.wordManagerScreen,
+      arguments: {'type': WordManagerScreenType.manageWords},
     );
   }
 
-  void goToAddEditWordScreen() {
+  void goToBookCrudScreen() {
     Get.toNamed(
-      Routes.addEditWordScreen,
+      Routes.bookCrudScreen,
+      arguments: {'type': BookScreenType.addBook},
+    );
+  }
+
+  void goToWordCrudScreen() {
+    Get.toNamed(
+      Routes.wordCrudScreen,
       arguments: {'type': WordScreenType.addWord},
     );
+  }
+
+  void gotoSearchScreen() {
+    Get.toNamed(Routes.searchScreen);
   }
 
   void goToBack() {

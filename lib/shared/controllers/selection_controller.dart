@@ -64,6 +64,7 @@ abstract class SelectionController<T> extends GetxController {
       _selectedItems
         ..clear()
         ..addAll(allDisplayedItems);
+      updateSelectionMode(mode: true);
     } else {
       _clearSelection();
     }

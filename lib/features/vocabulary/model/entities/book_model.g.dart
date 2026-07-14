@@ -16,10 +16,10 @@ class BookModelAdapter extends TypeAdapter<BookModel> {
       description: fields[2] as String,
       color: fields[3] as int,
       icon: fields[4] as int,
-      words: (fields[5] as List).cast<String>(),
+      words: (fields[5] as List).cast<int>(),
       level: fields[6] as int,
       createAt: fields[7] as int,
-      type: fields[8] as int
+      type: fields[8] as int,
     );
   }
 

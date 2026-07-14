@@ -10,7 +10,7 @@ class AppUiTheme {
     highlightColor: Colors.transparent,
     scaffoldBackgroundColor: ConstUiColors.backgroundColor,
     dividerTheme: _dividerTheme(),
-    expansionTileTheme: ExpansionTileThemeData(
+    expansionTileTheme: const ExpansionTileThemeData(
       childrenPadding: EdgeInsets.only(bottom: 30),
     ),
     appBarTheme: appbarTheme(),
@@ -18,20 +18,20 @@ class AppUiTheme {
     iconTheme: iconTheme(),
     tabBarTheme: tabbraTheme(),
     popupMenuTheme: popupMenuTheme(),
-    progressIndicatorTheme: ProgressIndicatorThemeData(
+    progressIndicatorTheme: const ProgressIndicatorThemeData(
       color: ConstUiColors.thirdColor,
     ),
   );
 
   static DividerThemeData _dividerTheme() {
-    return DividerThemeData(
+    return const DividerThemeData(
       radius: BorderRadius.all(Radius.circular(100)),
       color: ConstUiColors.backgroundColor2,
     );
   }
 
   static PopupMenuThemeData popupMenuTheme() {
-    return PopupMenuThemeData(
+    return const PopupMenuThemeData(
       menuPadding: EdgeInsets.all(0),
       shadowColor: Colors.transparent,
       color: ConstUiColors.thirdColor,
@@ -39,7 +39,7 @@ class AppUiTheme {
   }
 
   static TabBarThemeData tabbraTheme() {
-    return TabBarThemeData(
+    return const TabBarThemeData(
       indicatorSize: TabBarIndicatorSize.label,
       unselectedLabelColor: ConstUiColors.thirdColor,
       splashFactory: NoSplash.splashFactory,
@@ -51,7 +51,7 @@ class AppUiTheme {
   }
 
   static AppBarThemeData appbarTheme() {
-    return AppBarThemeData(
+    return const AppBarThemeData(
       toolbarHeight: 70,
       scrolledUnderElevation: 0,
       centerTitle: true,
@@ -62,7 +62,7 @@ class AppUiTheme {
   }
 
   static IconThemeData iconTheme() {
-    return IconThemeData(size: 20, color: ConstUiColors.thirdColor);
+    return const IconThemeData(size: 20, color: ConstUiColors.thirdColor);
   }
 
   static InputDecorationThemeData inputTheme() {
@@ -72,7 +72,7 @@ class AppUiTheme {
         color: ConstUiColors.thirdColor,
         fontSize: 12,
       ),
-      border: OutlineInputBorder(borderSide: BorderSide.none),
+      border: const OutlineInputBorder(borderSide: BorderSide.none),
       suffixIconColor: ConstUiColors.thirdColor,
     );
   }

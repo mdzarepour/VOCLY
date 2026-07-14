@@ -71,7 +71,7 @@ class WordCrudController extends GetxController {
           confirmTitle: AppStrings.dialogDuplicatedWordConfirm,
         );
         if (permission == null || !permission) {
-          return left(AppError(errorMessage: 'Permission Denied'));
+          return left(const AppError(errorMessage: 'Permission Denied'));
         }
       }
       await _wordRepository.addWord(word: word);
@@ -95,13 +95,13 @@ class WordCrudController extends GetxController {
     try {
       final Map<String, dynamic> map = _createMap();
       final updatedWord = editingWord!.copyWith(
-        name: map['name'],
-        meaning: map['meaning'],
-        example: map['example'],
-        icon: map['icon'],
-        type: map['type'],
-        color: map['color'],
-        level: map['level'],
+        name: map[AppStrings.keyName],
+        meaning: map[AppStrings.keyMeaning],
+        example: map[AppStrings.keyExample],
+        icon: map[AppStrings.keyIcon],
+        type: map[AppStrings.keyType],
+        color: map[AppStrings.keyColor],
+        level: map[AppStrings.keyLevel],
       );
       await _wordRepository.updateWord(
         key: editingWord!.key as int,
@@ -116,8 +116,7 @@ class WordCrudController extends GetxController {
   // ================ Helper Functions =========================================
 
   Map<String, dynamic> _createMap() {
-    Map<String, dynamic> map = {};
-    map = {
+    return {
       AppStrings.keyName: nameController.text,
       AppStrings.keyMeaning: meaningController.text,
       AppStrings.keyExample: exampleController.text,
@@ -126,7 +125,6 @@ class WordCrudController extends GetxController {
       AppStrings.keyColor: _selectedColorIndex.value,
       AppStrings.keyLevel: _selectedLevelIndex.value,
     };
-    return map;
   }
 
   void _initControllerEssentials() {
@@ -157,7 +155,7 @@ class WordCrudController extends GetxController {
         return await _updateWord();
       }
     }
-    return left(AppError(errorMessage: 'Please Fill Inputs First'));
+    return left(const AppError(errorMessage: 'Please Fill Inputs First'));
   }
 
   // ================ Navigation ===============================================

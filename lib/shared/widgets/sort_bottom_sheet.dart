@@ -19,12 +19,12 @@ class SortBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 15),
+        const SizedBox(height: 15),
         // drag effect widget
         Container(
           width: 50,
           height: 3,
-          decoration: BoxDecoration(color: ConstUiColors.thirdColor),
+          decoration: const BoxDecoration(color: ConstUiColors.thirdColor),
         ),
         Expanded(
           child: ListView(
@@ -46,7 +46,7 @@ class SortBottomSheet extends StatelessWidget {
                         return SizedBox(
                           height: 20,
                           child: Checkbox(
-                            side: BorderSide(
+                            side: const BorderSide(
                               width: 2,
                               color: ConstUiColors.thirdColor,
                             ),

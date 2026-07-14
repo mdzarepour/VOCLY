@@ -1,40 +1,13 @@
-enum WordScreenType { 
-  editWord,
-  addWord
-  }
+enum WordScreenType { editWord, addWord }
 
-enum BookScreenType { 
-  editBook,
-  addBook
-  }
-  
-enum ManageWordsScreenType { 
-  addWordToBook,
-  manageWords
-  }
+enum BookScreenType { editBook, addBook }
 
-enum FilterType { 
-  color,
-  type,
-  icon,
-  level }
+enum WordManagerScreenType { addWordToBook, manageWords }
 
-enum SortType { 
-  newest,
-  oldest,
-  aToZ,
-  zToA 
-  }
+enum FilterType { color, type, icon, level }
 
-enum ExportStatus { 
-  none,
-  file,
-  clipboard 
-  }
+enum SortType { newest, oldest, aToZ, zToA }
 
-enum ExpantionWidgetType {
-  entityColor,
-  entityType,
-  entityIcon,
-  entityLevel,
-}
+enum ExportStatus { none, file, clipboard }
+
+enum ExpantionWidgetType { entityColor, entityType, entityIcon, entityLevel }

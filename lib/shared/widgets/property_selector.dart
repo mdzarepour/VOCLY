@@ -32,7 +32,7 @@ class PropertySelector extends StatelessWidget {
           minTileHeight: 50,
           showTrailingIcon: false,
           splashColor: Colors.transparent,
-          childrenPadding: EdgeInsets.only(bottom: 30),
+          childrenPadding: const EdgeInsets.only(bottom: 30),
           // title
           title: Center(
             child: Text(
@@ -85,13 +85,13 @@ class PropertySelector extends StatelessWidget {
             width: 40,
             height: 40,
             padding: i == selectedChildIndex
-                ? EdgeInsets.all(15)
-                : EdgeInsets.all(100),
+                ? const EdgeInsets.all(15)
+                : const EdgeInsets.all(100),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(15)),
+              borderRadius: const BorderRadius.all(Radius.circular(15)),
               color: children![i] as Color,
             ),
-            child: CircleAvatar(backgroundColor: ConstUiColors.backgroundColor),
+            child: const CircleAvatar(backgroundColor: ConstUiColors.backgroundColor),
           );
         }
       // if type or level selection
