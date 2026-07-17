@@ -15,12 +15,12 @@ class VocabularyRepository
   VocabularyRepository({required this.booksBox, required this.wordsBox});
 
   @override
-  ValueListenable<Box<WordModel>> get wordValueListenable {
+  ValueListenable<Box<WordModel>> get wordListenable {
     return wordsBox.listenable();
   }
 
   @override
-  ValueListenable<Box<BookModel>> get bookValueListenable {
+  ValueListenable<Box<BookModel>> get bookListenable {
     return booksBox.listenable();
   }
 
@@ -60,26 +60,6 @@ class VocabularyRepository
     try {
       final keysToDelete = selectedWords.map((word) => word.key).toList();
       await wordsBox.deleteAll(keysToDelete);
-    } on HiveError catch (error) {
-      throw AppError(errorMessage: error.message, cause: error);
-    }
-  }
-
-  @override
-  List<BookModel> getAllBooks() {
-    try {
-      final List<BookModel> books = booksBox.values.toList();
-      return books;
-    } on HiveError catch (error) {
-      throw AppError(errorMessage: error.message, cause: error);
-    }
-  }
-
-  @override
-  List<WordModel> getAllWords() {
-    try {
-      final List<WordModel> words = wordsBox.values.toList();
-      return words.reversed.toList();
     } on HiveError catch (error) {
       throw AppError(errorMessage: error.message, cause: error);
     }

@@ -47,9 +47,10 @@ class SearchScreen extends GetView<WordSearchController> {
           final currentWord = words[index];
           final query = controller.query;
           // listview child
-          return InkWell(
-            onTap: () => controller.goToReadWordScreen(word: currentWord),
-            child: _SearchWordTile(currentWord: currentWord, query: query),
+          return _SearchWordTile(
+            onTap: () => controller.goToReadWordScreen(key: currentWord.key),
+            currentWord: currentWord,
+            query: query,
           );
         },
       ),
@@ -98,56 +99,64 @@ class SearchScreen extends GetView<WordSearchController> {
 class _SearchWordTile extends StatelessWidget {
   final WordModel currentWord;
   final String query;
-  const _SearchWordTile({required this.query, required this.currentWord});
+  final void Function()? onTap;
+  const _SearchWordTile({
+    required this.query,
+    required this.onTap,
+    required this.currentWord,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 70,
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      decoration: BoxDecoration(
-        border: Border.all(color: ConstUiColors.backgroundColor2),
-        borderRadius: const BorderRadius.all(Radius.circular(15)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              spacing: 2,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // word name text
-                Expanded(
-                  child: SubstringHighlight(
-                    text: currentWord.name,
-                    overflow: TextOverflow.ellipsis,
-                    term: query,
-                    textStyle: AppTextTheme.titleMedium,
-                    textStyleHighlight: AppTextTheme.titleMedium.copyWith(
-                      color: ConstUiColors.blueHighLightColor,
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        height: 70,
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        decoration: BoxDecoration(
+          border: Border.all(color: ConstUiColors.backgroundColor2),
+          borderRadius: const BorderRadius.all(Radius.circular(15)),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                spacing: 2,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // word name text
+                  Expanded(
+                    child: SubstringHighlight(
+                      text: currentWord.name,
+                      overflow: TextOverflow.ellipsis,
+                      term: query,
+                      textStyle: AppTextTheme.titleMedium,
+                      textStyleHighlight: AppTextTheme.titleMedium.copyWith(
+                        color: ConstUiColors.blueHighLightColor,
+                      ),
                     ),
                   ),
-                ),
-                // word example text
-                Expanded(
-                  child: SubstringHighlight(
-                    text: currentWord.example,
-                    overflow: TextOverflow.ellipsis,
-                    term: query,
-                    textStyle: AppTextTheme.titleMedium,
-                    textStyleHighlight: AppTextTheme.titleMedium.copyWith(
-                      color: ConstUiColors.blueHighLightColor,
+                  // word example text
+                  Expanded(
+                    child: SubstringHighlight(
+                      text: currentWord.example,
+                      overflow: TextOverflow.ellipsis,
+                      term: query,
+                      textStyle: AppTextTheme.titleMedium,
+                      textStyleHighlight: AppTextTheme.titleMedium.copyWith(
+                        color: ConstUiColors.blueHighLightColor,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          // right hand icon
-          Icon(EntityIcon.children[currentWord.icon]),
-        ],
+            // right hand icon
+            Icon(EntityIcon.children[currentWord.icon]),
+          ],
+        ),
       ),
     );
   }

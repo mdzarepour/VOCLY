@@ -9,11 +9,19 @@ import 'package:vocly/features/vocabulary/model/repositories/vocabulary_reposito
 import 'package:vocly/shared/constants/const_strings.dart';
 
 class WordCrudController extends GetxController {
-  late WordRepository _wordRepository;
-  late DialogService _dialogService;
+  final WordRepository wordRepository;
+  final DialogService dialogService;
+  final WordScreenType type;
+  final int? wordKey;
 
-  late WordScreenType? type;
-  late WordModel? editingWord;
+  WordCrudController({
+    this.wordKey,
+    required this.type,
+    required this.dialogService,
+    required this.wordRepository,
+  });
+
+  WordModel? editingWord;
 
   // ================ Form Key =================================================
 
@@ -27,54 +35,33 @@ class WordCrudController extends GetxController {
 
   // ================ Reactive Variables =======================================
 
-  final RxInt _selectedIconIndex = 0.obs;
-  int get selectedIconIndex => _selectedIconIndex.value;
+  final RxMap<String, int> _properties = <String, int>{}.obs;
+  Map<String, int> get properties => _properties;
 
-  final RxInt _selectedTypeIndex = 0.obs;
-  int get selectedTypeIndex => _selectedTypeIndex.value;
+  // ================ Ui Functions =============================================
 
-  final RxInt _selectedColorIndex = 0.obs;
-  int get selectedColorIndex => _selectedColorIndex.value;
-
-  final RxInt _selectedLevelIndex = 0.obs;
-  int get selectedLevelIndex => _selectedLevelIndex.value;
-
-  // ================ Ui Functions ===========================================
-
-  void updateSelectedIcon({required int value}) {
-    _selectedIconIndex.value = value;
+  void updateProperty({required String key, required int value}) {
+    _properties[key] = value;
   }
 
-  void updateSelectedType({required int value}) {
-    _selectedTypeIndex.value = value;
-  }
+  // ================ Main Functions ===========================================
 
-  void updateSelectedColor({required int value}) {
-    _selectedColorIndex.value = value;
-  }
-
-  void updateSelectedLevel({required int value}) {
-    _selectedLevelIndex.value = value;
-  }
-
-  // ================ Crud Functions ===========================================
-
-  Future<Either<AppError, AppSuccess>> _addWord() async {
+  Future<Either<AppError, AppSuccess>> addWord() async {
     try {
       final word = WordModel.fromMap(map: _createMap());
       final isExist = _isWordExist(name: word.name);
 
       if (isExist) {
-        final bool? permission = await _dialogService.showDialog(
+        final bool permission = await dialogService.showDialog(
           title: AppStrings.dialogDuplicatedWordTitle,
           content: AppStrings.dialogDuplicatedWordContent,
           confirmTitle: AppStrings.dialogDuplicatedWordConfirm,
         );
-        if (permission == null || !permission) {
+        if (!permission) {
           return left(const AppError(errorMessage: 'Permission Denied'));
         }
       }
-      await _wordRepository.addWord(word: word);
+      await wordRepository.addWord(word: word);
       return right(
         AppSuccess(successMessage: '${word.name.capitalizeFirst} Added'),
       );
@@ -85,15 +72,18 @@ class WordCrudController extends GetxController {
 
   bool _isWordExist({required final String name}) {
     try {
-      return _wordRepository.isWordExist(name: name);
+      return wordRepository.isWordExist(name: name);
     } catch (error) {
       return false;
     }
   }
 
-  Future<Either<AppError, AppSuccess>> _updateWord() async {
+  Future<Either<AppError, AppSuccess>> updateWord() async {
     try {
+      // 1__
       final Map<String, dynamic> map = _createMap();
+
+      // 2__
       final updatedWord = editingWord!.copyWith(
         name: map[AppStrings.keyName],
         meaning: map[AppStrings.keyMeaning],
@@ -103,13 +93,32 @@ class WordCrudController extends GetxController {
         color: map[AppStrings.keyColor],
         level: map[AppStrings.keyLevel],
       );
-      await _wordRepository.updateWord(
+      // 3__
+      await wordRepository.updateWord(
         key: editingWord!.key as int,
         word: updatedWord,
       );
-      return right(AppSuccess(successMessage: '${editingWord!.name} updated'));
+      return right(const AppSuccess(successMessage: 'updated')); // 4__
     } on AppError catch (error) {
-      return left(AppError(errorMessage: error.errorMessage));
+      return left(AppError(errorMessage: error.errorMessage)); // 5__
+    }
+  }
+
+  void _initControllerEssentials() {
+    if (type == WordScreenType.addWord) return;
+
+    final box = wordRepository.wordListenable.value;
+    editingWord = box.get(wordKey);
+
+    if (editingWord != null) {
+      nameController.text = editingWord!.name;
+      meaningController.text = editingWord!.meaning;
+      exampleController.text = editingWord!.example;
+
+      _properties[AppStrings.keyIcon] = editingWord!.icon;
+      _properties[AppStrings.keyType] = editingWord!.type;
+      _properties[AppStrings.keyColor] = editingWord!.color;
+      _properties[AppStrings.keyLevel] = editingWord!.level;
     }
   }
 
@@ -120,42 +129,11 @@ class WordCrudController extends GetxController {
       AppStrings.keyName: nameController.text,
       AppStrings.keyMeaning: meaningController.text,
       AppStrings.keyExample: exampleController.text,
-      AppStrings.keyIcon: _selectedIconIndex.value,
-      AppStrings.keyType: _selectedTypeIndex.value,
-      AppStrings.keyColor: _selectedColorIndex.value,
-      AppStrings.keyLevel: _selectedLevelIndex.value,
+      AppStrings.keyIcon: _properties[AppStrings.keyIcon] ?? 0,
+      AppStrings.keyType: _properties[AppStrings.keyType] ?? 0,
+      AppStrings.keyColor: _properties[AppStrings.keyColor] ?? 0,
+      AppStrings.keyLevel: _properties[AppStrings.keyLevel] ?? 0,
     };
-  }
-
-  void _initControllerEssentials() {
-    type = Get.arguments['type'];
-    if (type == WordScreenType.addWord) return;
-
-    final int wordKey = Get.arguments['word_key'];
-    final box = _wordRepository.wordValueListenable.value;
-    editingWord = box.get(wordKey);
-
-    if (editingWord != null) {
-      nameController.text = editingWord!.name;
-      meaningController.text = editingWord!.meaning;
-      exampleController.text = editingWord!.example;
-
-      _selectedIconIndex.value = editingWord!.icon;
-      _selectedTypeIndex.value = editingWord!.type;
-      _selectedColorIndex.value = editingWord!.color;
-      _selectedLevelIndex.value = editingWord!.level;
-    }
-  }
-
-  Future<Either<AppError, AppSuccess>> handleAction() async {
-    if (formKey.currentState!.validate()) {
-      if (type == WordScreenType.addWord) {
-        return await _addWord();
-      } else {
-        return await _updateWord();
-      }
-    }
-    return left(const AppError(errorMessage: 'Please Fill Inputs First'));
   }
 
   // ================ Navigation ===============================================
@@ -167,8 +145,6 @@ class WordCrudController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _wordRepository = Get.find();
-    _dialogService = Get.find();
     _initControllerEssentials();
   }
 

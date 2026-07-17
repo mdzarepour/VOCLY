@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vocly/core/types/entity_types.dart';
 import 'package:vocly/features/vocabulary/controller/word_details_controller.dart';
+import 'package:vocly/shared/constants/const_colors.dart';
 import 'package:vocly/shared/theme/app_text_theme.dart';
 import 'package:vocly/shared/widgets/card_widget.dart';
 import 'package:vocly/shared/constants/const_strings.dart';
@@ -36,6 +37,8 @@ class WordDetailsScreen extends GetView<WordDetailsController> {
                 SliverToBoxAdapter(child: _spellWidget()),
                 const SliverToBoxAdapter(child: SizedBox(height: 20)),
                 SliverToBoxAdapter(child: _editButton()),
+                const SliverToBoxAdapter(child: SizedBox(height: 20)),
+                SliverToBoxAdapter(child: _deleteButton()),
               ],
             ),
           );
@@ -220,6 +223,30 @@ class WordDetailsScreen extends GetView<WordDetailsController> {
         height: 50,
         child: Center(
           child: Text(UIStrings.edit, style: AppTextTheme.titleMedium),
+        ),
+      ),
+    );
+  }
+
+  Widget _deleteButton() {
+    return InkWell(
+      onTap: () async {
+        final either = await controller.deleteWord();
+        either.fold(
+          (appError) {
+            Get.snackbar('Oops!', appError.errorMessage);
+          },
+          (appSuccess) {
+            controller.goToBack();
+            Get.snackbar('Success', appSuccess.successMessage!);
+          },
+        );
+      },
+      child: CardWidget(
+        selectedBorderColor: ConstUiColors.errorColor,
+        height: 50,
+        child: Center(
+          child: Text(UIStrings.deleteWord, style: AppTextTheme.titleMedium),
         ),
       ),
     );

@@ -8,17 +8,21 @@ import 'package:vocly/shared/theme/app_text_theme.dart';
 import 'package:vocly/shared/widgets/card_widget.dart';
 
 class DialogService extends GetxService {
-  Future<bool?> showDialog({
-    required final String title,
-    required final String content,
-    required final String confirmTitle,
+  Future<bool> showDialog({
+   required String title,
+   required String content,
+   required String confirmTitle,
   }) async {
     final bool result = await Get.dialog(
       barrierColor: ConstUiColors.backgroundColor,
       transitionCurve: Curves.easeIn,
       transitionDuration: const Duration(milliseconds: 100),
       useSafeArea: true,
-      _DialogWidget(title: title, content: content, confirmTitle: confirmTitle),
+      _DialogWidget(
+        title: title ,
+        content: content ,
+        confirmTitle: confirmTitle ,
+      ),
     );
     return result;
   }

@@ -16,12 +16,19 @@ import 'package:vocly/features/vocabulary/model/repositories/vocabulary_reposito
 import 'package:vocly/shared/constants/const_strings.dart';
 
 class HomeController extends GetxController {
-  late LinkService _linkService;
-  late PlatformService _platformService;
+  final LinkService linkService;
+  final PlatformService platformService;
+  final WordRepository wordRepository;
+  final BookRepository bookRepository;
+  final BackupRepository backupRepository;
 
-  late WordRepository _wordRepository;
-  late BookRepository _bookRepository;
-  late BackupRepository _backupRepository;
+  HomeController({
+    required this.linkService,
+    required this.platformService,
+    required this.wordRepository,
+    required this.bookRepository,
+    required this.backupRepository,
+  });
 
   late ValueListenable<Box<WordModel>> _wordListenable;
   late ValueListenable<Box<BookModel>> _bookListenable;
@@ -72,7 +79,7 @@ class HomeController extends GetxController {
 
   Future<void> openBookLibrary() async {
     try {
-      await _linkService.openBookLibraryPage();
+      await linkService.openBookLibraryPage();
     } catch (error) {
       debugPrint(error.toString());
     }
@@ -83,11 +90,11 @@ class HomeController extends GetxController {
   Future<Either<AppError, AppSuccess>> exportToFile() async {
     try {
       _exportLoading.value = ExportStatus.file;
-      final content = await _backupRepository.exportHiveContent();
+      final content = await backupRepository.exportHiveContent();
       final Uint8List bytes = await Isolate.run(() {
         return utf8.encode(content);
       });
-      final path = await _platformService.saveSelectFile(bytes: bytes);
+      final path = await platformService.saveSelectFile(bytes: bytes);
       if (path == null) {
         return left(const AppError(errorMessage: 'File Not Save!'));
       } else {
@@ -105,13 +112,13 @@ class HomeController extends GetxController {
   Future<Either<AppError, AppSuccess>> exportToClipboard() async {
     try {
       _exportLoading.value = ExportStatus.clipboard;
-      final content = await _backupRepository.exportHiveContent();
+      final content = await backupRepository.exportHiveContent();
       if (content.isEmpty) {
         return left(
           const AppError(errorMessage: 'There Is Nothing To Export!'),
         );
       } else {
-        await _platformService.setContentToClipBoard(content: content);
+        await platformService.setContentToClipBoard(content: content);
         return right(
           const AppSuccess(successMessage: 'Backup Copied To Clipboard!'),
         );
@@ -131,7 +138,7 @@ class HomeController extends GetxController {
       if (_selectedFileContent == null) {
         return left(const AppError(errorMessage: 'Please Select File First'));
       }
-      await _backupRepository.importHiveContent(content: _selectedFileContent!);
+      await backupRepository.importHiveContent(content: _selectedFileContent!);
       return right(
         const AppSuccess(successMessage: 'Data Imported From File!'),
       );
@@ -145,7 +152,7 @@ class HomeController extends GetxController {
   Future<Either<AppError, AppSuccess>> _importFromClipBoard() async {
     try {
       final content = inputController.text.trim();
-      await _backupRepository.importHiveContent(content: content);
+      await backupRepository.importHiveContent(content: content);
       return right(
         const AppSuccess(successMessage: 'Data Imported From Clipboard!'),
       );
@@ -161,7 +168,7 @@ class HomeController extends GetxController {
   String? _selectedFileContent;
   Future<Either<AppError, AppSuccess>> selectFile() async {
     try {
-      final selectedFile = await _platformService.selectFile();
+      final selectedFile = await platformService.selectFile();
       _updateFileName(name: selectedFile.fileName);
       _selectedFileContent = selectedFile.fileContent;
       return right(AppSuccess(successMessage: '$_fileName Selected'));
@@ -220,15 +227,8 @@ class HomeController extends GetxController {
 
   @override
   void onInit() {
-    _backupRepository = Get.find();
-    _wordRepository = Get.find();
-    _bookRepository = Get.find();
-
-    _platformService = Get.find();
-    _linkService = Get.find();
-
-    _wordListenable = _wordRepository.wordValueListenable;
-    _bookListenable = _bookRepository.bookValueListenable;
+    _wordListenable = wordRepository.wordListenable;
+    _bookListenable = bookRepository.bookListenable;
 
     _wordListenable.addListener(_initWordsCount);
     _bookListenable.addListener(_initBooksCount);

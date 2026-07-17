@@ -13,10 +13,17 @@ import 'package:vocly/shared/controllers/filter_controller.dart';
 import 'package:vocly/shared/controllers/selection_controller.dart';
 
 class WordManagerController extends GetxController {
-  late WordRepository _wordRepository;
-  late WordSelectionController selectionController;
-  late FilterController<WordModel> filterController;
-  late DialogService _dialogService;
+  final WordRepository wordRepository;
+  final SelectionController<WordModel> selectionController;
+  final FilterController<WordModel> filterController;
+  final DialogService dialogService;
+
+  WordManagerController({
+    required this.wordRepository,
+    required this.selectionController,
+    required this.dialogService,
+    required this.filterController,
+  });
 
   late WordManagerScreenType? type;
   late ValueListenable<Box<WordModel>> _wordListenable;
@@ -60,7 +67,7 @@ class WordManagerController extends GetxController {
 
   Future<Either<AppError, AppSuccess>> deleteWords() async {
     try {
-      final bool? permission = await _dialogService.showDialog(
+      final bool? permission = await dialogService.showDialog(
         title: AppStrings.dialogConfirmDeleteTitle,
         content: AppStrings.dialogConfirmDeleteWordsContent,
         confirmTitle: AppStrings.dialogConfirmDeleteAction,
@@ -69,7 +76,7 @@ class WordManagerController extends GetxController {
         return left(const AppError(errorMessage: 'Permission Denied'));
       }
       _updateLoadingState(value: true);
-      await _wordRepository.deleteWords(selectedWords: _getSelectedWords());
+      await wordRepository.deleteWords(selectedWords: _getSelectedWords());
       return right(const AppSuccess(successMessage: 'Words Deleted!'));
     } on AppError catch (error) {
       return left(AppError(errorMessage: error.errorMessage));
@@ -78,8 +85,6 @@ class WordManagerController extends GetxController {
       selectionController.updateSelectionMode(mode: false);
     }
   }
-
-  // ================ Helper Functions =========================================
 
   void _initControllerEssentials() {
     type = Get.arguments['type'];
@@ -94,6 +99,8 @@ class WordManagerController extends GetxController {
     selectionController.selectAllItems(allDisplayedItems: selectedWords);
   }
 
+  // ================ Helper Functions =========================================
+
   List<WordModel> _getSelectedWords() {
     return selectionController.selectedItems.cast<WordModel>();
   }
@@ -105,7 +112,7 @@ class WordManagerController extends GetxController {
   }
 
   void goToWordDetailsScreen({required int key}) {
-    Get.toNamed(Routes.wordDetailsScreen, arguments: {'book_key': key});
+    Get.toNamed(Routes.wordDetailsScreen, arguments: {'word_key': key});
   }
 
   // ================ Life Cycle ===============================================
@@ -114,12 +121,7 @@ class WordManagerController extends GetxController {
   void onInit() {
     super.onInit();
 
-    _wordRepository = Get.find();
-    _dialogService = Get.find();
-    filterController = Get.find();
-    selectionController = Get.find();
-
-    _wordListenable = _wordRepository.wordValueListenable;
+    _wordListenable = wordRepository.wordListenable;
     _wordListenable.addListener(_initWordsList);
     _initWordsList();
     _initControllerEssentials();

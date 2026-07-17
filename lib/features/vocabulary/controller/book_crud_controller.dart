@@ -10,8 +10,13 @@ import 'package:vocly/features/vocabulary/model/repositories/vocabulary_reposito
 import 'package:vocly/shared/constants/const_strings.dart';
 
 class BookCrudController extends GetxController {
-  late BookRepository _bookRepository;
-  late DialogService _dialogService;
+  final BookRepository bookRepository;
+  final DialogService dialogService;
+
+  BookCrudController({
+    required this.bookRepository,
+    required this.dialogService,
+  });
 
   late BookModel? _editingBook;
   late BookScreenType type;
@@ -27,47 +32,19 @@ class BookCrudController extends GetxController {
 
   // ================ Reactive Variables =======================================
 
-  final Rxn<BookModel> _currentBook = Rxn<BookModel>();
-  BookModel? get currentBook => _currentBook.value;
+  final RxMap<String, int> _properties = <String, int>{}.obs;
+  Map<String, int> get properties => _properties;
 
   final RxList<int> _selectedWords = <int>[].obs;
   List<int> get selectedWords => _selectedWords;
 
-  final RxInt _selectedIconIndex = 0.obs;
-  int get selectedIconIndex => _selectedIconIndex.value;
+  // ================ Ui Functions =============================================
 
-  final RxInt _selectedTypeIndex = 0.obs;
-  int get selectedTypeIndex => _selectedTypeIndex.value;
-
-  final RxInt _selectedColorIndex = 0.obs;
-  int get selectedColorIndex => _selectedColorIndex.value;
-
-  final RxInt _selectedLevelIndex = 0.obs;
-  int get selectedLevelIndex => _selectedLevelIndex.value;
-
-  // ================ Ui Functions ===========================================
-
-  void updateSelectedIcon({required int value}) {
-    _selectedIconIndex.value = value;
+  void updateProperty({required String key, required int value}) {
+    _properties[key] = value;
   }
 
-  void updateSelectedType({required int value}) {
-    _selectedTypeIndex.value = value;
-  }
-
-  void updateSelectedColor({required int value}) {
-    _selectedColorIndex.value = value;
-  }
-
-  void updateSelectedLevel({required int value}) {
-    _selectedLevelIndex.value = value;
-  }
-
-  void updateSelectedWords({required List<int> words}) {
-    _selectedWords.value = words;
-  }
-
-  // ================ Crud Functions ===========================================
+  // ================ Main Functions ===========================================
 
   Future<Either<AppError, AppSuccess>> _addBook() async {
     try {
@@ -75,7 +52,7 @@ class BookCrudController extends GetxController {
       final isExist = _isBookExist(name: book.name);
 
       if (isExist) {
-        final bool? permission = await _dialogService.showDialog(
+        final bool? permission = await dialogService.showDialog(
           title: AppStrings.dialogDuplicatedBookTitle,
           content: AppStrings.dialogDuplicatedBookContent,
           confirmTitle: AppStrings.dialogDuplicatedBookConfirm,
@@ -84,7 +61,7 @@ class BookCrudController extends GetxController {
           return left(const AppError(errorMessage: 'Permission Denied'));
         }
       }
-      await _bookRepository.addBook(book: book);
+      await bookRepository.addBook(book: book);
       return right(
         AppSuccess(successMessage: '${book.name.capitalizeFirst} Added'),
       );
@@ -95,7 +72,7 @@ class BookCrudController extends GetxController {
 
   bool _isBookExist({required final String name}) {
     try {
-      return _bookRepository.isBookExist(name: name);
+      return bookRepository.isBookExist(name: name);
     } catch (error) {
       return false;
     }
@@ -113,7 +90,7 @@ class BookCrudController extends GetxController {
         color: map[AppStrings.keyColor],
         level: map[AppStrings.keyLevel],
       );
-      await _bookRepository.updateBook(
+      await bookRepository.updateBook(
         key: _editingBook!.key,
         book: updatedBook,
       );
@@ -123,37 +100,38 @@ class BookCrudController extends GetxController {
     }
   }
 
+  void _initControllerEssentials() {
+    type = Get.arguments['type'];
+    if (type == BookScreenType.addBook) return;
+
+    final int bookKey = Get.arguments['book_key'];
+    final box = bookRepository.bookListenable.value;
+    _editingBook = box.get(bookKey);
+
+    if (_editingBook != null) {
+      nameController.text = _editingBook!.name;
+      descriptionController.text = _editingBook!.description;
+      _selectedWords.value = _editingBook!.words;
+
+      _properties[AppStrings.keyIcon] = _editingBook!.icon;
+      _properties[AppStrings.keyType] = _editingBook!.type;
+      _properties[AppStrings.keyColor] = _editingBook!.color;
+      _properties[AppStrings.keyLevel] = _editingBook!.level;
+    }
+  }
+
   // ================ Helper Functions =========================================
 
   Map<String, dynamic> _createMap() {
     return {
       AppStrings.keyName: nameController.text,
       AppStrings.keyDescription: descriptionController.text,
-      AppStrings.keyIcon: _selectedIconIndex.value,
-      AppStrings.keyType: _selectedTypeIndex.value,
-      AppStrings.keyColor: _selectedColorIndex.value,
-      AppStrings.keyLevel: _selectedLevelIndex.value,
       AppStrings.keyWords: _selectedWords,
+      AppStrings.keyIcon: _properties[AppStrings.keyIcon] ?? 0,
+      AppStrings.keyType: _properties[AppStrings.keyType] ?? 0,
+      AppStrings.keyColor: _properties[AppStrings.keyColor] ?? 0,
+      AppStrings.keyLevel: _properties[AppStrings.keyLevel] ?? 0,
     };
-  }
-
-  void _initControllerEssentials() {
-    type = Get.arguments['type'];
-    if (type == BookScreenType.addBook) return;
-
-    final int bookKey = Get.arguments['book_key'];
-    final box = _bookRepository.bookValueListenable.value;
-    _editingBook = box.get(bookKey);
-
-    if (_editingBook != null) {
-      nameController.text = _editingBook!.name;
-      descriptionController.text = _editingBook!.description;
-      _selectedIconIndex.value = _editingBook!.icon;
-      _selectedTypeIndex.value = _editingBook!.type;
-      _selectedColorIndex.value = _editingBook!.color;
-      _selectedLevelIndex.value = _editingBook!.level;
-      _selectedWords.value = _editingBook!.words;
-    }
   }
 
   Future<Either<AppError, AppSuccess>> handleAction() async {
@@ -176,7 +154,7 @@ class BookCrudController extends GetxController {
       Routes.wordManagerScreen,
       arguments: {
         'type': WordManagerScreenType.addWordToBook,
-        'words': selectedWords,
+        'words': _selectedWords,
       },
     );
   }
@@ -186,8 +164,6 @@ class BookCrudController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _bookRepository = Get.find();
-    _dialogService = Get.find();
     _initControllerEssentials();
   }
 

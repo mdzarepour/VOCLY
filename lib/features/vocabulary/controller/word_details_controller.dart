@@ -1,18 +1,29 @@
 import 'package:flutter/foundation.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:vocly/core/error/app_exception.dart';
 import 'package:vocly/core/router/app_router.dart';
+import 'package:vocly/core/services/dialog_service.dart';
 import 'package:vocly/core/services/speech_service.dart';
 import 'package:vocly/core/types/enums.dart';
 import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
 import 'package:vocly/features/vocabulary/model/repositories/vocabulary_repository.dart';
+import 'package:vocly/shared/constants/const_strings.dart';
 import 'package:vocly/shared/controllers/spelling_controller.dart';
 
 class WordDetailsController extends GetxController {
-  late WordRepository _wordRepository;
+  final WordRepository wordRepository;
+  final SpellingController spellingController;
+  final SpeechService speechService;
+  final DialogService dialogService;
 
-  late SpeechService _speechService;
-  late SpellingController spellingController;
+  WordDetailsController({
+    required this.dialogService,
+    required this.speechService,
+    required this.spellingController,
+    required this.wordRepository,
+  });
 
   late ValueListenable<Box<WordModel>> _wordListenable;
 
@@ -24,10 +35,29 @@ class WordDetailsController extends GetxController {
   // ================ Speech Service Functions =================================
 
   void listenToWord() {
-    _speechService.speak(text: _word.value!.name.toLowerCase());
+    speechService.speak(text: _word.value!.name.toLowerCase());
   }
 
   // ================ Main Functions ===========================================
+
+  Future<Either<AppError, AppSuccess>> deleteWord() async {
+    try {
+      final bool? permission = await dialogService.showDialog(
+        title: AppStrings.dialogConfirmDeleteTitle,
+        content: AppStrings.dialogConfirmDeleteWordsContent,
+        confirmTitle: AppStrings.dialogConfirmDeleteAction,
+      );
+      if (permission == null || permission == false) {
+        return left(const AppError(errorMessage: 'Permision Denied'));
+      }
+      await wordRepository.deleteWords(selectedWords: [_word.value!]);
+      return right(AppSuccess(successMessage: '${_word.value!.name} deleted'));
+    } on HiveError catch (error) {
+      return left(AppError(errorMessage: error.message));
+    } catch (error) {
+      return left(AppError(errorMessage: error.toString()));
+    }
+  }
 
   void _initWord() {
     final key = Get.arguments['word_key'];
@@ -52,16 +82,17 @@ class WordDetailsController extends GetxController {
     );
   }
 
+  void goToBack() {
+    Get.back();
+  }
+
   // ================ Life Cycle ===============================================
 
   @override
   void onInit() {
     super.onInit();
-    _wordRepository = Get.find();
-    _speechService = Get.find();
-    spellingController = Get.find();
 
-    _wordListenable = _wordRepository.wordValueListenable;
+    _wordListenable = wordRepository.wordListenable;
     _wordListenable.addListener(_initWord);
     _initWord();
   }

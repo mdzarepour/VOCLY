@@ -8,7 +8,10 @@ import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
 import 'package:vocly/features/vocabulary/model/repositories/vocabulary_repository.dart';
 
 class BookDetailsController extends GetxController {
-  late BookRepository _bookRepository;
+  final BookRepository bookRepository;
+
+  BookDetailsController({required this.bookRepository});
+
   late ValueListenable<Box<BookModel>> _bookListenable;
 
   // ================ Reactive Variables =======================================
@@ -28,7 +31,7 @@ class BookDetailsController extends GetxController {
 
     if (updatedData != null) {
       _book.value = updatedData;
-      _bookWords.value = _bookRepository.getBookWords(book: _book.value!);
+      _bookWords.value = bookRepository.getBookWords(book: _book.value!);
     }
   }
 
@@ -53,12 +56,10 @@ class BookDetailsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _bookRepository = Get.find();
 
-    _bookListenable = _bookRepository.bookValueListenable;
+    _bookListenable = bookRepository.bookListenable;
     _bookListenable.addListener(_initBook);
     _initBook();
-    //  _initBookWords();
   }
 
   @override

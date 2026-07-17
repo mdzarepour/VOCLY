@@ -24,7 +24,9 @@
   static const spellingPractice = 'Spelling practice';
   static const edit = 'Edit';
   static const listen = 'Listen';
-  static const delete = 'delete';
+  static const delete = 'Delete';
+  static const deleteWord = 'Delete word';
+  static const deleteBook = 'Delete book';
   static const deleting = 'Deleting!';
   static const thereIsNoBookYet = 'there is no book yet!';
   static const wordBoxIsEmpty = 'Words box is empty';

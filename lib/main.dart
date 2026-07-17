@@ -1,5 +1,5 @@
-﻿import 'package:get/get.dart';
-import 'package:flutter/services.dart';
+﻿import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:vocly/features/vocabulary/binding/initial_binding.dart';
@@ -20,7 +20,6 @@ void main(List<String> args) async {
 
   await Hive.openBox<WordModel>(AppStrings.wordBox);
   await Hive.openBox<BookModel>(AppStrings.bookBox);
-
   runApp(const Application());
 }
 
@@ -42,9 +41,6 @@ class Application extends StatelessWidget {
 ///[better code todos]==========================================================
 //TODO use stream instead of valulistenable
 //TODO use controller as generic classes
-//TODO move hive initing to bindings
-//TODO revise documentation
-//TODO put all reactive varibale of controllers in one map variable
 
 ///[bugs and experience todos]==================================================
 //TODO increase the size of appbar  icons

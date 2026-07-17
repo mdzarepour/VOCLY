@@ -9,10 +9,9 @@ class ConstUiColors {
   static const Color secondColor = Color(0XFFD4D4D4);
   static const Color thirdColor = Color.fromARGB(255, 190, 190, 190);
   static const Color newColor = Color.fromARGB(180, 71, 71, 71);
-  static const Color errorColor = Color(0xFFFF6B81);
-  static const Color positiveColor = Colors.greenAccent;
+  static const Color errorColor = Color.fromARGB(181, 255, 107, 129);
+  static const Color positiveColor = Color.fromARGB(181, 105, 240, 175);
   static const Color blurColor = Color.fromARGB(15, 255, 255, 255);
   static const Color secondaryBorder = Color(0xFF48D1CC);
   static const Color blueHighLightColor = Color(0xFF6495ED);
 }
-

@@ -12,12 +12,17 @@ import 'package:vocly/shared/controllers/filter_controller.dart';
 import 'package:vocly/shared/controllers/selection_controller.dart';
 
 class BookManagerController extends GetxController {
-  late BookRepository _bookRepository;
+  final BookRepository bookRepository;
+  final SelectionController<BookModel> selectionController;
+  final FilterController<BookModel> filterController;
+  final DialogService dialogService;
 
-  late BookSelectionController selectionController;
-  late FilterController<BookModel> filterController;
-
-  late DialogService _dialogService;
+  BookManagerController({
+    required this.bookRepository,
+    required this.filterController,
+    required this.selectionController,
+    required this.dialogService,
+  });
 
   late ValueListenable<Box<BookModel>> _bookListenable;
 
@@ -53,7 +58,7 @@ class BookManagerController extends GetxController {
 
   Future<Either<AppError, AppSuccess>> deleteBooks() async {
     try {
-      final bool? permission = await _dialogService.showDialog(
+      final bool? permission = await dialogService.showDialog(
         title: AppStrings.dialogConfirmDeleteTitle,
         content: AppStrings.dialogConfirmDeleteBooksContent,
         confirmTitle: AppStrings.dialogConfirmDeleteAction,
@@ -62,7 +67,7 @@ class BookManagerController extends GetxController {
         return left(const AppError(errorMessage: 'Permision Denied'));
       }
       _updateLoadingState(value: true);
-      await _bookRepository.deleteBooks(selectedBooks: _getSelectedBooks());
+      await bookRepository.deleteBooks(selectedBooks: _getSelectedBooks());
       return right(const AppSuccess(successMessage: 'Words Deleted!'));
     } catch (error) {
       return left(AppError(errorMessage: error.toString()));
@@ -89,14 +94,8 @@ class BookManagerController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    super.onInit();
 
-    _bookRepository = Get.find();
-    _dialogService = Get.find();
-    filterController = Get.find();
-    selectionController = Get.find();
-
-    _bookListenable = _bookRepository.bookValueListenable;
+    _bookListenable = bookRepository.bookListenable;
     _bookListenable.addListener(_initBooksList);
     _initBooksList();
 

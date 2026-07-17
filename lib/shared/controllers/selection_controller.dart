@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:vocly/features/vocabulary/model/entities/book_model.dart';
-import 'package:vocly/features/vocabulary/model/entities/word_model.dart';
-import 'package:vocly/features/vocabulary/model/repositories/vocabulary_repository.dart';
 
-abstract class SelectionController<T> extends GetxController {
-  List<T> get items;
+class SelectionController<T> extends GetxController {
+  final List<T> items;
+  SelectionController({required this.items});
 
   // ================ Reactive Variables =======================================
 
@@ -94,20 +92,4 @@ abstract class SelectionController<T> extends GetxController {
     super.onClose();
     _clearSelection();
   }
-}
-
-class WordSelectionController extends SelectionController<WordModel> {
-  final WordRepository wordRepository;
-  WordSelectionController({required this.wordRepository});
-
-  @override
-  List<WordModel> get items => wordRepository.getAllWords();
-}
-
-class BookSelectionController extends SelectionController<BookModel> {
-  final BookRepository bookRepository;
-  BookSelectionController({required this.bookRepository});
-
-  @override
-  List<BookModel> get items => bookRepository.getAllBooks();
 }

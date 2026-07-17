@@ -31,7 +31,7 @@ class CardWidget extends StatelessWidget {
           color: selectedBorderColor ?? ConstUiColors.backgroundColor2,
           width: 1,
         ),
-        borderRadius: BorderRadius.all(const Radius.circular(15)),
+        borderRadius: const BorderRadius.all(Radius.circular(15)),
       ),
       child: child,
     );

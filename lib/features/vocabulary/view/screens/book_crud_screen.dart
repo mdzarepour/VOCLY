@@ -96,8 +96,10 @@ class BookCrudScreen extends GetView<BookCrudController> {
     return Obx(() {
       return PropertySelector(
         title: UIStrings.type,
-        onChildTap: (i) => controller.updateSelectedType(value: i),
-        selectedChildIndex: controller.selectedTypeIndex,
+        onChildTap: (i) {
+          controller.updateProperty(key: AppStrings.keyType, value: i);
+        },
+        selectedChildIndex: controller.properties[AppStrings.keyType],
         type: ExpantionWidgetType.entityType,
         children: WordTypes.children,
       );
@@ -108,8 +110,10 @@ class BookCrudScreen extends GetView<BookCrudController> {
     return Obx(() {
       return PropertySelector(
         title: UIStrings.difficulty,
-        onChildTap: (i) => controller.updateSelectedLevel(value: i),
-        selectedChildIndex: controller.selectedLevelIndex,
+        onChildTap: (i) {
+          controller.updateProperty(key: AppStrings.keyLevel, value: i);
+        },
+        selectedChildIndex: controller.properties[AppStrings.keyLevel],
         type: ExpantionWidgetType.entityLevel,
         children: EntityLevel.children,
       );
@@ -120,8 +124,10 @@ class BookCrudScreen extends GetView<BookCrudController> {
     return Obx(() {
       return PropertySelector(
         title: UIStrings.color,
-        onChildTap: (i) => controller.updateSelectedColor(value: i),
-        selectedChildIndex: controller.selectedColorIndex,
+        onChildTap: (i) {
+          controller.updateProperty(key: AppStrings.keyColor, value: i);
+        },
+        selectedChildIndex: controller.properties[AppStrings.keyColor],
         type: ExpantionWidgetType.entityColor,
         children: EntityColor.children,
       );
@@ -132,8 +138,10 @@ class BookCrudScreen extends GetView<BookCrudController> {
     return Obx(() {
       return PropertySelector(
         title: UIStrings.icon,
-        onChildTap: (i) => controller.updateSelectedIcon(value: i),
-        selectedChildIndex: controller.selectedIconIndex,
+        onChildTap: (i) {
+          controller.updateProperty(key: AppStrings.keyIcon, value: i);
+        },
+        selectedChildIndex: controller.properties[AppStrings.keyIcon],
         type: ExpantionWidgetType.entityIcon,
         children: EntityIcon.children,
       );
