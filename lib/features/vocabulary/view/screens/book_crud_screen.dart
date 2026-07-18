@@ -197,16 +197,30 @@ class BookCrudScreen extends GetView<BookCrudController> {
 
   Future<void> _action() async {
     FocusManager.instance.primaryFocus!.unfocus();
-    final either = await controller.handleAction();
-    either.fold(
-      (appError) {
-        controller.goToBack();
-        Get.snackbar('Oops!', appError.errorMessage);
-      },
-      (appSuccess) {
-        controller.goToBack();
-        Get.snackbar('Success', appSuccess.successMessage!);
-      },
-    );
+    if (controller.formKey.currentState!.validate()) {
+      if (controller.type == BookScreenType.addBook) {
+        final either = await controller.addBook();
+        either.fold(
+          (appError) {
+            Get.snackbar('Oops!', appError.errorMessage);
+          },
+          (appSuccess) {
+            controller.goToBack();
+            Get.snackbar('Success', appSuccess.successMessage!);
+          },
+        );
+      } else {
+        final either = await controller.updateBook();
+        either.fold(
+          (appError) {
+            Get.snackbar('Oops!', appError.errorMessage);
+          },
+          (appSuccess) {
+            controller.goToBack();
+            Get.snackbar('Success', appSuccess.successMessage!);
+          },
+        );
+      }
+    }
   }
 }

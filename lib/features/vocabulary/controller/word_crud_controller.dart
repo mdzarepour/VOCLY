@@ -80,10 +80,7 @@ class WordCrudController extends GetxController {
 
   Future<Either<AppError, AppSuccess>> updateWord() async {
     try {
-      // 1__
       final Map<String, dynamic> map = _createMap();
-
-      // 2__
       final updatedWord = editingWord!.copyWith(
         name: map[AppStrings.keyName],
         meaning: map[AppStrings.keyMeaning],
@@ -93,14 +90,13 @@ class WordCrudController extends GetxController {
         color: map[AppStrings.keyColor],
         level: map[AppStrings.keyLevel],
       );
-      // 3__
       await wordRepository.updateWord(
         key: editingWord!.key as int,
         word: updatedWord,
       );
-      return right(const AppSuccess(successMessage: 'updated')); // 4__
+      return right(const AppSuccess(successMessage: 'updated')); 
     } on AppError catch (error) {
-      return left(AppError(errorMessage: error.errorMessage)); // 5__
+      return left(AppError(errorMessage: error.errorMessage)); 
     }
   }
 

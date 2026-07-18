@@ -90,6 +90,8 @@ class BookCrudBinding extends Bindings {
       () => BookCrudController(
         bookRepository: Get.find(),
         dialogService: Get.find(),
+        type: Get.arguments['type'],
+        bookKey: Get.arguments['book_key'],
       ),
     );
   }

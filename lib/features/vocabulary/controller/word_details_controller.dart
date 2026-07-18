@@ -42,7 +42,7 @@ class WordDetailsController extends GetxController {
 
   Future<Either<AppError, AppSuccess>> deleteWord() async {
     try {
-      final bool? permission = await dialogService.showDialog(
+      final bool permission = await dialogService.showDialog(
         title: AppStrings.dialogConfirmDeleteTitle,
         content: AppStrings.dialogConfirmDeleteWordsContent,
         confirmTitle: AppStrings.dialogConfirmDeleteAction,

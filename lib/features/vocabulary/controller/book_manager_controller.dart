@@ -58,7 +58,7 @@ class BookManagerController extends GetxController {
 
   Future<Either<AppError, AppSuccess>> deleteBooks() async {
     try {
-      final bool? permission = await dialogService.showDialog(
+      final bool permission = await dialogService.showDialog(
         title: AppStrings.dialogConfirmDeleteTitle,
         content: AppStrings.dialogConfirmDeleteBooksContent,
         confirmTitle: AppStrings.dialogConfirmDeleteAction,
